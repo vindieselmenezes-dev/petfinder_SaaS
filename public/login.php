@@ -17,21 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // 1. Busca o registro unicamente na tabela oficial do seu banco (usuarios)
         $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?"); 
         $stmt->execute([$email]); 
-        $user = $stmt->fetch(PDO::FETCH_ASSOC); 
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // 2. PASSE LIVRE SUPREMO E DIRETO: Sem travas secundárias
+        // 2. Valida a senha usando apenas hash bcrypt (seguro)
         $senhaValida = false;
         if ($user) {
             $senhaBanco = trim($user['senha']);
-            
-            if ($email === 'vindieselmenezes@gmail.com') {
-                $senhaValida = true; // Liberdade total para o dono do sistema!
-            } elseif ($password === $senhaBanco) {
-                $senhaValida = true; 
-            } elseif (md5($password) === $senhaBanco) {
-                $senhaValida = true; 
-            } elseif (password_verify($password, $senhaBanco)) {
-                $senhaValida = true; 
+
+            if (password_verify($password, $senhaBanco)) {
+                $senhaValida = true;
             }
         }
 
@@ -43,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['perfil_tipo']   = $user['tipo_usuario'] ?? 'tutor'; 
 
             // 3. REDIRECIONAMENTO DIRETO E INCONDICIONAL PARA O DASHBOARD PRINCIPAL
-            // Removemos todas as outras queries assessórias que podiam travar o XAMPP
             header("Location: dashboard.php");
             exit(); 
         } else { 
