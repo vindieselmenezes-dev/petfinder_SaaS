@@ -1,0 +1,2811 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <!-- ========================= -->
+    <!-- META TAGS -->
+    <!-- ========================= -->
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>
+        PetFinder Brasil | Tudo para seu pet em um só lugar
+    </title>
+
+    <meta name="description" content="Marketplace completo para serviços e produtos do universo pet.">
+
+    <meta name="keywords" content="Pet Shop, Veterinário, Cachorro, Gato, Banho e Tosa, Marketplace Pet">
+
+    <meta name="author" content="PetFinder Brasil">
+
+    <meta name="robots" content="index,follow">
+
+    <!-- ========================= -->
+    <!-- OPEN GRAPH -->
+    <!-- ========================= -->
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:title" content="PetFinder Brasil">
+
+    <meta property="og:description" content="Tudo para seu pet em um só lugar.">
+
+    <meta property="og:image" content="assets/img/banner.jpg">
+
+    <meta property="og:url" content="https://petfinderbrasil.com.br">
+
+    <!-- ========================= -->
+    <!-- FAVICON -->
+    <!-- ========================= -->
+
+    <link rel="icon" href="assets/img/favicon.png">
+
+    <!-- ========================= -->
+    <!-- GOOGLE FONTS -->
+    <!-- ========================= -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- ========================= -->
+    <!-- BOOTSTRAP -->
+    <!-- ========================= -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- ========================= -->
+    <!-- BOOTSTRAP ICONS -->
+    <!-- ========================= -->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <!-- ========================= -->
+    <!-- CSS -->
+    <!-- ========================= -->
+
+    <link rel="stylesheet" href="assets/css/style.css">
+
+</head>
+
+<body>
+
+    <!-- ======================================== -->
+    <!-- LOADER -->
+    <!-- ======================================== -->
+
+    <div id="loader">
+
+        <div class="loader-content">
+
+            <img src="assets/img/logo.png" alt="PetFinder Brasil">
+
+            <h2>Carregando...</h2>
+
+        </div>
+
+    </div>
+
+    <!-- ======================================== -->
+    <!-- BOTÃO VOLTAR AO TOPO -->
+    <!-- ======================================== -->
+
+    <button id="btnTopo" class="btn-top">
+
+        <i class="bi bi-arrow-up"></i>
+
+    </button>
+
+    <!-- ======================================== -->
+    <!-- CONTAINER PRINCIPAL -->
+    <!-- ======================================== -->
+
+    <div id="app">
+
+        <!-- ========================================================= -->
+        <!-- HEADER -->
+        <!-- ========================================================= -->
+
+        <header id="header" class="shadow-sm fixed-top">
+
+            <div class="container-fluid">
+
+                <nav class="navbar navbar-expand-xl navbar-light">
+
+                    <!-- ===================================== -->
+                    <!-- LOGO -->
+                    <!-- ===================================== -->
+
+                    <a class="navbar-brand d-flex align-items-center" href="index.html">
+
+                        <img src="assets/img/logo.png" alt="PetFinder Brasil" class="logo">
+
+                        <div class="ms-2">
+
+                            <h3 class="m-0">PetFinder Brasil</h3>
+
+                            <small>
+                                Tudo para seu pet em um só lugar
+                            </small>
+
+                        </div>
+
+                    </a>
+
+                    <!-- ===================================== -->
+                    <!-- MENU MOBILE -->
+                    <!-- ===================================== -->
+
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#menuPrincipal">
+
+                        <span class="navbar-toggler-icon"></span>
+
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="menuPrincipal">
+
+                        <!-- ===================================== -->
+                        <!-- BUSCA -->
+                        <!-- ===================================== -->
+
+                        <form class="d-flex flex-grow-1 mx-xl-4 my-3 my-xl-0" id="formBuscaAdocao" method="GET"
+                            action="index.html">
+
+                            <div class="input-group w-100">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-search"></i>
+                                </span>
+
+                                <input type="search" class="form-control" id="inputBuscaAdocao" name="busca"
+                                    autocomplete="off" placeholder="Pesquisar pets para adoção...">
+
+                                <button type="button" class="btn btn-outline-secondary" id="btnIrFiltros">
+                                    <i class="bi bi-funnel"></i>
+                                    Filtros
+                                </button>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-search"></i>
+                                    Buscar
+                                </button>
+
+                            </div>
+
+                        </form>
+
+
+
+                        <!-- ===================================== -->
+                        <!-- MENU -->
+                        <!-- ===================================== -->
+
+                        <ul class="navbar-nav me-auto">
+
+                            <li class="nav-item">
+
+                                <a class="nav-link" href="index.html">
+                                    Home
+                                </a>
+
+                            </li>
+
+                            <li class="nav-item">
+
+                                <a class="nav-link" href="public/empresas.php">
+                                    Empresas
+                                </a>
+
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="public/empresas.php?categoria_id=10">
+                                    Serviços
+                                </a>
+
+                            </li>
+
+                            <li class="nav-item">
+
+                                <a class="nav-link" href="public/produtos.php">
+                                    Produtos
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+
+                                <a class="nav-link" href="public/empresas.php?categoria_id=2">
+                                    Veterinários
+                                </a>
+
+                            </li>
+
+                            <li class="nav-item">
+
+                                <a class="nav-link" href="public/blog.php">
+                                    Blog
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                        <!-- ===================================== -->
+                        <!-- BOTÕES -->
+                        <!-- ===================================== -->
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <!-- Anunciar -->
+
+                            <!-- Anunciar -->
+
+                            <a href="public/cadastro_empresa.php" class="btn btn-success">
+
+                                <i class="bi bi-megaphone"></i>
+
+                                Anunciar
+
+                            </a>
+                            <!-- Favoritos -->
+
+                            <a href="public/meus_favoritos.php" id="btnHeaderFavoritos"
+                                class="btn btn-light position-relative" style="display:none;">
+
+                                <i class="bi bi-heart"></i>
+
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+
+                                    0
+
+                                </span>
+
+                            </a>
+
+                            <!-- Carrinho -->
+
+                            <a href="public/em_breve.php?recurso=Carrinho" id="btnHeaderCarrinho"
+                                class="btn btn-light position-relative" style="display:none;">
+
+                                <i class="bi bi-cart3"></i>
+
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+
+                                    0
+
+                                </span>
+
+                            </a>
+
+                            <!-- Notificações -->
+
+                            <a href="public/notificacoes.php" id="btnHeaderNotificacoes"
+                                class="btn btn-light position-relative" style="display:none;">
+
+                                <i class="bi bi-bell"></i>
+
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">
+
+                                    3
+
+                                </span>
+
+                            </a>
+
+                            <!-- Login -->
+
+                            <a href="public/login.php" class="btn btn-outline-primary">
+
+                                Login
+
+                            </a>
+
+                            <!-- Cadastro -->
+
+                            <a href="public/cadastro.php" class="btn btn-primary">
+
+                                Cadastro
+
+                            </a>
+
+                            <!-- Perfil -->
+
+                            <div class="dropdown">
+
+                                <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+
+                                    <i class="bi bi-person-circle"></i>
+
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-end">
+
+                                    <li>
+
+                                        <a class="dropdown-item" href="public/endereco.php">
+
+                                            Meu Perfil
+
+                                        </a>
+
+                                    </li>
+
+                                    <li>
+
+                                        <a class="dropdown-item" href="public/meus_pets.php">
+
+                                            Meus Pets
+
+                                        </a>
+
+                                    </li>
+
+                                    <li>
+
+                                        <a class="dropdown-item" href="#">
+
+                                            Pedidos
+
+                                        </a>
+
+                                    </li>
+
+                                    <li>
+
+                                        <a class="dropdown-item" href="#">
+
+                                            Favoritos
+
+                                        </a>
+
+                                    </li>
+
+                                    <li>
+
+                                        <hr class="dropdown-divider">
+
+                                    </li>
+
+                                    <li>
+
+                                        <a class="dropdown-item text-danger" href="public/logout.php">
+
+                                            Sair
+
+                                        </a>
+
+                                    </li>
+
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </nav>
+
+            </div>
+
+        </header>
+
+        <!-- Espaçamento para compensar o header fixo -->
+        <div style="height:95px;"></div>
+
+        <!-- ========================================================= -->
+        <!-- HERO / BANNER PRINCIPAL -->
+        <!-- ========================================================= -->
+
+        <section id="hero">
+
+            <div id="carouselHero" class="carousel slide carousel-fade" data-bs-ride="carousel">
+
+                <div class="carousel-inner">
+
+                    <!-- Slide 1 -->
+
+                    <div class="carousel-item active">
+
+                        <img src="assets/img/banner/banner01.png" class="d-block w-100 hero-image"
+                            alt="PetFinder Brasil">
+
+                        <div class="carousel-caption">
+
+                            <h1>
+                                Tudo para seu pet em um só lugar
+                            </h1>
+
+                            <p>
+                                Encontre pet shops, clínicas, veterinários,
+                                hotéis, produtos e serviços perto de você.
+                            </p>
+
+                            <!-- =============================== -->
+                            <!-- BUSCA INTELIGENTE -->
+                            <!-- =============================== -->
+
+                            <div class="hero-search">
+
+                                <div class="input-group input-group-lg">
+
+                                    <span class="input-group-text">
+
+                                        <i class="bi bi-search"></i>
+
+                                    </span>
+
+                                    <input type="text" class="form-control" id="campoPesquisa"
+                                        placeholder="O que você procura hoje?">
+
+                                    <button class="btn btn-primary" type="button" id="btnPesquisar">
+
+                                        Pesquisar
+
+                                    </button>
+
+                                    <button class="btn btn-success">
+
+                                        <i class="bi bi-mic-fill"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Slide 2 -->
+
+                    <div class="carousel-item">
+
+                        <img src="assets/img/banner/banner02.png" class="d-block w-100 hero-image"
+                            alt="Marketplace Pet">
+
+                        <div class="carousel-caption">
+
+                            <h1>
+
+                                Marketplace Completo
+
+                            </h1>
+
+                            <p>
+
+                                Milhares de produtos com entrega rápida.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Slide 3 -->
+
+                    <div class="carousel-item">
+
+                        <img src="assets/img/banner/banner03.png" class="d-block w-100 hero-image" alt="Serviços Pet">
+
+                        <div class="carousel-caption">
+
+                            <h1>
+
+                                Serviços Especializados
+
+                            </h1>
+
+                            <p>
+
+                                Agende consultas, banho e tosa,
+                                hotéis e muito mais.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- CONTROLES -->
+
+                <button class="carousel-control-prev" data-bs-target="#carouselHero" data-bs-slide="prev">
+
+                    <span class="carousel-control-prev-icon"></span>
+
+                </button>
+
+                <button class="carousel-control-next" data-bs-target="#carouselHero" data-bs-slide="next">
+
+                    <span class="carousel-control-next-icon"></span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- PETS PARA ADOÇÃO -->
+        <!-- ========================================================= -->
+
+        <section id="adocao" class="py-5">
+
+            <div class="container">
+
+                <div class="row mb-4">
+
+                    <div class="col-lg-8">
+
+                        <h2 class="fw-bold">
+                            🐾 Pets para Adoção
+                        </h2>
+
+                        <p class="text-muted">
+                            Animais esperando por um novo lar. Use os filtros avançados para encontrar o pet ideal por
+                            espécie, raça, sexo, cor, idade, peso e cidade.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card filtros-avancados-card shadow-sm p-4">
+                            <div class="mb-3">
+                                <h5 class="mb-1">Filtros avançados</h5>
+                                <p class="text-muted mb-0">Refine sua busca por cidade, espécie, raça, sexo, cor,
+                                    status, ordem, idade, peso e altura.</p>
+                            </div>
+
+                            <div class="row g-3 align-items-end">
+                                <div class="col-12 col-lg-3">
+                                    <label class="form-label" for="selectCidadeAdocao">Cidade</label>
+                                    <select class="form-select" id="selectCidadeAdocao">
+                                        <option value="">Selecione sua cidade</option>
+                                        <option>São Paulo</option>
+                                        <option>Rio de Janeiro</option>
+                                        <option>Belo Horizonte</option>
+                                        <option>Brasília</option>
+                                        <option>Curitiba</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <label class="form-label" for="selectEspecieAdocao">Espécie</label>
+                                    <select class="form-select" id="selectEspecieAdocao">
+                                        <option value="">Todas as espécies</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <label class="form-label" for="selectRacaAdocao">Raça</label>
+                                    <select class="form-select" id="selectRacaAdocao">
+                                        <option value="">Todas as raças</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <label class="form-label" for="selectStatusAdocao">Status</label>
+                                    <select class="form-select" id="selectStatusAdocao">
+                                        <option value="">Qualquer status</option>
+                                        <option selected>Para Adoção</option>
+                                        <option>Adotado</option>
+                                        <option>Perdido</option>
+                                        <option>Encontrado</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <label class="form-label" for="selectSexoAdocao">Sexo</label>
+                                    <select class="form-select" id="selectSexoAdocao">
+                                        <option value="">Qualquer sexo</option>
+                                        <option>Masculino</option>
+                                        <option>Feminino</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <label class="form-label" for="inputCorAdocao">Cor</label>
+                                    <input type="text" class="form-control" id="inputCorAdocao"
+                                        placeholder="Ex: marrom, branco">
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <label class="form-label" for="selectCastradoAdocao">Castrado</label>
+                                    <select class="form-select" id="selectCastradoAdocao">
+                                        <option value="">Qualquer opção</option>
+                                        <option value="1">Sim</option>
+                                        <option value="0">Não</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <label class="form-label" for="selectOrdemAdocao">Ordenar por</label>
+                                    <select class="form-select" id="selectOrdemAdocao">
+                                        <option value="recente" selected>Mais recentes</option>
+                                        <option value="antigo">Mais antigos</option>
+                                        <option value="maior_peso">Maior peso</option>
+                                        <option value="menor_peso">Menor peso</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    <label class="form-label" for="inputIdadeMinAdocao">Idade mínima</label>
+                                    <input type="number" class="form-control" id="inputIdadeMinAdocao" placeholder="0">
+                                </div>
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    <label class="form-label" for="inputIdadeMaxAdocao">Idade máxima</label>
+                                    <input type="number" class="form-control" id="inputIdadeMaxAdocao" placeholder="12">
+                                </div>
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    <label class="form-label" for="inputPesoMinAdocao">Peso min.</label>
+                                    <input type="number" class="form-control" id="inputPesoMinAdocao" placeholder="0">
+                                </div>
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    <label class="form-label" for="inputPesoMaxAdocao">Peso max.</label>
+                                    <input type="number" class="form-control" id="inputPesoMaxAdocao" placeholder="30">
+                                </div>
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    <label class="form-label" for="inputAlturaMinAdocao">Altura min.</label>
+                                    <input type="number" class="form-control" id="inputAlturaMinAdocao" placeholder="0">
+                                </div>
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    <label class="form-label" for="inputAlturaMaxAdocao">Altura max.</label>
+                                    <input type="number" class="form-control" id="inputAlturaMaxAdocao"
+                                        placeholder="60">
+                                </div>
+                                <div class="col-12 text-end">
+                                    <button type="button" class="btn btn-secondary" id="btnLimparFiltrosAdocao">Limpar
+                                        filtros</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4" id="listaAdocao">
+
+                    <div class="col-12 text-center text-muted py-5">
+                        Carregando pets para adoção...
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- CATEGORIAS RÁPIDAS -->
+        <!-- ========================================================= -->
+
+        <section id="categorias" class="py-5">
+
+            <div class="container">
+
+                <div class="row text-center g-4">
+
+                    <div class="col-6 col-md-3 col-lg-2">
+
+                        <a href="public/empresas.php?categoria_id=2" class="categoria-card">
+
+                            <i class="bi bi-heart-pulse-fill"></i>
+
+                            <span>Veterinários</span>
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-6 col-md-3 col-lg-2">
+
+                        <a href="public/empresas.php?categoria_id=4" class="categoria-card">
+
+                            <i class="bi bi-scissors"></i>
+
+                            <span>Banho e Tosa</span>
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-6 col-md-3 col-lg-2">
+
+                        <a href="public/empresas.php?categoria_id=1" class="categoria-card">
+
+                            <i class="bi bi-shop"></i>
+
+                            <span>Pet Shops</span>
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-6 col-md-3 col-lg-2">
+
+                        <a href="public/empresas.php?categoria_id=5" class="categoria-card">
+
+                            <i class="bi bi-house-heart-fill"></i>
+
+                            <span>Hotel Pet</span>
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-6 col-md-3 col-lg-2">
+
+                        <a href="public/empresas.php?categoria_id=10" class="categoria-card">
+
+                            <i class="bi bi-truck"></i>
+
+                            <span>Táxi Pet</span>
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-6 col-md-3 col-lg-2">
+
+                        <a href="public/produtos.php" class="categoria-card">
+
+                            <i class="bi bi-cart-fill"></i>
+
+                            <span>Produtos</span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- ESTATÍSTICAS -->
+        <!-- ========================================================= -->
+
+        <section id="estatisticas" class="py-5 bg-light">
+
+            <div class="container">
+
+                <div class="row text-center">
+
+                    <div class="col-md-3">
+
+                        <h2>12.500+</h2>
+
+                        <p>Empresas Cadastradas</p>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <h2>5.800+</h2>
+
+                        <p>Veterinários</p>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <h2>320 mil</h2>
+
+                        <p>Clientes</p>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <h2>1 milhão+</h2>
+
+                        <p>Produtos</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- EMPRESAS EM DESTAQUE -->
+        <!-- ========================================================= -->
+
+        <section id="empresas-destaque" class="py-5">
+
+            <div class="container">
+
+                <div class="row mb-5">
+
+                    <div class="col-lg-8">
+
+                        <h2 class="fw-bold">
+
+                            Empresas em Destaque
+
+                        </h2>
+
+                        <p class="text-muted">
+
+                            Os estabelecimentos mais bem avaliados da plataforma.
+
+                        </p>
+
+                    </div>
+
+                    <div class="col-lg-4 text-lg-end">
+
+                        <a href="public/empresas.php" class="btn btn-primary">
+
+                            Ver Todas
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-4">
+
+                    <!-- CARD 01 -->
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <div class="card empresa-card h-100 shadow-sm">
+
+                            <img src="assets/img/empresas/petshop01.png" class="card-img-top" alt="Pet Shop">
+
+                            <div class="card-body">
+
+                                <span class="badge bg-success mb-3">
+
+                                    Pet Shop
+
+                                </span>
+
+                                <h4>
+
+                                    Pet Feliz
+
+                                </h4>
+
+                                <p>
+
+                                    Produtos, banho e tosa,
+                                    consultas veterinárias
+                                    e atendimento completo.
+
+                                </p>
+
+                                <div class="mb-3">
+
+                                    ⭐⭐⭐⭐⭐
+
+                                    <small>
+
+                                        (524 avaliações)
+
+                                    </small>
+
+                                </div>
+
+                                <div class="mb-3">
+
+                                    <i class="bi bi-geo-alt-fill"></i>
+
+                                    2,4 km
+
+                                </div>
+
+                            </div>
+
+                            <div class="card-footer bg-white">
+
+                                <div class="d-grid gap-2">
+
+                                    <a href="public/empresa.php?id=1" class="btn btn-success">
+
+                                        <i class="bi bi-whatsapp"></i>
+
+                                        WhatsApp
+
+                                    </a>
+
+                                    <a href="public/empresa.php?id=1" class="btn btn-outline-primary">
+
+                                        Agendar
+
+                                    </a>
+
+                                    <a href="public/empresa.php?id=1" class="btn btn-light">
+
+                                        Ver Perfil
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- CARD 02 -->
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <div class="card empresa-card h-100 shadow-sm">
+
+                            <img src="assets/img/empresas/vet01.png" class="card-img-top">
+
+                            <div class="card-body">
+
+                                <span class="badge bg-primary mb-3">
+
+                                    Clínica Veterinária
+
+                                </span>
+
+                                <h4>
+
+                                    Vet Center
+
+                                </h4>
+
+                                <p>
+
+                                    Atendimento 24 horas,
+                                    exames, vacinas,
+                                    internação e cirurgias.
+
+                                </p>
+
+                                <div class="mb-3">
+
+                                    ⭐⭐⭐⭐⭐
+
+                                    <small>
+
+                                        (1.132 avaliações)
+
+                                    </small>
+
+                                </div>
+
+                                <div class="mb-3">
+
+                                    <i class="bi bi-geo-alt-fill"></i>
+
+                                    1,8 km
+
+                                </div>
+
+                            </div>
+
+                            <div class="card-footer bg-white">
+
+                                <div class="d-grid gap-2">
+
+                                    <a href="public/empresa.php?id=2" class="btn btn-success">
+
+                                        WhatsApp
+
+                                    </a>
+
+                                    <a href="public/empresas.php?categoria_id=2" class="btn btn-outline-primary">
+
+                                        Agendar
+
+                                    </a>
+
+                                    <a href="public/empresa.php?id=2" class="btn btn-light">
+
+                                        Ver Perfil
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- CARD 03 -->
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <div class="card empresa-card h-100 shadow-sm">
+
+                            <img src="assets/img/empresas/hotel01.png" class="card-img-top">
+
+                            <div class="card-body">
+
+                                <span class="badge bg-warning text-dark mb-3">
+
+                                    Hotel Pet
+
+                                </span>
+
+                                <h4>
+
+                                    Hotel Dog House
+
+                                </h4>
+
+                                <p>
+
+                                    Hospedagem,
+                                    recreação,
+                                    monitoramento 24h
+                                    e câmeras online.
+
+                                </p>
+
+                                <div class="mb-3">
+
+                                    ⭐⭐⭐⭐⭐
+
+                                    <small>
+
+                                        (418 avaliações)
+
+                                    </small>
+
+                                </div>
+
+                                <div class="mb-3">
+
+                                    <i class="bi bi-geo-alt-fill"></i>
+
+                                    5,1 km
+
+                                </div>
+
+                            </div>
+
+                            <div class="card-footer bg-white">
+
+                                <div class="d-grid gap-2">
+
+                                    <a href="public/empresa.php?id=3" class="btn btn-success">
+
+                                        WhatsApp
+
+                                    </a>
+
+                                    <a href="public/empresas.php?categoria_id=5" class="btn btn-outline-primary">
+
+                                        Reservar
+
+                                    </a>
+
+                                    <a href="public/empresa.php?id=3" class="btn btn-light">
+
+                                        Ver Perfil
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VETERINÁRIOS PRÓXIMOS -->
+        <!-- ========================================================= -->
+
+        <section id="veterinarios" class="py-5 bg-light">
+
+            <div class="container">
+
+                <div class="row mb-4">
+
+                    <div class="col">
+
+                        <h2 class="fw-bold">
+
+                            Veterinários Próximos
+
+                        </h2>
+
+                        <p class="text-muted">
+
+                            Atendimento rápido perto de você.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-4">
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="card shadow-sm">
+
+                            <img src="assets/img/veterinarios/vet01.png" class="card-img-top">
+
+                            <div class="card-body text-center">
+
+                                <h5>
+
+                                    Dr. Carlos Mendes
+
+                                </h5>
+
+                                <p>
+
+                                    Clínica Geral
+
+                                </p>
+
+                                <p>
+
+                                    ⭐⭐⭐⭐⭐
+
+                                </p>
+
+                                <a href="public/empresa.php?id=2" class="btn btn-primary w-100">
+
+                                    Agendar Consulta
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="card shadow-sm">
+
+                            <img src="assets/img/veterinarios/vet02.png" class="card-img-top">
+
+                            <div class="card-body text-center">
+
+                                <h5>
+
+                                    Dra. Fernanda Lima
+
+                                </h5>
+
+                                <p>
+
+                                    Cirurgiã
+
+                                </p>
+
+                                <p>
+
+                                    ⭐⭐⭐⭐⭐
+
+                                </p>
+
+                                <a href="public/empresa.php?id=2" class="btn btn-primary w-100">
+
+                                    Agendar Consulta
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="card shadow-sm">
+
+                            <img src="assets/img/veterinarios/vet03.png" class="card-img-top">
+
+                            <div class="card-body text-center">
+
+                                <h5>
+
+                                    Dr. Eduardo Alves
+
+                                </h5>
+
+                                <p>
+
+                                    Dermatologia
+
+                                </p>
+
+                                <p>
+
+                                    ⭐⭐⭐⭐⭐
+
+                                </p>
+
+                                <a href="public/empresa.php?id=2" class="btn btn-primary w-100">
+
+                                    Agendar Consulta
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="card shadow-sm">
+
+                            <img src="assets/img/veterinarios/vet04.png" class="card-img-top">
+
+                            <div class="card-body text-center">
+
+                                <h5>
+
+                                    Dra. Juliana Costa
+
+                                </h5>
+
+                                <p>
+
+                                    Ortopedia
+
+                                </p>
+
+                                <p>
+
+                                    ⭐⭐⭐⭐⭐
+
+                                </p>
+
+                                <a href="public/empresa.php?id=2" class="btn btn-primary w-100">
+
+                                    Agendar Consulta
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- MARKETPLACE - PRODUTOS EM DESTAQUE -->
+        <!-- ========================================================= -->
+
+        <section id="marketplace" class="py-5">
+
+            <div class="container">
+
+                <div class="row align-items-center mb-5">
+
+                    <div class="col-lg-8">
+
+                        <h2 class="fw-bold">
+
+                            Produtos em Destaque
+
+                        </h2>
+
+                        <p class="text-muted">
+
+                            Os produtos mais vendidos para o seu pet.
+
+                        </p>
+
+                    </div>
+
+                    <div class="col-lg-4 text-lg-end">
+
+                        <a href="public/produtos.php" class="btn btn-outline-primary">
+
+                            Ver Todos os Produtos
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-4">
+
+                    <!-- ======================================== -->
+                    <!-- PRODUTO 01 -->
+                    <!-- ======================================== -->
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="card produto-card h-100 shadow-sm">
+
+                            <span class="badge bg-danger position-absolute m-3">
+
+                                -25%
+
+                            </span>
+
+                            <img src="assets/img/produtos/racao-premium.png" class="card-img-top" alt="Ração Premium">
+
+                            <div class="card-body">
+
+                                <small class="text-muted">
+
+                                    Rações
+
+                                </small>
+
+                                <h5 class="mt-2">
+
+                                    Ração Premium Cães Adultos
+
+                                </h5>
+
+                                <div class="mb-2">
+
+                                    ⭐⭐⭐⭐⭐
+
+                                    <small>(327)</small>
+
+                                </div>
+
+                                <p class="text-decoration-line-through text-muted">
+
+                                    R$ 249,90
+
+                                </p>
+
+                                <h4 class="text-success">
+
+                                    R$ 189,90
+
+                                </h4>
+
+                                <small>
+
+                                    ou 12x de R$ 15,82
+
+                                </small>
+
+                            </div>
+
+                            <div class="card-footer bg-white">
+
+                                <div class="d-grid gap-2">
+
+                                    <button class="btn btn-success" data-href="public/empresa.php?id=1">
+
+                                        Vendedor
+
+                                    </button>
+
+                                    <button class="btn btn-outline-primary"
+                                        data-href="public/em_breve.php?recurso=Carrinho">
+
+                                        <i class="bi bi-cart-plus"></i>
+
+                                        Adicionar ao Carrinho
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ======================================== -->
+                    <!-- PRODUTO 02 -->
+                    <!-- ======================================== -->
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="card produto-card h-100 shadow-sm">
+
+                            <img src="assets/img/produtos/caminha.png" class="card-img-top" alt="Caminha">
+
+                            <div class="card-body">
+
+                                <small class="text-muted">
+
+                                    Camas
+
+                                </small>
+
+                                <h5>
+
+                                    Caminha Luxo Impermeável
+
+                                </h5>
+
+                                <div class="mb-2">
+
+                                    ⭐⭐⭐⭐⭐
+
+                                    <small>(181)</small>
+
+                                </div>
+
+                                <p class="text-decoration-line-through text-muted">
+
+                                    R$ 329,90
+
+                                </p>
+
+                                <h4 class="text-success">
+
+                                    R$ 259,90
+
+                                </h4>
+
+                            </div>
+
+                            <div class="card-footer bg-white">
+
+                                <div class="d-grid gap-2">
+
+                                    <button class="btn btn-success" data-href="public/empresa.php?id=1">
+
+                                        Vendedor
+
+                                    </button>
+
+                                    <button class="btn btn-outline-primary"
+                                        data-href="public/em_breve.php?recurso=Carrinho">
+
+                                        <i class="bi bi-cart-plus"></i>
+
+                                        Adicionar ao Carrinho
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ======================================== -->
+                    <!-- PRODUTO 03 -->
+                    <!-- ======================================== -->
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="card produto-card h-100 shadow-sm">
+
+                            <img src="assets/img/produtos/brinquedo.png" class="card-img-top" alt="Brinquedo">
+
+                            <div class="card-body">
+
+                                <small>
+
+                                    Brinquedos
+
+                                </small>
+
+                                <h5>
+
+                                    Mordedor Interativo
+
+                                </h5>
+
+                                <div>
+
+                                    ⭐⭐⭐⭐⭐
+
+                                    <small>(642)</small>
+
+                                </div>
+
+                                <p class="text-decoration-line-through">
+
+                                    R$ 89,90
+
+                                </p>
+
+                                <h4 class="text-success">
+
+                                    R$ 59,90
+
+                                </h4>
+
+                            </div>
+
+                            <div class="card-footer bg-white">
+
+                                <div class="d-grid gap-2">
+
+                                    <button class="btn btn-success" data-href="public/empresa.php?id=1">
+
+                                        Vendedor
+
+                                    </button>
+
+                                    <button class="btn btn-outline-primary"
+                                        data-href="public/em_breve.php?recurso=Carrinho">
+
+                                        <i class="bi bi-cart-plus"></i>
+
+                                        Adicionar ao Carrinho
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ======================================== -->
+                    <!-- PRODUTO 04 -->
+                    <!-- ======================================== -->
+
+                    <div class="col-lg-3 col-md-6">
+
+                        <div class="card produto-card h-100 shadow-sm">
+
+                            <img src="assets/img/produtos/coleira.jpg" class="card-img-top" alt="Coleira">
+
+                            <div class="card-body">
+
+                                <small>
+
+                                    Acessórios
+
+                                </small>
+
+                                <h5>
+
+                                    Coleira Premium Couro
+
+                                </h5>
+
+                                <div>
+
+                                    ⭐⭐⭐⭐⭐
+
+                                    <small>(228)</small>
+
+                                </div>
+
+                                <p class="text-decoration-line-through">
+
+                                    R$ 149,90
+
+                                </p>
+
+                                <h4 class="text-success">
+
+                                    R$ 99,90
+
+                                </h4>
+
+                            </div>
+
+                            <div class="card-footer bg-white">
+
+                                <div class="d-grid gap-2">
+
+                                    <button class="btn btn-success" data-href="public/empresa.php?id=1">
+
+                                        Vendedor
+
+                                    </button>
+
+                                    <button class="btn btn-outline-primary"
+                                        data-href="public/em_breve.php?recurso=Carrinho">
+
+                                        <i class="bi bi-cart-plus"></i>
+
+                                        Adicionar ao Carrinho
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- BANNER PROMOCIONAL -->
+        <!-- ========================================================= -->
+
+        <section class="py-5 bg-primary text-white">
+
+            <div class="container">
+
+                <div class="row align-items-center">
+
+                    <div class="col-lg-8">
+
+                        <h2>
+
+                            Semana PetFinder Brasil
+
+                        </h2>
+
+                        <p>
+
+                            Aproveite descontos de até 60% em produtos e serviços.
+
+                        </p>
+
+                    </div>
+
+                    <div class="col-lg-4 text-lg-end">
+
+                        <a href="public/ofertas.php" class="btn btn-warning btn-lg">
+                            Aproveitar Ofertas
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- SERVIÇOS EM DESTAQUE -->
+        <!-- ========================================================= -->
+
+        <section id="servicos" class="py-5 bg-light">
+
+            <div class="container">
+
+                <div class="row mb-5">
+
+                    <div class="col">
+
+                        <h2 class="fw-bold">
+
+                            Serviços em Destaque
+
+                        </h2>
+
+                        <p class="text-muted">
+
+                            Agende serviços especializados para o seu pet.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-4">
+
+                    <div class="col-lg-4">
+
+                        <div class="card shadow-sm h-100">
+
+                            <div class="card-body text-center">
+
+                                <i class="bi bi-scissors display-3 text-primary"></i>
+
+                                <h4 class="mt-3">
+
+                                    Banho e Tosa
+
+                                </h4>
+
+                                <p>
+
+                                    Atendimento com profissionais qualificados.
+
+                                </p>
+
+                                <a href="public/empresas.php?categoria_id=4" class="btn btn-primary">
+                                    Agendar
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <div class="card shadow-sm h-100">
+
+                            <div class="card-body text-center">
+
+                                <i class="bi bi-heart-pulse-fill display-3 text-danger"></i>
+
+                                <h4 class="mt-3">
+
+                                    Consulta Veterinária
+
+                                </h4>
+
+                                <p>
+
+                                    Atendimento presencial ou online.
+
+                                </p>
+
+                                <a href="public/empresas.php?categoria_id=2" class="btn btn-danger">
+                                    Marcar Consulta
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <div class="card shadow-sm h-100">
+
+                            <div class="card-body text-center">
+
+                                <i class="bi bi-house-heart-fill display-3 text-success"></i>
+
+                                <h4 class="mt-3">
+
+                                    Hotel Pet
+
+                                </h4>
+
+                                <p>
+
+                                    Hospedagem segura com monitoramento.
+
+                                </p>
+
+                                <a href="public/empresas.php?categoria_id=5" class="btn btn-success">
+                                    Reservar
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- ÁREA MEU PET -->
+        <!-- ========================================================= -->
+
+        <section id="meu-pet" class="py-5">
+
+            <div class="container">
+
+                <div class="row align-items-center">
+
+                    <div class="col-lg-6">
+
+                        <img src="assets/img/pets/meu-pet.jpg" class="img-fluid rounded shadow" alt="Meu Pet">
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <h2 class="fw-bold">
+
+                            Gerencie a vida do seu pet
+
+                        </h2>
+
+                        <p class="text-muted">
+
+                            Cadastre seus animais e acompanhe vacinas,
+                            consultas, medicamentos, peso, documentos
+                            e histórico veterinário em um único lugar.
+
+                        </p>
+
+                        <ul class="list-group list-group-flush mb-4">
+
+                            <li class="list-group-item">
+
+                                ✔ Carteira Digital
+
+                            </li>
+
+                            <li class="list-group-item">
+
+                                ✔ Vacinas
+
+                            </li>
+
+                            <li class="list-group-item">
+
+                                ✔ Histórico Médico
+
+                            </li>
+
+                            <li class="list-group-item">
+
+                                ✔ Lembretes
+
+                            </li>
+
+                            <li class="list-group-item">
+
+                                ✔ Medicamentos
+
+                            </li>
+
+                        </ul>
+
+                        <a href="public/cadastrar_pet.php" class="btn btn-primary btn-lg">
+
+                            Cadastrar Meu Pet
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- BLOG -->
+        <!-- ========================================================= -->
+
+        <section id="blog" class="py-5 bg-light">
+
+            <div class="container">
+
+                <div class="row mb-5">
+
+                    <div class="col">
+
+                        <h2 class="fw-bold">
+
+                            Blog PetFinder
+
+                        </h2>
+
+                        <p class="text-muted">
+
+                            Dicas e informações para cuidar melhor do seu pet.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-4">
+
+                    <div class="col-lg-4">
+
+                        <div class="card h-100 shadow-sm">
+
+                            <img src="assets/img/blog/blog01.jpg" class="card-img-top" alt="Blog">
+
+                            <div class="card-body">
+
+                                <h5>
+
+                                    Como escolher a melhor ração?
+
+                                </h5>
+
+                                <p>
+
+                                    Descubra como alimentar corretamente
+                                    seu melhor amigo.
+
+                                </p>
+
+                                <a href="public/blog.php#post1" class="btn btn-outline-primary">
+
+                                    Ler Artigo
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <div class="card h-100 shadow-sm">
+
+                            <img src="assets/img/blog/blog02.jpg" class="card-img-top" alt="Blog">
+
+                            <div class="card-body">
+
+                                <h5>
+
+                                    Vacinas obrigatórias
+
+                                </h5>
+
+                                <p>
+
+                                    Veja quais vacinas são indispensáveis.
+
+                                </p>
+
+                                <a href="public/blog.php#post2" class="btn btn-outline-primary">
+
+                                    Ler Artigo
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <div class="card h-100 shadow-sm">
+
+                            <img src="assets/img/blog/blog03.jpg" class="card-img-top" alt="Blog">
+
+                            <div class="card-body">
+
+                                <h5>
+
+                                    Como viajar com seu pet
+
+                                </h5>
+
+                                <p>
+
+                                    Dicas para uma viagem segura.
+
+                                </p>
+
+                                <a href="public/blog.php#post3" class="btn btn-outline-primary">
+
+                                    Ler Artigo
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- ÚLTIMAS AVALIAÇÕES -->
+        <!-- ========================================================= -->
+
+        <section id="avaliacoes" class="py-5">
+
+            <div class="container">
+
+                <h2 class="fw-bold mb-5 text-center">
+
+                    O que nossos clientes dizem
+
+                </h2>
+
+                <div class="row g-4">
+
+                    <div class="col-lg-4">
+
+                        <div class="card shadow-sm h-100">
+
+                            <div class="card-body">
+
+                                ⭐⭐⭐⭐⭐
+
+                                <p class="mt-3">
+
+                                    Excelente plataforma.
+                                    Consegui encontrar um veterinário
+                                    rapidamente.
+
+                                </p>
+
+                                <strong>
+
+                                    Maria Oliveira
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <div class="card shadow-sm h-100">
+
+                            <div class="card-body">
+
+                                ⭐⭐⭐⭐⭐
+
+                                <p class="mt-3">
+
+                                    Ótimos preços e entrega rápida.
+
+                                </p>
+
+                                <strong>
+
+                                    João Pereira
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <div class="card shadow-sm h-100">
+
+                            <div class="card-body">
+
+                                ⭐⭐⭐⭐⭐
+
+                                <p class="mt-3">
+
+                                    Muito fácil de usar.
+                                    Recomendo.
+
+                                </p>
+
+                                <strong>
+
+                                    Fernanda Souza
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- PARCEIROS -->
+        <!-- ========================================================= -->
+
+        <section id="parceiros" class="py-5 bg-light">
+
+            <div class="container">
+
+                <h2 class="text-center fw-bold mb-5">
+
+                    Empresas Parceiras
+
+                </h2>
+
+                <div class="row text-center">
+
+                    <div class="col">
+
+                        <img src="assets/img/parceiros/parceiro01.jpg" class="img-fluid">
+
+                    </div>
+
+                    <div class="col">
+
+                        <img src="assets/img/parceiros/parceiro02.jpg" class="img-fluid">
+
+                    </div>
+
+                    <div class="col">
+
+                        <img src="assets/img/parceiros/parceiro03.jpg" class="img-fluid">
+
+                    </div>
+
+                    <div class="col">
+
+                        <img src="assets/img/parceiros/parceiro04.jpg" class="img-fluid">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- NEWSLETTER -->
+        <!-- ========================================================= -->
+
+        <section id="newsletter" class="py-5 bg-primary text-white">
+
+            <div class="container text-center">
+
+                <h2>
+
+                    Receba nossas novidades
+
+                </h2>
+
+                <p>
+
+                    Promoções, dicas e novidades diretamente no seu e-mail.
+
+                </p>
+
+                <form class="row justify-content-center">
+
+                    <div class="col-lg-5">
+
+                        <input type="email" name="email" id="email" autocomplete="email" required>
+
+                    </div>
+
+                    <div class="col-auto">
+
+                        <button class="btn btn-warning btn-lg">
+
+                            Inscrever-se
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- FOOTER -->
+        <!-- ========================================================= -->
+
+        <footer id="footer" class="bg-dark text-light pt-5">
+
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-lg-4">
+
+                        <h4>
+
+                            PetFinder Brasil
+
+                        </h4>
+
+                        <p>
+
+                            Tudo para seu pet em um só lugar.
+
+                        </p>
+
+                    </div>
+
+                    <div class="col-lg-2">
+
+                        <h5>
+
+                            Empresa
+
+                        </h5>
+
+                        <ul class="list-unstyled">
+
+                            <li><a href="#" class="text-light">Sobre</a></li>
+                            <li><a href="#" class="text-light">Contato</a></li>
+                            <li><a href="public/blog.php" class="text-light">Blog</a></li>
+
+                        </ul>
+
+                    </div>
+
+                    <div class="col-lg-3">
+
+                        <h5>
+
+                            Suporte
+
+                        </h5>
+
+                        <ul class="list-unstyled">
+
+                            <li><a href="#" class="text-light">Ajuda</a></li>
+                            <li><a href="#" class="text-light">Privacidade</a></li>
+                            <li><a href="#" class="text-light">Termos</a></li>
+
+                        </ul>
+
+                    </div>
+
+                    <div class="col-lg-3">
+
+                        <h5>
+
+                            Redes Sociais
+
+                        </h5>
+
+                        <div class="d-flex gap-3 fs-3">
+
+                            <a href="#" class="text-light">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+
+                            <a href="#" class="text-light">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+
+                            <a href="#" class="text-light">
+                                <i class="bi bi-youtube"></i>
+                            </a>
+
+                            <a href="#" class="text-light">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <div class="text-center py-3">
+
+                    © 2026 PetFinder Brasil — Todos os direitos reservados.
+
+                </div>
+
+            </div>
+
+        </footer>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- BOOTSTRAP -->
+    <!-- ========================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!-- ========================= -->
+    <!-- JAVASCRIPT -->
+    <!-- ========================= -->
+
+    <script src="assets/js/script.js">
+    </script>
+
+    <!-- ========================= -->
+    <!-- BUSCA DE PETS PARA ADOÇÃO -->
+    <!-- ========================= -->
+
+    <script>
+
+        (function () {
+
+            const container = document.getElementById("listaAdocao");
+            const form = document.getElementById("formBuscaAdocao");
+            const inputBusca = document.getElementById("inputBuscaAdocao");
+            const selectCidade = document.getElementById("selectCidadeAdocao");
+            const selectEspecie = document.getElementById("selectEspecieAdocao");
+            const selectRaca = document.getElementById("selectRacaAdocao");
+            const selectSexo = document.getElementById("selectSexoAdocao");
+            const inputCor = document.getElementById("inputCorAdocao");
+            const selectCastrado = document.getElementById("selectCastradoAdocao");
+            const selectStatus = document.getElementById("selectStatusAdocao");
+            const selectOrdem = document.getElementById("selectOrdemAdocao");
+            const inputIdadeMin = document.getElementById("inputIdadeMinAdocao");
+            const inputIdadeMax = document.getElementById("inputIdadeMaxAdocao");
+            const inputPesoMin = document.getElementById("inputPesoMinAdocao");
+            const inputPesoMax = document.getElementById("inputPesoMaxAdocao");
+            const inputAlturaMin = document.getElementById("inputAlturaMinAdocao");
+            const inputAlturaMax = document.getElementById("inputAlturaMaxAdocao");
+            const btnLimpar = document.getElementById("btnLimparFiltrosAdocao");
+            const btnIrFiltros = document.getElementById("btnIrFiltros");
+            let racasPorEspecie = {};
+
+            function escapeHtml(texto) {
+                const div = document.createElement("div");
+                div.textContent = texto ?? "";
+                return div.innerHTML;
+            }
+
+            function montarQueryString() {
+                const params = new URLSearchParams();
+
+                if (inputBusca) {
+                    const texto = inputBusca.value.trim();
+                    if (texto) params.set("busca", texto);
+                }
+
+                if (selectCidade) {
+                    const cidade = selectCidade.value;
+                    if (cidade && cidade !== "Selecione sua cidade") {
+                        params.set("cidade", cidade);
+                    }
+                }
+
+                if (selectEspecie && selectEspecie.value) {
+                    params.set("especie_id", selectEspecie.value);
+                }
+
+                if (selectRaca && selectRaca.value) {
+                    params.set("raca_id", selectRaca.value);
+                }
+
+                if (selectSexo && selectSexo.value) {
+                    params.set("sexo", selectSexo.value);
+                }
+
+                if (inputCor) {
+                    const cor = inputCor.value.trim();
+                    if (cor) params.set("cor", cor);
+                }
+
+                if (selectCastrado && selectCastrado.value !== "") {
+                    params.set("castrado", selectCastrado.value);
+                }
+
+                if (selectStatus && selectStatus.value) {
+                    params.set("status", selectStatus.value);
+                }
+
+                if (selectOrdem && selectOrdem.value) {
+                    params.set("ordem", selectOrdem.value);
+                }
+
+                if (inputIdadeMin && inputIdadeMin.value) {
+                    params.set("idade_min", inputIdadeMin.value);
+                }
+
+                if (inputIdadeMax && inputIdadeMax.value) {
+                    params.set("idade_max", inputIdadeMax.value);
+                }
+
+                if (inputPesoMin && inputPesoMin.value) {
+                    params.set("peso_min", inputPesoMin.value);
+                }
+
+                if (inputPesoMax && inputPesoMax.value) {
+                    params.set("peso_max", inputPesoMax.value);
+                }
+
+                if (inputAlturaMin && inputAlturaMin.value) {
+                    params.set("altura_min", inputAlturaMin.value);
+                }
+
+                if (inputAlturaMax && inputAlturaMax.value) {
+                    params.set("altura_max", inputAlturaMax.value);
+                }
+
+                return params.toString();
+            }
+
+            function lerParametroBusca() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get("busca") || "";
+            }
+
+            function renderizarPets(pets) {
+
+                if (!pets || pets.length === 0) {
+                    container.innerHTML =
+                        '<div class="col-12 text-center text-muted py-5">' +
+                        'Nenhum pet para adoção encontrado com esses filtros.' +
+                        '</div>';
+                    return;
+                }
+
+                let html = "";
+
+                pets.forEach(function (pet) {
+
+                    const foto = pet.foto && pet.foto !== "sem-foto.png"
+                        ? "uploads/pets/" + pet.foto
+                        : "assets/img/pets/sem-foto.png";
+
+                    const cidade = pet.cidade ? escapeHtml(pet.cidade) : "Cidade não informada";
+                    const cor = pet.cor ? escapeHtml(pet.cor) : "Cor não informada";
+                    const telefone = pet.tutor_telefone ? String(pet.tutor_telefone).replace(/\D/g, "") : "";
+
+                    html += `
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card empresa-card h-100 shadow-sm">
+                                <a href="public/pet.php?id=${pet.id}">
+                                    <img src="${foto}" class="card-img-top" alt="${escapeHtml(pet.nome)}">
+                                </a>
+                                <div class="card-body">
+                                    <span class="badge bg-success mb-3">Para Adoção</span>
+                                    <h4>
+                                        <a href="public/pet.php?id=${pet.id}" class="text-decoration-none text-dark">
+                                            ${escapeHtml(pet.nome)}
+                                        </a>
+                                    </h4>
+                                    <p>
+                                        ${escapeHtml(pet.especie)} • ${escapeHtml(pet.raca)}<br>
+                                        ${escapeHtml(pet.sexo || '')} • ${cor}
+                                    </p>
+                                    <div class="mb-3">
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                        ${cidade}
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white">
+                                    <div class="d-grid gap-2">
+                                        <a href="public/pet.php?id=${pet.id}" class="btn btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                            Ver detalhes
+                                        </a>
+                                        ${telefone ? `
+                                            <a href="https://wa.me/55${telefone}" class="btn btn-success" target="_blank" rel="noopener">
+                                                <i class="bi bi-whatsapp"></i>
+                                                Falar com o tutor
+                                            </a>
+                                        ` : `
+                                            <button class="btn btn-secondary" type="button" disabled>
+                                                Contato não informado
+                                            </button>
+                                        `}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                });
+
+                container.innerHTML = html;
+
+                try {
+                    const listaEl = document.getElementById('listaAdocao');
+                    if (listaEl) {
+                        listaEl.classList.add('busca-realizada');
+                        setTimeout(function () { listaEl.classList.remove('busca-realizada'); }, 1000);
+                    }
+                } catch (e) {
+                    console.warn('Erro ao aplicar destaque visual:', e);
+                }
+
+            }
+
+            function popularRacas(especieId) {
+
+                if (!selectRaca) return;
+
+                const valorAtual = selectRaca.value;
+                const racas = especieId ? (racasPorEspecie[especieId] || []) : [];
+
+                selectRaca.innerHTML = '<option value="">Todas as raças</option>';
+
+                racas.forEach(function (raca) {
+                    const option = document.createElement("option");
+                    option.value = raca.id;
+                    option.textContent = raca.nome;
+                    selectRaca.appendChild(option);
+                });
+
+                if (valorAtual && racas.some(function (raca) { return String(raca.id) === String(valorAtual); })) {
+                    selectRaca.value = valorAtual;
+                } else {
+                    selectRaca.value = "";
+                }
+
+            }
+
+            function carregarOpcoesFiltros() {
+
+                fetch("app/ajax/listar_filtros.php")
+                    .then(function (resposta) { return resposta.json(); })
+                    .then(function (dados) {
+
+                        if (!dados || !Array.isArray(dados.especies)) return;
+
+                        racasPorEspecie = dados.racas || {};
+
+                        if (selectEspecie) {
+                            selectEspecie.innerHTML = '<option value="">Todas as espécies</option>';
+                            dados.especies.forEach(function (especie) {
+                                const option = document.createElement("option");
+                                option.value = especie.id;
+                                option.textContent = especie.nome;
+                                selectEspecie.appendChild(option);
+                            });
+                        }
+
+                        popularRacas(selectEspecie ? selectEspecie.value : "");
+
+                    });
+
+            }
+
+            function buscarPets() {
+
+                container.innerHTML =
+                    '<div class="col-12 text-center text-muted py-5">Carregando...</div>';
+
+                const query = montarQueryString();
+                const url = query ? "app/ajax/listar_adocao.php?" + query : "app/ajax/listar_adocao.php";
+
+                fetch(url)
+                    .then(function (resposta) {
+                        if (!resposta.ok) {
+                            throw new Error('Resposta não OK: ' + resposta.status);
+                        }
+                        return resposta.json();
+                    })
+                    .then(function (dados) {
+                        renderizarPets(dados);
+                    })
+                    .catch(function (err) {
+                        console.error('buscarPets: erro', err);
+                        container.innerHTML =
+                            '<div class="col-12 text-center text-danger py-5">' +
+                            'Erro ao carregar os pets. Tente novamente.' +
+                            '</div>';
+                    });
+
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                carregarOpcoesFiltros();
+                const buscaInicial = lerParametroBusca();
+                if (inputBusca && buscaInicial) {
+                    inputBusca.value = buscaInicial;
+                }
+                buscarPets();
+            });
+
+            if (form) {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    buscarPets();
+                    const adocaoEl = document.getElementById("adocao");
+                    if (adocaoEl) adocaoEl.scrollIntoView({ behavior: "smooth" });
+                });
+            }
+
+            if (btnIrFiltros) {
+                btnIrFiltros.addEventListener("click", function () {
+                    const filtros = document.querySelector(".filtros-avancados-card");
+                    if (filtros) {
+                        filtros.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                });
+            }
+
+            if (selectEspecie) {
+                selectEspecie.addEventListener("change", function () {
+                    popularRacas(this.value);
+                    buscarPets();
+                });
+            }
+
+            if (selectRaca) {
+                selectRaca.addEventListener("change", buscarPets);
+            }
+
+            if (selectSexo) {
+                selectSexo.addEventListener("change", buscarPets);
+            }
+
+            if (inputCor) {
+                inputCor.addEventListener("change", buscarPets);
+            }
+
+            if (selectCastrado) {
+                selectCastrado.addEventListener("change", buscarPets);
+            }
+
+            if (selectStatus) {
+                selectStatus.addEventListener("change", buscarPets);
+            }
+
+            if (selectOrdem) {
+                selectOrdem.addEventListener("change", buscarPets);
+            }
+
+            [inputIdadeMin, inputIdadeMax, inputPesoMin, inputPesoMax, inputAlturaMin, inputAlturaMax].forEach(function (campo) {
+                if (campo) {
+                    campo.addEventListener("change", buscarPets);
+                }
+            });
+
+            if (selectCidade) {
+                selectCidade.addEventListener("change", buscarPets);
+            }
+
+            if (btnLimpar) {
+                btnLimpar.addEventListener("click", function () {
+                    if (form) {
+                        form.reset();
+                    }
+
+                    if (selectCidade) {
+                        selectCidade.value = "Selecione sua cidade";
+                    }
+
+                    if (selectEspecie) {
+                        selectEspecie.value = "";
+                    }
+
+                    if (selectStatus) {
+                        selectStatus.value = "Para Adoção";
+                    }
+
+                    if (selectOrdem) {
+                        selectOrdem.value = "recente";
+                    }
+
+                    popularRacas("");
+                    buscarPets();
+                });
+            }
+
+        })();
+
+    </script>
+
+
+    <!-- saved from url=(0061)file:///C:/Users/vindi/Downloads/Fix_posicao_sugestoes_3.html -->
+    <html>
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script>
+            (function () {
+
+                function corrigirPosicaoListas() {
+
+                    document.querySelectorAll('.lista-sugestoes').forEach(function (lista) {
+
+                        const campo = lista.parentElement ? lista.parentElement.querySelector('input') : null;
+
+                        if (!campo) return;
+
+                        const rect = campo.getBoundingClientRect();
+
+                        lista.style.position = 'fixed';
+                        lista.style.top = rect.bottom + 'px';
+                        lista.style.left = rect.left + 'px';
+                        lista.style.width = rect.width + 'px';
+                        lista.style.zIndex = '99999';
+                        lista.style.margin = '4px 0 0 0';
+
+                    });
+
+                }
+
+                // Reposiciona toda vez que alguém digita em qualquer campo
+                // (dá um tempinho pro script.js criar/atualizar a lista antes)
+                document.addEventListener('input', function () {
+                    setTimeout(corrigirPosicaoListas, 10);
+                }, true);
+
+                // Reposiciona também se a pessoa rolar a página ou redimensionar a janela
+                window.addEventListener('scroll', corrigirPosicaoListas, true);
+                window.addEventListener('resize', corrigirPosicaoListas);
+
+            })();
+        </script>
+    </head>
+
+    <body></body>
+
+    </html>
+    <!-- ========================================================= -->
+    <!-- MOSTRA BOTÕES DO HEADER SÓ PARA USUÁRIOS LOGADOS -->
+    <!-- ========================================================= -->
+
+    <script>
+        (function () {
+
+            fetch("app/ajax/verificar_sessao.php")
+                .then(function (resposta) { return resposta.json(); })
+                .then(function (dados) {
+
+                    if (dados && dados.logado) {
+
+                        ["btnHeaderFavoritos", "btnHeaderCarrinho", "btnHeaderNotificacoes"].forEach(function (idBotao) {
+                            const botao = document.getElementById(idBotao);
+                            if (botao) {
+                                botao.style.display = "";
+                            }
+                        });
+
+                    }
+
+                })
+                .catch(function () {
+                    // se der erro na checagem, mantém os botões escondidos por segurança
+                });
+
+        })();
+    </script>
+</body>
+
+</html>

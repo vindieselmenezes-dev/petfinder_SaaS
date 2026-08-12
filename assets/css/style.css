@@ -1,0 +1,2473 @@
+/* ==========================================================
+   PetFinder Brasil
+   Arquivo: assets/css/style.css
+   Parte 1
+   ========================================================== */
+
+
+/* ==========================================================
+   IMPORTAÇÃO DA FONTE
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+
+/* ==========================================================
+   VARIÁVEIS
+   ========================================================== */
+
+:root {
+
+    --azul-escuro: #1B365D;
+    --azul-claro: #4FA3FF;
+
+    --verde: #2ECC71;
+
+    --laranja: #FF8C42;
+
+    --branco: #FFFFFF;
+
+    --cinza-claro: #F5F7FA;
+
+    --cinza: #E5E7EB;
+
+    --cinza-escuro: #2C3E50;
+
+    --texto: #343A40;
+
+    --preto: #1A1A1A;
+
+    --sombra:
+
+        0 12px 35px rgba(0, 0, 0, .08);
+
+    --transicao:
+
+        .35s ease;
+
+}
+
+
+/* ==========================================================
+   RESET
+   ========================================================== */
+
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+}
+
+
+html {
+
+    scroll-behavior: smooth;
+
+}
+
+
+body {
+
+    background: var(--cinza-claro);
+
+    color: var(--texto);
+
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 16px;
+
+    line-height: 1.6;
+
+    overflow-x: hidden;
+
+}
+
+
+/* ==========================================================
+   TIPOGRAFIA
+   ========================================================== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+    color: var(--azul-escuro);
+
+    font-weight: 700;
+
+    margin-bottom: 15px;
+
+}
+
+p {
+
+    margin-bottom: 15px;
+
+}
+
+
+small {
+
+    color: #666;
+
+}
+
+
+strong {
+
+    font-weight: 700;
+
+}
+
+
+/* ==========================================================
+   LINKS
+   ========================================================== */
+
+a {
+
+    text-decoration: none;
+
+    transition: var(--transicao);
+
+    color: inherit;
+
+}
+
+
+a:hover {
+
+    text-decoration: none;
+
+}
+
+
+/* ==========================================================
+   LISTAS
+   ========================================================== */
+
+ul {
+
+    list-style: none;
+
+    padding: 0;
+
+    margin: 0;
+
+}
+
+
+/* ==========================================================
+   IMAGENS
+   ========================================================== */
+
+img {
+
+    max-width: 100%;
+
+    display: block;
+
+}
+
+
+/* ==========================================================
+   BOTÕES
+   ========================================================== */
+
+.btn {
+
+    border-radius: 12px;
+
+    transition: var(--transicao);
+
+    font-weight: 600;
+
+}
+
+
+.btn:hover {
+
+    transform: translateY(-2px);
+
+}
+
+
+/* ==========================================================
+   CARDS
+   ========================================================== */
+
+.card {
+
+    border: none;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    transition: var(--transicao);
+
+}
+
+
+.card:hover {
+
+    transform: translateY(-6px);
+
+    box-shadow: var(--sombra);
+
+}
+
+
+/* ==========================================================
+   CONTAINER
+   ========================================================== */
+
+.container {
+
+    max-width: 1320px;
+
+}
+
+
+/* ==========================================================
+   LOADER
+   ========================================================== */
+
+#loader {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: #fff;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    z-index: 99999;
+
+}
+
+
+.loader-content {
+
+    text-align: center;
+
+}
+
+
+.loader-content img {
+
+    width: 90px;
+
+    margin: auto;
+
+    margin-bottom: 20px;
+
+    animation: girar 3s linear infinite;
+
+}
+
+
+.loader-content h2 {
+
+    font-size: 24px;
+
+}
+
+
+/* ==========================================================
+   BOTÃO TOPO
+   ========================================================== */
+
+#btnTopo {
+
+    position: fixed;
+
+    right: 30px;
+
+    bottom: 30px;
+
+    width: 55px;
+
+    height: 55px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: var(--verde);
+
+    color: #fff;
+
+    font-size: 22px;
+
+    cursor: pointer;
+
+    display: none;
+
+    z-index: 999;
+
+    transition: var(--transicao);
+
+    box-shadow: var(--sombra);
+
+}
+
+
+#btnTopo:hover {
+
+    transform: translateY(-4px);
+
+}
+
+
+/* ==========================================================
+   UTILITÁRIOS
+   ========================================================== */
+
+.section-title {
+
+    font-size: 2.3rem;
+
+    margin-bottom: 20px;
+
+}
+
+
+.section-subtitle {
+
+    color: #666;
+
+    margin-bottom: 50px;
+
+}
+
+
+.bg-gradient-primary {
+
+    background: linear-gradient(135deg,
+
+            var(--azul-escuro),
+
+            var(--azul-claro));
+
+}
+
+
+.shadow-soft {
+
+    box-shadow: var(--sombra);
+
+}
+
+
+.radius {
+
+    border-radius: 18px;
+
+}
+
+
+/* ==========================================================
+   ANIMAÇÕES
+   ========================================================== */
+
+@keyframes girar {
+
+    from {
+
+        transform: rotate(0deg);
+
+    }
+
+    to {
+
+        transform: rotate(360deg);
+
+    }
+
+}
+
+
+@keyframes aparecer {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+
+.fade-up {
+
+    animation: aparecer .8s ease forwards;
+
+}
+
+
+/* ==========================================================
+   FIM DA PARTE 1
+   ========================================================== */
+
+/* ==========================================================
+   HEADER
+   ========================================================== */
+
+#header {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    z-index: 1050;
+
+    background: rgba(255, 255, 255, .98);
+
+    backdrop-filter: blur(12px);
+
+    border-bottom: 1px solid rgba(0, 0, 0, .05);
+
+    transition: var(--transicao);
+
+}
+
+#header.scrolled {
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+
+    background: rgba(255, 255, 255, .97);
+
+}
+
+/* ==========================================================
+   NAVBAR
+   ========================================================== */
+
+.navbar {
+
+    min-height: 90px;
+
+    padding: 10px 0;
+
+}
+
+/* ==========================================================
+   LOGO
+   ========================================================== */
+
+.logo {
+
+    width: 65px;
+
+    height: 65px;
+
+    object-fit: contain;
+
+}
+
+.navbar-brand {
+
+    display: flex;
+
+    align-items: center;
+
+}
+
+.navbar-brand h3 {
+
+    font-size: 1.4rem;
+
+    margin: 0;
+
+    color: var(--azul-escuro);
+
+    font-weight: 700;
+
+}
+
+.navbar-brand small {
+
+    display: block;
+
+    color: #666;
+
+    font-size: .80rem;
+
+}
+
+/* ==========================================================
+   CAMPO DE PESQUISA
+   ========================================================== */
+
+.input-group {
+
+    border-radius: 40px;
+
+    overflow: hidden;
+
+    box-shadow: 0 4px 18px rgba(0, 0, 0, .06);
+
+}
+
+.input-group-text {
+
+    background: #fff;
+
+    border: none;
+
+    padding-left: 18px;
+
+}
+
+.input-group-text i {
+
+    color: var(--azul-claro);
+
+}
+
+.input-group .form-control {
+
+    border: none;
+
+    padding: 14px;
+
+    box-shadow: none;
+
+}
+
+.input-group .form-control:focus {
+
+    box-shadow: none;
+
+}
+
+.input-group button {
+
+    border: none;
+
+}
+
+/* ==========================================================
+   SELECT DE CIDADE
+   ========================================================== */
+
+.form-select {
+
+    min-width: 180px;
+
+    border-radius: 30px;
+
+    padding: 10px 18px;
+
+    border: 1px solid #ddd;
+
+    transition: var(--transicao);
+
+}
+
+.form-control {
+
+    border-radius: 18px;
+
+    border: 1px solid #ddd;
+
+    padding: 12px 16px;
+
+}
+
+.form-control:focus {
+
+    border-color: var(--azul-claro);
+
+    box-shadow: 0 0 0 .2rem rgba(79, 163, 255, .15);
+
+}
+
+.filtros-avancados-card {
+
+    border-radius: 24px;
+
+    background: #fff;
+
+    padding: 1.5rem;
+
+}
+
+.filtros-avancados-card h5 {
+
+    font-size: 1.15rem;
+
+    font-weight: 700;
+
+    margin-bottom: 0.25rem;
+
+}
+
+.filtros-avancados-card p {
+
+    margin-bottom: 0;
+
+}
+
+.filtros-avancados-card .form-label {
+
+    font-size: 0.9rem;
+
+    color: #5f6f88;
+
+    margin-bottom: .35rem;
+
+}
+
+.filtros-avancados-card .row>div {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.filtros-avancados-card .form-control,
+.filtros-avancados-card .form-select {
+
+    min-height: 46px;
+
+}
+
+.filtros-avancados-card .btn-secondary {
+
+    min-width: 150px;
+
+}
+
+.form-select:focus {
+
+    border-color: var(--azul-claro);
+
+    box-shadow: 0 0 0 .2rem rgba(79, 163, 255, .25);
+
+}
+
+/* ==========================================================
+   MENU
+   ========================================================== */
+
+.navbar-nav {
+
+    align-items: center;
+
+    gap: 8px;
+
+}
+
+.nav-link {
+
+    color: var(--cinza-escuro);
+
+    font-weight: 600;
+
+    padding: 12px 18px !important;
+
+    border-radius: 30px;
+
+    transition: var(--transicao);
+
+}
+
+.nav-link:hover {
+
+    background: var(--azul-claro);
+
+    color: #fff;
+
+}
+
+.nav-link.active {
+
+    background: var(--azul-escuro);
+
+    color: #fff;
+
+}
+
+/* ==========================================================
+   BOTÃO ANUNCIAR
+   ========================================================== */
+
+.btn-success {
+
+    background: var(--verde);
+
+    border: none;
+
+}
+
+.btn-success:hover {
+
+    background: #25b764;
+
+}
+
+/* ==========================================================
+   ÍCONES
+   ========================================================== */
+
+.btn-light {
+
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    border: 1px solid #e5e5e5;
+
+    background: #fff;
+
+}
+
+.btn-light i {
+
+    font-size: 1.2rem;
+
+}
+
+.btn-light:hover {
+
+    background: var(--azul-claro);
+
+    color: #fff;
+
+}
+
+/* ==========================================================
+   BADGES
+   ========================================================== */
+
+.badge {
+
+    font-size: .70rem;
+
+    font-weight: 600;
+
+}
+
+/* ==========================================================
+   DROPDOWN
+   ========================================================== */
+
+.dropdown-menu {
+
+    border: none;
+
+    border-radius: 15px;
+
+    padding: 10px;
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, .10);
+
+}
+
+.dropdown-item {
+
+    border-radius: 10px;
+
+    padding: 10px 15px;
+
+    transition: var(--transicao);
+
+}
+
+.dropdown-item:hover {
+
+    background: var(--cinza-claro);
+
+}
+
+/* ==========================================================
+   BOTÕES LOGIN / CADASTRO
+   ========================================================== */
+
+.btn-primary {
+
+    background: var(--azul-claro);
+
+    border: none;
+
+}
+
+.btn-primary:hover {
+
+    background: #2d8ff8;
+
+}
+
+/* Destaque temporário após busca AJAX */
+.busca-realizada {
+    box-shadow: 0 0 0 6px rgba(255, 193, 7, 0.14);
+    transition: box-shadow 0.25s ease-in-out;
+}
+
+/* Estilos para lista de sugestões dinâmica */
+.lista-sugestoes {
+    list-style: none;
+    margin: 6px 0 0 0;
+    padding: 0;
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.lista-sugestoes .list-group-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.lista-sugestoes .list-group-item:hover {
+    background: #f8f9fa;
+}
+
+.btn-outline-primary {
+
+    border-color: var(--azul-claro);
+
+    color: var(--azul-claro);
+
+}
+
+.btn-outline-primary:hover {
+
+    background: var(--azul-claro);
+
+    color: #fff;
+
+}
+
+/* ==========================================================
+   MENU MOBILE
+   ========================================================== */
+
+.navbar-toggler {
+
+    border: none;
+
+    box-shadow: none !important;
+
+}
+
+.navbar-toggler:focus {
+
+    box-shadow: none;
+
+}
+
+/* ==========================================================
+   RESPONSIVIDADE HEADER
+   ========================================================== */
+
+@media(max-width:1199px) {
+
+    .navbar-collapse {
+
+        margin-top: 20px;
+
+        padding: 20px;
+
+        background: #fff;
+
+        border-radius: 20px;
+
+        box-shadow: 0 15px 40px rgba(0, 0, 0, .08);
+
+    }
+
+    .navbar-nav {
+
+        align-items: flex-start;
+
+    }
+
+    .navbar .d-flex.align-items-center.gap-2 {
+
+        flex-wrap: wrap;
+
+        margin-top: 20px;
+
+    }
+
+    .form-select {
+
+        width: 100%;
+
+    }
+
+}
+
+@media(max-width:768px) {
+
+    .logo {
+
+        width: 50px;
+
+        height: 50px;
+
+    }
+
+    .navbar-brand h3 {
+
+        font-size: 1.1rem;
+
+    }
+
+    .navbar-brand small {
+
+        display: none;
+
+    }
+
+}
+
+/* ==========================================================
+   HERO
+   ========================================================== */
+
+#hero {
+
+    position: relative;
+
+}
+
+.hero-image {
+
+    width: 100%;
+
+    height: auto;
+
+    max-height: 720px;
+
+    object-fit: contain;
+
+}
+
+/* ==========================================================
+   OVERLAY
+   ========================================================== */
+
+#hero .carousel-item {
+
+    position: relative;
+
+}
+
+#hero .carousel-item::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, .45);
+
+    z-index: 1;
+
+}
+
+/* ==========================================================
+   CAPTION
+   ========================================================== */
+
+.carousel-caption {
+
+    z-index: 2;
+
+    bottom: 18%;
+
+}
+
+.carousel-caption h1 {
+
+    font-size: 3.6rem;
+
+    font-weight: 800;
+
+    color: #fff;
+
+    text-shadow: 0 5px 20px rgba(0, 0, 0, .35);
+
+}
+
+.carousel-caption p {
+
+    color: #fff;
+
+    font-size: 1.25rem;
+
+    margin: 25px auto;
+
+    max-width: 750px;
+
+}
+
+/* ==========================================================
+   BUSCA HERO
+   ========================================================== */
+
+.hero-search {
+
+    max-width: 900px;
+
+    margin: auto;
+
+    margin-top: 35px;
+
+}
+
+.hero-search .input-group {
+
+    border-radius: 60px;
+
+    overflow: hidden;
+
+    box-shadow: 0 18px 45px rgba(0, 0, 0, .25);
+
+}
+
+.hero-search .form-control {
+
+    border: none;
+
+    font-size: 18px;
+
+    padding: 18px;
+
+}
+
+.hero-search .btn {
+
+    padding: 18px 30px;
+
+    font-weight: 600;
+
+}
+
+/* ==========================================================
+   CONTROLES DO CAROUSEL
+   ========================================================== */
+
+.carousel-control-prev-icon,
+
+.carousel-control-next-icon {
+
+    width: 55px;
+
+    height: 55px;
+
+    border-radius: 50%;
+
+    background-color: rgba(255, 255, 255, .35);
+
+    backdrop-filter: blur(5px);
+
+}
+
+/* ==========================================================
+   CATEGORIAS
+   ========================================================== */
+
+#categorias {
+
+    background: #fff;
+
+}
+
+.categoria-card {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 30px 20px;
+
+    border-radius: 20px;
+
+    background: #fff;
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .06);
+
+    transition: var(--transicao);
+
+    min-height: 170px;
+
+}
+
+.categoria-card:hover {
+
+    transform: translateY(-8px);
+
+    background: var(--azul-claro);
+
+    color: #fff;
+
+}
+
+.categoria-card i {
+
+    font-size: 2.8rem;
+
+    margin-bottom: 18px;
+
+}
+
+.categoria-card span {
+
+    font-weight: 600;
+
+    text-align: center;
+
+}
+
+/* ==========================================================
+   ESTATÍSTICAS
+   ========================================================== */
+
+#estatisticas {
+
+    background: linear-gradient(135deg,
+
+            var(--azul-escuro),
+
+            var(--azul-claro));
+
+    color: #fff;
+
+}
+
+#estatisticas h2 {
+
+    color: #fff;
+
+    font-size: 2.8rem;
+
+    font-weight: 800;
+
+}
+
+#estatisticas p {
+
+    color: #fff;
+
+    opacity: .95;
+
+    margin-bottom: 0;
+
+}
+
+/* ==========================================================
+   ANIMAÇÕES HERO
+   ========================================================== */
+
+.carousel-caption h1 {
+
+    animation: aparecer .8s ease;
+
+}
+
+.carousel-caption p {
+
+    animation: aparecer 1.2s ease;
+
+}
+
+.hero-search {
+
+    animation: aparecer 1.6s ease;
+
+}
+
+/* ==========================================================
+   RESPONSIVIDADE
+   ========================================================== */
+
+@media(max-width:1200px) {
+
+    .hero-image {
+
+        height: 620px;
+
+    }
+
+}
+
+@media(max-width:992px) {
+
+    .hero-image {
+
+        height: 560px;
+
+    }
+
+    .carousel-caption {
+
+        bottom: 14%;
+
+    }
+
+    .carousel-caption h1 {
+
+        font-size: 2.6rem;
+
+    }
+
+}
+
+@media(max-width:768px) {
+
+    .hero-image {
+
+        height: 500px;
+
+    }
+
+    .carousel-caption {
+
+        bottom: 12%;
+
+    }
+
+    .carousel-caption h1 {
+
+        font-size: 2rem;
+
+    }
+
+    .carousel-caption p {
+
+        font-size: 1rem;
+
+    }
+
+    .hero-search .btn {
+
+        padding: 14px 18px;
+
+    }
+
+    .categoria-card {
+
+        min-height: 145px;
+
+        padding: 22px 15px;
+
+    }
+
+    .categoria-card i {
+
+        font-size: 2.2rem;
+
+    }
+
+}
+
+@media(max-width:576px) {
+
+    .hero-image {
+
+        height: 420px;
+
+    }
+
+    .carousel-caption {
+
+        bottom: 8%;
+
+    }
+
+    .carousel-caption h1 {
+
+        font-size: 1.6rem;
+
+    }
+
+    .carousel-caption p {
+
+        display: none;
+
+    }
+
+    .hero-search .form-control {
+
+        font-size: 15px;
+
+        padding: 12px;
+
+    }
+
+    #estatisticas h2 {
+
+        font-size: 2rem;
+
+    }
+
+}
+
+/* ==========================================================
+   EMPRESAS EM DESTAQUE
+   ========================================================== */
+
+#empresas-destaque {
+
+    background: #ffffff;
+
+}
+
+.empresa-card {
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    transition: var(--transicao);
+
+    border: none;
+
+}
+
+.empresa-card:hover {
+
+    transform: translateY(-10px);
+
+    box-shadow: 0 20px 45px rgba(0, 0, 0, .12);
+
+}
+
+.empresa-card img {
+
+    width: 100%;
+
+    height: 240px;
+
+    object-fit: cover;
+
+}
+
+.empresa-card .card-body {
+
+    padding: 25px;
+
+}
+
+.empresa-card h4 {
+
+    font-size: 1.35rem;
+
+    font-weight: 700;
+
+    margin-bottom: 15px;
+
+}
+
+.empresa-card p {
+
+    color: #666;
+
+    font-size: .95rem;
+
+}
+
+.empresa-card .badge {
+
+    font-size: .80rem;
+
+    padding: 8px 14px;
+
+    border-radius: 30px;
+
+}
+
+.empresa-card small {
+
+    color: #888;
+
+}
+
+.empresa-card .card-footer {
+
+    padding: 20px;
+
+    border: none;
+
+    background: #fff;
+
+}
+
+/* ==========================================================
+   BOTÕES DOS CARDS
+   ========================================================== */
+
+.empresa-card .btn {
+
+    border-radius: 12px;
+
+    padding: 11px;
+
+    font-weight: 600;
+
+}
+
+.empresa-card .btn-success {
+
+    background: var(--verde);
+
+}
+
+.empresa-card .btn-success:hover {
+
+    background: #27b864;
+
+}
+
+.empresa-card .btn-outline-primary {
+
+    border: 2px solid var(--azul-claro);
+
+}
+
+.empresa-card .btn-outline-primary:hover {
+
+    background: var(--azul-claro);
+
+    color: #fff;
+
+}
+
+.empresa-card .btn-light {
+
+    border: 1px solid #ddd;
+
+    width: 100%;
+
+    height: auto;
+
+    border-radius: 12px;
+
+    justify-content: center;
+
+}
+
+/* ==========================================================
+   AVALIAÇÃO
+   ========================================================== */
+
+.empresa-card .avaliacao {
+
+    color: #FFC107;
+
+    font-size: 1rem;
+
+}
+
+.empresa-card .distancia {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #666;
+
+    font-size: .90rem;
+
+}
+
+/* ==========================================================
+   VETERINÁRIOS
+   ========================================================== */
+
+#veterinarios {
+
+    background: var(--cinza-claro);
+
+}
+
+#veterinarios .card {
+
+    border: none;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    transition: var(--transicao);
+
+}
+
+#veterinarios .card:hover {
+
+    transform: translateY(-8px);
+
+    box-shadow: 0 18px 45px rgba(0, 0, 0, .10);
+
+}
+
+#veterinarios img {
+
+    width: 100%;
+
+    height: 260px;
+
+    object-fit: cover;
+
+}
+
+#veterinarios .card-body {
+
+    padding: 25px;
+
+}
+
+#veterinarios h5 {
+
+    font-size: 1.20rem;
+
+    font-weight: 700;
+
+    margin-bottom: 10px;
+
+}
+
+#veterinarios p {
+
+    margin-bottom: 12px;
+
+}
+
+#veterinarios .btn {
+
+    border-radius: 12px;
+
+    padding: 12px;
+
+}
+
+/* ==========================================================
+   TÍTULOS DAS SEÇÕES
+   ========================================================== */
+
+#empresas-destaque h2,
+#veterinarios h2 {
+
+    font-size: 2.2rem;
+
+    font-weight: 700;
+
+}
+
+#empresas-destaque .text-muted,
+#veterinarios .text-muted {
+
+    font-size: 1rem;
+
+}
+
+/* ==========================================================
+   RESPONSIVIDADE
+   ========================================================== */
+
+@media(max-width:992px) {
+
+    .empresa-card img {
+
+        height: 220px;
+
+    }
+
+    #veterinarios img {
+
+        height: 220px;
+
+    }
+
+}
+
+@media(max-width:768px) {
+
+    .empresa-card img {
+
+        height: 200px;
+
+    }
+
+    #veterinarios img {
+
+        height: 200px;
+
+    }
+
+    #empresas-destaque h2,
+    #veterinarios h2 {
+
+        font-size: 1.8rem;
+
+    }
+
+}
+
+@media(max-width:576px) {
+
+    .empresa-card {
+
+        margin-bottom: 20px;
+
+    }
+
+    #veterinarios .card {
+
+        margin-bottom: 20px;
+
+    }
+
+}
+
+/* ==========================================================
+   MARKETPLACE
+   ========================================================== */
+
+#marketplace {
+
+    background: #ffffff;
+
+}
+
+.produto-card {
+
+    position: relative;
+
+    border: none;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    transition: var(--transicao);
+
+    background: #fff;
+
+}
+
+.produto-card:hover {
+
+    transform: translateY(-8px);
+
+    box-shadow: 0 20px 45px rgba(0, 0, 0, .10);
+
+}
+
+.produto-card img {
+
+    width: 100%;
+
+    height: 240px;
+
+    object-fit: cover;
+
+    transition: var(--transicao);
+
+}
+
+.produto-card:hover img {
+
+    transform: scale(1.05);
+
+}
+
+.produto-card .card-body {
+
+    padding: 22px;
+
+}
+
+.produto-card small {
+
+    color: #777;
+
+    font-size: .85rem;
+
+}
+
+.produto-card h5 {
+
+    font-size: 1.1rem;
+
+    font-weight: 700;
+
+    min-height: 55px;
+
+    margin-top: 10px;
+
+}
+
+.produto-card h4 {
+
+    color: var(--verde);
+
+    font-weight: 700;
+
+}
+
+.produto-card p {
+
+    margin-bottom: 8px;
+
+}
+
+.produto-card .card-footer {
+
+    border: none;
+
+    background: #fff;
+
+    padding: 20px;
+
+}
+
+/* ==========================================================
+   DESCONTO
+   ========================================================== */
+
+.produto-card .badge {
+
+    font-size: .85rem;
+
+    padding: 8px 14px;
+
+    border-radius: 30px;
+
+    z-index: 10;
+
+}
+
+/* ==========================================================
+   BOTÕES PRODUTO
+   ========================================================== */
+
+.produto-card .btn {
+
+    border-radius: 12px;
+
+    font-weight: 600;
+
+    padding: 11px;
+
+}
+
+.produto-card .btn-success {
+
+    background: var(--verde);
+
+}
+
+.produto-card .btn-success:hover {
+
+    background: #28b664;
+
+}
+
+.produto-card .btn-outline-primary {
+
+    border: 2px solid var(--azul-claro);
+
+}
+
+.produto-card .btn-outline-primary:hover {
+
+    background: var(--azul-claro);
+
+    color: #fff;
+
+}
+
+.produto-card .btn-light {
+
+    border: 1px solid #ddd;
+
+    width: 100%;
+
+    height: auto;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+}
+
+/* ==========================================================
+   PREÇOS
+   ========================================================== */
+
+.text-decoration-line-through {
+
+    color: #999 !important;
+
+    font-size: .90rem;
+
+}
+
+.text-success {
+
+    color: var(--verde) !important;
+
+}
+
+/* ==========================================================
+   BANNER PROMOCIONAL
+   ========================================================== */
+
+.bg-primary {
+
+    background: linear-gradient(135deg,
+
+            var(--azul-escuro),
+
+            var(--azul-claro)) !important;
+
+}
+
+.bg-primary h2 {
+
+    color: #fff;
+
+    font-size: 2.4rem;
+
+}
+
+.bg-primary p {
+
+    color: #fff;
+
+    opacity: .95;
+
+}
+
+.bg-primary .btn-warning {
+
+    border-radius: 15px;
+
+    font-weight: 700;
+
+    padding: 15px 28px;
+
+}
+
+/* ==========================================================
+   SERVIÇOS
+   ========================================================== */
+
+#servicos {
+
+    background: var(--cinza-claro);
+
+}
+
+#servicos .card {
+
+    border: none;
+
+    border-radius: 20px;
+
+    transition: var(--transicao);
+
+}
+
+#servicos .card:hover {
+
+    transform: translateY(-8px);
+
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .10);
+
+}
+
+#servicos .card-body {
+
+    padding: 35px;
+
+}
+
+#servicos i {
+
+    transition: var(--transicao);
+
+}
+
+#servicos .card:hover i {
+
+    transform: scale(1.15);
+
+}
+
+#servicos h4 {
+
+    margin-top: 20px;
+
+    margin-bottom: 18px;
+
+}
+
+#servicos p {
+
+    color: #666;
+
+    min-height: 70px;
+
+}
+
+#servicos .btn {
+
+    border-radius: 12px;
+
+    padding: 12px;
+
+}
+
+/* ==========================================================
+   RESPONSIVIDADE
+   ========================================================== */
+
+@media(max-width:992px) {
+
+    .produto-card img {
+
+        height: 210px;
+
+    }
+
+}
+
+@media(max-width:768px) {
+
+    .produto-card img {
+
+        height: 190px;
+
+    }
+
+    .bg-primary h2 {
+
+        font-size: 1.9rem;
+
+    }
+
+    #servicos .card-body {
+
+        padding: 25px;
+
+    }
+
+}
+
+@media(max-width:576px) {
+
+    .produto-card {
+
+        margin-bottom: 20px;
+
+    }
+
+    .produto-card h5 {
+
+        min-height: auto;
+
+    }
+
+    .bg-primary {
+
+        text-align: center;
+
+    }
+
+    .bg-primary .btn-warning {
+
+        width: 100%;
+
+        margin-top: 20px;
+
+    }
+
+}
+
+/* ==========================================================
+   ÁREA MEU PET
+   ========================================================== */
+
+#meu-pet {
+
+    background: #ffffff;
+
+}
+
+#meu-pet img {
+
+    border-radius: 20px;
+
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .10);
+
+}
+
+#meu-pet h2 {
+
+    font-size: 2.4rem;
+
+    margin-bottom: 25px;
+
+}
+
+#meu-pet p {
+
+    color: #666;
+
+}
+
+#meu-pet .list-group-item {
+
+    border: none;
+
+    padding: 12px 0;
+
+    color: var(--texto);
+
+    font-weight: 500;
+
+    background: transparent;
+
+}
+
+/* ==========================================================
+   BLOG
+   ========================================================== */
+
+#blog {
+
+    background: var(--cinza-claro);
+
+}
+
+#blog .card {
+
+    border: none;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    transition: var(--transicao);
+
+}
+
+#blog .card:hover {
+
+    transform: translateY(-8px);
+
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .10);
+
+}
+
+#blog img {
+
+    width: 100%;
+
+    height: 220px;
+
+    object-fit: cover;
+
+}
+
+#blog .card-body {
+
+    padding: 25px;
+
+}
+
+#blog h5 {
+
+    font-size: 1.25rem;
+
+    font-weight: 700;
+
+}
+
+/* ==========================================================
+   AVALIAÇÕES
+   ========================================================== */
+
+#avaliacoes {
+
+    background: #ffffff;
+
+}
+
+#avaliacoes .card {
+
+    border: none;
+
+    border-radius: 20px;
+
+    transition: var(--transicao);
+
+}
+
+#avaliacoes .card:hover {
+
+    transform: translateY(-8px);
+
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .10);
+
+}
+
+#avaliacoes .card-body {
+
+    padding: 30px;
+
+}
+
+#avaliacoes strong {
+
+    color: var(--azul-escuro);
+
+}
+
+/* ==========================================================
+   PARCEIROS
+   ========================================================== */
+
+#parceiros {
+
+    background: var(--cinza-claro);
+
+}
+
+#parceiros img {
+
+    max-height: 80px;
+
+    margin: auto;
+
+    opacity: .75;
+
+    transition: var(--transicao);
+
+}
+
+#parceiros img:hover {
+
+    opacity: 1;
+
+    transform: scale(1.08);
+
+}
+
+/* ==========================================================
+   NEWSLETTER
+   ========================================================== */
+
+#newsletter {
+
+    background: linear-gradient(135deg,
+            var(--azul-escuro),
+            var(--azul-claro));
+
+}
+
+#newsletter h2 {
+
+    color: #fff;
+
+    font-size: 2.2rem;
+
+}
+
+#newsletter p {
+
+    color: #fff;
+
+    opacity: .95;
+
+}
+
+#newsletter .form-control {
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 16px;
+
+}
+
+#newsletter .btn {
+
+    border-radius: 14px;
+
+    font-weight: 700;
+
+    padding: 16px 28px;
+
+}
+
+/* ==========================================================
+   FOOTER
+   ========================================================== */
+
+#footer {
+
+    background: #1b1f24;
+
+}
+
+#footer h4,
+#footer h5 {
+
+    color: #fff;
+
+}
+
+#footer p {
+
+    color: #d6d6d6;
+
+}
+
+#footer a {
+
+    color: #d6d6d6;
+
+    transition: var(--transicao);
+
+}
+
+#footer a:hover {
+
+    color: var(--azul-claro);
+
+}
+
+#footer ul li {
+
+    margin-bottom: 12px;
+
+}
+
+#footer hr {
+
+    border-color: rgba(255, 255, 255, .12);
+
+}
+
+#footer .fs-3 a {
+
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: rgba(255, 255, 255, .08);
+
+}
+
+#footer .fs-3 a:hover {
+
+    background: var(--azul-claro);
+
+    color: #fff;
+
+}
+
+/* ==========================================================
+   RESPONSIVIDADE GERAL
+   ========================================================== */
+
+@media(max-width:992px) {
+
+    #meu-pet {
+
+        text-align: center;
+
+    }
+
+    #meu-pet img {
+
+        margin-bottom: 40px;
+
+    }
+
+    #newsletter .btn {
+
+        width: 100%;
+
+        margin-top: 15px;
+
+    }
+
+}
+
+@media(max-width:768px) {
+
+    #meu-pet h2 {
+
+        font-size: 2rem;
+
+    }
+
+    #blog img {
+
+        height: 200px;
+
+    }
+
+    #footer {
+
+        text-align: center;
+
+    }
+
+    #footer .fs-3 {
+
+        justify-content: center;
+
+    }
+
+}
+
+@media(max-width:576px) {
+
+    #blog img {
+
+        height: 180px;
+
+    }
+
+    #newsletter h2 {
+
+        font-size: 1.8rem;
+
+    }
+
+    #newsletter .form-control {
+
+        margin-bottom: 15px;
+
+    }
+
+}
+
+/* ==========================================================
+   SCROLLBAR
+   ========================================================== */
+
+::-webkit-scrollbar {
+
+    width: 10px;
+
+}
+
+::-webkit-scrollbar-track {
+
+    background: #ececec;
+
+}
+
+::-webkit-scrollbar-thumb {
+
+    background: var(--azul-claro);
+
+    border-radius: 20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover {
+
+    background: var(--azul-escuro);
+
+}
+
+/* ==========================================================
+   SELEÇÃO DE TEXTO
+   ========================================================== */
+
+::selection {
+
+    background: var(--azul-claro);
+
+    color: #ffffff;
+
+}
+
+/* ==========================================================
+   FIM DA PRIMEIRA VERSÃO DO STYLE.CSS
+   ========================================================== */
+/* ===================================================
+   AUTOCOMPLETE DA BUSCA - correção de posicionamento
+   =================================================== */
+
+.lista-sugestoes {
+    top: 100% !important;
+    left: 0 !important;
+    margin-top: 4px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.lista-sugestoes .list-group-item {
+    cursor: pointer;
+    border-left: none;
+    border-right: none;
+}
+
+.lista-sugestoes .list-group-item:hover {
+    background-color: #f0f4ff;
+}
