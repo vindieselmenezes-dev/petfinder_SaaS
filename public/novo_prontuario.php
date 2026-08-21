@@ -1,87 +1,120 @@
 <?php 
-// 1. CONEXÃO COM O BANCO DO PROJETO 1
 require_once __DIR__ . '/../app/Models/Usuario.php'; 
+require_once __DIR__ . '/../app/Models/Veterinario.php';
+require_once __DIR__ . '/../app/Helpers/EmpresaAcesso.php';
 $pdo = Database::conectar(); 
 
 session_start(); 
 
-// 2. SEGURANÇA E VALIDAÇÃO
-if (!isset($_SESSION['user_id']) || !isset($_GET['org_id'])) { 
+if (!isset($_SESSION['usuario_id']) || !isset($_GET['empresa_id'])) { 
     header("Location: login.php"); 
     exit(); 
 } 
 
-$orgId = (int)$_GET['org_id'];
-$userId = $_SESSION['user_id']; 
+$empresaId = (int)$_GET['empresa_id'];
+$usuarioId = (int)$_SESSION['usuario_id'];
 
-// 3. CARREGAR OS ANIMAIS (Ajustado para a sua tabela real 'usuarios' e coluna 'nome')
-$stmtPets = $pdo->query("SELECT id, nome as name FROM pets ORDER BY nome ASC");
- 
-$pets = $stmtPets->fetchAll(); 
+// Só quem é da equipe da empresa (dono, admin ou veterinário) pode registrar prontuário
+if (!EmpresaAcesso::temAcesso($pdo, $empresaId, $usuarioId, ['proprietario', 'administrador', 'veterinario'])) {
+    die("<h1 style='color:red; text-align:center; margin-top:50px;'>🚨 Erro de Segurança: Você não tem permissão pra registrar prontuários nesta empresa.</h1>");
+}
 
-// 4. INCLUI O CABEÇALHO E MENU DO PROJETO 1
+$veterinarioModel = new Veterinario();
+$meuRegistroVet = $veterinarioModel->buscarPorUsuario($usuarioId);
+
+// Cadastro rápido de CRMV, se a pessoa ainda não tiver um registro de veterinário
+if (!$meuRegistroVet && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['crmv'])) {
+    $crmv = trim($_POST['crmv']);
+    if ($crmv !== '') {
+        $veterinarioModel->cadastrar($usuarioId, $crmv);
+        $meuRegistroVet = $veterinarioModel->buscarPorUsuario($usuarioId);
+    }
+}
+
+$stmtPets = $pdo->query("SELECT id, nome FROM pets ORDER BY nome ASC");
+$pets = $stmtPets->fetchAll();
+
 include __DIR__ . '/../app/Includes/header.php'; 
 include __DIR__ . '/../app/Includes/menu.php';
 ?>
 
-<!-- 5. ADICIONA A MARGEM PARA EMPURRAR O CONTEÚDO PARA A DIREITA -->
-<main class="container" style="margin-top: 30px; margin-bottom: 50px; margin-left: 280px; padding: 20px;">
+<main class="conteudo">
+<div class="container" style="max-width:500px; margin:0 auto;">
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Registro Clínico</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
-        h2 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; color: #34495e; font-weight: bold; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 6px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        .btn:hover { background: #2980b9; }
-        .back-link { text-align: center; margin-top: 15px; font-size: 14px; }
-        .back-link a { color: #7f8c8d; text-decoration: none; }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h2>📋 Emitir Novo Prontuário Médico</h2>
-        <form action="processa_prontuario.php" method="POST">
-            <input type="hidden" name="organization_id" value="<?php echo $orgId; ?>">
-            
-            <div class="form-group">
-                <label for="pet_id">Selecione o Paciente (Pet)</label>
-                <select id="pet_id" name="pet_id" required>
-                    <option value="">-- Escolha o Animal --</option>
-                    <?php foreach ($pets as $pet): ?>
-                        <option value="<?php echo $pet['id']; ?>"><?php echo htmlspecialchars($pet['name']); ?></option>
-                    <?php endforeach; ?>
-                </select>
+    <?php if (!$meuRegistroVet): ?>
+        <!-- ETAPA 1: quem ainda não tem registro de veterinário precisa informar o CRMV primeiro -->
+        <div class="formulario-cadastro">
+            <h2 style="text-align:center; color:#2c3e50;">🩺 Complete seu cadastro de veterinário</h2>
+            <p style="color:#7f8c8d; text-align:center; font-size:14px;">Pra registrar prontuários, precisamos do seu CRMV (registro profissional). Isso só é pedido uma vez.</p>
+            <form method="POST">
+                <div class="grupo-form">
+                    <label for="crmv">Número do CRMV</label>
+                    <input type="text" id="crmv" name="crmv" class="form-control" autocomplete="off" required placeholder="Ex: CRMV-SP 12345">
+                </div>
+                <button type="submit" class="btn-acao" style="background:#3498db; color:white; width:100%; padding:12px; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Confirmar e Continuar</button>
+            </form>
+            <div class="back-link" style="text-align:center; margin-top:15px;">
+                <a href="painel_b2b.php?empresa_id=<?php echo $empresaId; ?>">⬅ Cancelar e Voltar</a>
             </div>
-
-            <div class="form-group">
-                <label for="diagnostico">Diagnóstico Clínico</label>
-                <textarea id="diagnostico" name="diagnostico" rows="3" required placeholder="Descreva os sintomas e o diagnóstico..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="tratamento">Tratamento Prescrito / Medicamentos</label>
-                <textarea id="tratamento" name="tratamento" rows="3" required placeholder="Dosagens, exames solicitados e recomendações..."></textarea>
-            </div>
-
-            <button type="submit" class="btn">Garantir e Salvar Registro</button>
-        </form>
-        <div class="back-link">
-            <a href="painel_b2b.php?org_id=<?php echo $orgId; ?>">⬅ Cancelar e Voltar</a>
         </div>
-    </div>
+    <?php else: ?>
+        <!-- ETAPA 2: formulário de verdade do prontuário -->
+        <div class="formulario-cadastro">
+            <h2 style="text-align:center; color:#2c3e50;">📋 Emitir Novo Prontuário Médico</h2>
+            <form action="processa_prontuario.php" method="POST">
+                <input type="hidden" name="empresa_id" value="<?php echo $empresaId; ?>">
+
+                <div class="grupo-form">
+                    <label for="pet_id">Selecione o Paciente (Pet)</label>
+                    <select id="pet_id" name="pet_id" class="form-select" required>
+                        <option value="">-- Escolha o Animal --</option>
+                        <?php foreach ($pets as $pet): ?>
+                            <option value="<?php echo $pet['id']; ?>"><?php echo htmlspecialchars($pet['nome']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="grupo-form">
+                    <label for="motivo">Motivo da Consulta</label>
+                    <input type="text" id="motivo" name="motivo" class="form-control" autocomplete="off" placeholder="Ex: Check-up de rotina, vômito, ferimento...">
+                </div>
+
+                <div class="grupo-form">
+                    <label for="diagnostico">Diagnóstico Clínico</label>
+                    <textarea id="diagnostico" name="diagnostico" class="form-control" rows="3" required placeholder="Descreva os sintomas e o diagnóstico..."></textarea>
+                </div>
+
+                <div class="grupo-form">
+                    <label for="tratamento">Tratamento Prescrito</label>
+                    <textarea id="tratamento" name="tratamento" class="form-control" rows="2" placeholder="Procedimentos realizados..."></textarea>
+                </div>
+
+                <div class="grupo-form">
+                    <label for="medicamentos">Medicamentos</label>
+                    <textarea id="medicamentos" name="medicamentos" class="form-control" rows="2" placeholder="Nome, dosagem e frequência..."></textarea>
+                </div>
+
+                <div class="grupo-form">
+                    <label for="recomendacoes">Recomendações</label>
+                    <textarea id="recomendacoes" name="recomendacoes" class="form-control" rows="2" placeholder="Cuidados em casa, dieta..."></textarea>
+                </div>
+
+                <div class="grupo-form">
+                    <label for="retorno">Data de retorno (opcional)</label>
+                    <input type="date" id="retorno" name="retorno" class="form-control">
+                </div>
+
+                <button type="submit" class="btn-acao" style="background:#3498db; color:white; width:100%; padding:12px; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Salvar Registro</button>
+            </form>
+            <div class="back-link" style="text-align:center; margin-top:15px;">
+                <a href="painel_b2b.php?empresa_id=<?php echo $empresaId; ?>">⬅ Cancelar e Voltar</a>
+            </div>
+        </div>
+    <?php endif; ?>
+
+</div>
 </main>
 
 <?php 
-// Inclui o rodapé padrão com os scripts do Projeto 1
 include __DIR__ . '/../app/Includes/footer.php'; 
 ?>
-

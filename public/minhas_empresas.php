@@ -29,7 +29,7 @@ require_once "../app/Includes/menu.php";
 ?> 
 
 <!-- AJUSTE ESTRUTURAL MACRO: Afasta do menu lateral e desce do topo fixo -->
-<main class="container" style="margin-top: 100px !important; margin-left: 280px !important; padding: 20px !important; display: block !important;"> 
+<main class="container" style="margin-top: 100px !important; margin-left: 240px !important; padding: 20px !important; display: block !important;"> 
     
     <!-- CONTÊINER BRANCO UNIFICADO: Mesmo design de alto nível das telas anteriores -->
     <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 40px auto 0 auto !important; position: relative !important; display: block !important;"> 
@@ -66,7 +66,7 @@ require_once "../app/Includes/menu.php";
                         <tr style="border-bottom: 1px solid #eaeaea;"> 
                             <td style="padding: 15px; text-align: center;"> 
                                 <?php $logoNome = !empty($emp['logo']) ? $emp['logo'] : 'sem-logo.png'; ?> 
-                                <img src="../uploads/logos/<?= htmlspecialchars($logoNome); ?>" width="50" height="50" style="object-fit: cover; border-radius: 6px; border: 1px solid #eee;" alt="Logo" onerror="this.src='../assets/img/sem-foto.png';"> 
+                                <img src="../uploads/logos/<?= htmlspecialchars($logoNome); ?>" width="50" height="50" style="object-fit: cover; border-radius: 6px; border: 1px solid #eee;" alt="Logo" onerror="this.src='../assets/img/pets/sem-foto.png';"> 
                             </td> 
                             <td style="padding: 15px; font-weight: bold; color: #333;"> 
                                 <?= htmlspecialchars($emp["nome"] ?? 'Sem Nome'); ?> 
@@ -92,7 +92,7 @@ require_once "../app/Includes/menu.php";
                                 </span> 
                             </td> 
                             <td style="padding: 15px; text-align: center; white-space: nowrap;"> 
-                                <a href="painel_b2b.php?org_id=<?= (int)$emp['id']; ?>" style="color: #2ecc71; text-decoration: none; font-weight: bold; font-size: 14px; margin-right: 15px;">🚀 Acessar Painel</a> 
+                                <a href="painel_b2b.php?empresa_id=<?= (int)$emp['id']; ?>" style="color: #2ecc71; text-decoration: none; font-weight: bold; font-size: 14px; margin-right: 15px;">🚀 Acessar Painel</a> 
                                 <a href="editar_empresa.php?id=<?= (int)$emp['id']; ?>" style="color: #3498db; text-decoration: none; font-weight: bold; font-size: 14px;">✏️ Editar</a> 
                             </td> 
                         </tr> 

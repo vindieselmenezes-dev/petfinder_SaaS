@@ -44,6 +44,27 @@ class Pet
     }
 
     /**
+     * Lista as cidades onde já existe pelo menos um pet cadastrado
+     * (via endereço do tutor), pra alimentar sugestões de busca sem
+     * travar numa lista fixa — qualquer cidade digitada continua
+     * podendo ser buscada, isso aqui é só pra sugerir/autocompletar.
+     */
+    public function listarCidadesComPets(): array
+    {
+        $sql = "
+            SELECT DISTINCT end.cidade
+            FROM pets p
+            INNER JOIN enderecos end ON end.usuario_id = p.usuario_id
+            WHERE end.cidade IS NOT NULL AND end.cidade != ''
+            ORDER BY end.cidade
+        ";
+
+        $stmt = $this->pdo->query($sql);
+
+        return array_column($stmt->fetchAll(), 'cidade');
+    }
+
+    /**
      * Lista as raças de uma espécie
      */
     public function listarRacas(int $especieId): array
@@ -333,7 +354,7 @@ class Pet
             $this->garantirTabelaImagens();
 
             $sql = "
-                SELECT arquivo
+                SELECT id, arquivo
                 FROM pet_imagens
                 WHERE pet_id = :pet_id
                 ORDER BY id
@@ -346,6 +367,26 @@ class Pet
         } catch (PDOException) {
             return [];
         }
+    }
+
+    /**
+     * Exclui uma imagem extra específica de um pet (a foto de perfil
+     * não é afetada, é só a galeria adicional)
+     */
+    public function excluirImagem(int $imagemId, int $petId): bool
+    {
+        $sql = "
+            DELETE FROM pet_imagens
+            WHERE id = :id
+              AND pet_id = :pet_id
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        return $stmt->execute([
+            ':id'     => $imagemId,
+            ':pet_id' => $petId,
+        ]);
     }
 
     /**
@@ -454,6 +495,7 @@ class Pet
                 p.foto,
                 p.sexo,
                 p.cor,
+                p.status,
                 p.observacoes,
                 p.peso,
                 p.altura,
@@ -610,6 +652,7 @@ class Pet
         $sql = "
             SELECT
                 p.id,
+                p.usuario_id,
                 p.nome,
                 p.foto,
                 p.sexo,
@@ -619,8 +662,18 @@ class Pet
                 p.criado_em,
                 e.nome AS especie,
                 r.nome AS raca,
-                end.cidade,
-                end.estado,
+                (
+                    SELECT cidade FROM enderecos
+                    WHERE usuario_id = p.usuario_id
+                    ORDER BY principal DESC, id ASC
+                    LIMIT 1
+                ) AS cidade,
+                (
+                    SELECT estado FROM enderecos
+                    WHERE usuario_id = p.usuario_id
+                    ORDER BY principal DESC, id ASC
+                    LIMIT 1
+                ) AS estado,
                 u.nome AS tutor_nome,
                 u.telefone AS tutor_telefone
             FROM pets p
@@ -630,9 +683,6 @@ class Pet
                 ON r.id = p.raca_id
             INNER JOIN usuarios u
                 ON u.id = p.usuario_id
-            LEFT JOIN enderecos end
-                ON end.usuario_id = p.usuario_id
-                AND end.principal = 1
             WHERE p.status = :status
             ORDER BY p.criado_em DESC
         ";
@@ -683,6 +733,26 @@ class Pet
         return $stmt->execute([
             ':status' => $status,
             ':id'     => $petId
+        ]);
+    }
+
+    /**
+     * Transfere a posse de um pet pra outro usuário (usado quando uma
+     * solicitação de adoção é aprovada)
+     */
+    public function transferirTutor(int $petId, int $novoTutorId): bool
+    {
+        $sql = "
+            UPDATE pets
+            SET usuario_id = :novo_tutor_id
+            WHERE id = :id
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        return $stmt->execute([
+            ':novo_tutor_id' => $novoTutorId,
+            ':id'            => $petId
         ]);
     }
 }

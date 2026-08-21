@@ -18,4 +18,5 @@ foreach ($especies as $especie) {
 echo json_encode([
     'especies' => $especies,
     'racas' => $racasPorEspecie,
+    'cidades' => $controller->listarCidadesComPets(),
 ]);

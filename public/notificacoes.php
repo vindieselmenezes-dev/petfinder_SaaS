@@ -28,33 +28,13 @@ require_once "../app/Includes/header.php";
 require_once "../app/Includes/menu.php";
 ?>
 
-<!DOCTYPE html>
+<main class="conteudo" style="margin-top: 100px !important; margin-left: 240px !important; padding: 20px !important; display: block !important;">
 
-<html lang="pt-BR">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Notificações</title>
-
-<link rel="stylesheet" href="../assets/css/style.css">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-
-</head>
-
-<body>
-
-<main class="conteudo">
-
-<div class="container">
+<div class="container mt-4">
 
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
 
-    <h1>🔔 Notificações</h1>
+    <h1 class="mt-4">🔔 Notificações</h1>
 
     <button type="button" class="btn btn-outline-secondary btn-sm" id="btnMarcarTodas">
         Marcar todas como lidas
@@ -77,8 +57,10 @@ require_once "../app/Includes/menu.php";
 
             <?php $icone = $iconePorTipo[$notificacao["tipo"]] ?? "bi-bell-fill text-secondary"; ?>
 
-            <div class="card mb-2 notificacao-item <?= empty($notificacao["lida"]) ? "border-primary" : "" ?>"
-                 data-id="<?= (int) $notificacao["id"] ?>">
+            <div class="card mb-2 notificacao-item <?= empty($notificacao["lida"]) ? "border-primary" : "" ?> <?= !empty($notificacao["link"]) ? "notificacao-clicavel" : "" ?>"
+                 data-id="<?= (int) $notificacao["id"] ?>"
+                 data-link="<?= htmlspecialchars($notificacao["link"] ?? '') ?>"
+                 <?= !empty($notificacao["link"]) ? 'style="cursor:pointer;"' : '' ?>>
 
                 <div class="card-body d-flex gap-3 align-items-start">
 
@@ -131,15 +113,23 @@ document.querySelectorAll(".notificacao-item").forEach(function (item) {
     item.addEventListener("click", function () {
 
         const id = this.dataset.id;
+        const link = this.dataset.link;
 
-        if (!this.classList.contains("border-primary")) return;
-
-        fetch("../app/ajax/marcar_notificacao_lida.php?id=" + id)
-            .then(function () {
-                item.classList.remove("border-primary");
-                const badge = item.querySelector(".badge");
-                if (badge) badge.remove();
-            });
+        if (this.classList.contains("border-primary")) {
+            fetch("../app/ajax/marcar_notificacao_lida.php?id=" + id)
+                .then(function () {
+                    item.classList.remove("border-primary");
+                    const badge = item.querySelector(".badge");
+                    if (badge) badge.remove();
+                })
+                .finally(function () {
+                    if (link) {
+                        window.location.href = link;
+                    }
+                });
+        } else if (link) {
+            window.location.href = link;
+        }
 
     });
 
@@ -171,7 +161,3 @@ if (btnMarcarTodas) {
 }
 
 </script>
-
-</body>
-
-</html>

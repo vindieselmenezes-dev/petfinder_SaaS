@@ -11,9 +11,12 @@ if (!isset($_SESSION["usuario_id"])) {
 
 require_once "../app/Controllers/EmpresaController.php";
 require_once "../app/Controllers/ProdutoController.php";
+require_once "../app/Helpers/EmpresaAcesso.php";
+require_once "../app/Models/Usuario.php";
 
 $empresaController = new EmpresaController();
 $produtoController  = new ProdutoController();
+$pdo = Database::conectar();
 
 $usuarioId = (int) $_SESSION["usuario_id"];
 $produtoId = (int) ($_GET["id"] ?? 0);
@@ -21,13 +24,14 @@ $empresaId = (int) ($_GET["empresa_id"] ?? 0);
 
 /*
 |--------------------------------------------------------------------------
-| Confirma que a empresa pertence ao usuário antes de excluir o produto
+| Confirma que o usuário tem acesso à empresa (dono ou equipe) antes de
+| excluir o produto
 |--------------------------------------------------------------------------
 */
 
 $empresa = $empresaController->buscarPorId($empresaId);
 
-if ($empresa !== null && (int) $empresa["usuario_id"] === $usuarioId) {
+if ($empresa !== null && EmpresaAcesso::temAcesso($pdo, $empresaId, $usuarioId)) {
 
     if ($produtoController->excluir($produtoId, $empresaId)) {
         $_SESSION["sucesso_produto"] = "Produto excluído com sucesso!";

@@ -60,6 +60,11 @@ class PetController
         return $this->pet->listarEspecies();
     }
 
+    public function listarCidadesComPets(): array
+    {
+        return $this->pet->listarCidadesComPets();
+    }
+
     /**
      * Lista as raças de uma espécie
      */
@@ -383,6 +388,11 @@ class PetController
         return $this->pet->buscarImagens($petId);
     }
 
+    public function excluirImagem(int $imagemId, int $petId): bool
+    {
+        return $this->pet->excluirImagem($imagemId, $petId);
+    }
+
     /**
      * Lista pets da plataforma por status (para telas públicas)
      */
@@ -413,6 +423,11 @@ class PetController
         }
 
         return $this->pet->atualizarStatus($petId, $status);
+    }
+
+    public function transferirTutor(int $petId, int $novoTutorId): bool
+    {
+        return $this->pet->transferirTutor($petId, $novoTutorId);
     }
 
     /**

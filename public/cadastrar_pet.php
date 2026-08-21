@@ -131,33 +131,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 }
 
+$tituloPagina = "Cadastrar Pet";
+
 ?>
-
-<!DOCTYPE html>
-
-<html lang="pt-BR">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Cadastrar Pet</title>
-
-<link
-rel="stylesheet"
-href="../assets/css/style.css">
-
-<link
-rel="stylesheet"
-href="../assets/css/dashboard.css">
-
-</head>
-
-<body>
 
 <?php require_once "../app/Includes/header.php"; ?>
 
@@ -222,6 +198,7 @@ href="../assets/css/dashboard.css">
                 id="nome"
                 name="nome"
                 class="form-control"
+                autocomplete="off"
                 required>
 
         </div>

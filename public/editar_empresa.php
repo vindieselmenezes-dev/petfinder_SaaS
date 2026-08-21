@@ -127,25 +127,9 @@ foreach ($horariosAtuais as $horario) {
 
 $galeriaAtual = $controller->buscarGaleria($empresaId);
 
+$tituloPagina = "Editar Empresa";
+
 ?>
-
-<!DOCTYPE html>
-
-<html lang="pt-BR">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Editar Empresa</title>
-
-<link rel="stylesheet" href="../assets/css/style.css">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-
-</head>
-
-<body>
 
 <?php require_once "../app/Includes/header.php"; ?>
 
@@ -176,7 +160,7 @@ $galeriaAtual = $controller->buscarGaleria($empresaId);
     <div class="col-md-6">
         <div class="grupo-form">
             <label for="nome_fantasia">Nome Fantasia *</label>
-            <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" maxlength="180" required
+            <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" maxlength="180" autocomplete="off" required
                 value="<?= htmlspecialchars($empresa['nome_fantasia'] ?? '') ?>">
         </div>
     </div>
@@ -220,7 +204,7 @@ $galeriaAtual = $controller->buscarGaleria($empresaId);
 
 <div class="grupo-form">
     <label for="descricao">Descrição</label>
-    <textarea id="descricao" name="descricao" rows="4" class="form-control"><?= htmlspecialchars($empresa['descricao'] ?? '') ?></textarea>
+    <textarea id="descricao" name="descricao" rows="4" class="form-control" autocomplete="off"><?= htmlspecialchars($empresa['descricao'] ?? '') ?></textarea>
 </div>
 
 <hr>

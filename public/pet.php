@@ -204,6 +204,12 @@ $corStatus = $pet ? ($statusCores[$pet["status"]] ?? "secondary") : "secondary";
                                 <i class="bi bi-star"></i> Favoritar pet
                             </a>
                         <?php endif; ?>
+
+                        <?php if (($pet["status"] ?? '') === 'Para Adoção' && (int) $pet["usuario_id"] !== (int) $_SESSION["usuario_id"]): ?>
+                            <a href="solicitar_adocao.php?pet_id=<?= (int) $pet["id"]; ?>" class="btn btn-success">
+                                <i class="bi bi-house-heart"></i> Quero Adotar
+                            </a>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
 

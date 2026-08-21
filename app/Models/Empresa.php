@@ -176,6 +176,10 @@ class Empresa
      */
     public function listarPorUsuario(int $usuarioId): array
     {
+        // Inclui tanto as empresas em que o usuário é o dono (empresas.usuario_id)
+        // quanto aquelas em que ele é colaborador/administrador via empresa_equipe —
+        // é isso que permite um usuário administrar várias empresas com papéis
+        // diferentes em cada uma.
         $sql = "
             SELECT
                 e.id,
@@ -187,16 +191,23 @@ class Empresa
                 e.verificada,
                 e.avaliacao,
                 e.criado_em,
-                c.nome AS categoria_nome
+                c.nome AS categoria_nome,
+                COALESCE(ee.papel, 'proprietario') AS meu_papel
             FROM empresas e
             INNER JOIN categorias c
                 ON c.id = e.categoria_id
+            LEFT JOIN empresa_equipe ee
+                ON ee.empresa_id = e.id AND ee.usuario_id = :usuario_id_equipe AND ee.status = 'ativo'
             WHERE e.usuario_id = :usuario_id
+               OR ee.usuario_id IS NOT NULL
             ORDER BY e.criado_em DESC
         ";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':usuario_id' => $usuarioId]);
+        $stmt->execute([
+            ':usuario_id' => $usuarioId,
+            ':usuario_id_equipe' => $usuarioId,
+        ]);
 
         return $stmt->fetchAll();
     }

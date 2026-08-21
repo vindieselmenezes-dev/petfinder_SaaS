@@ -18,7 +18,7 @@ require_once "../app/Includes/header.php";
 require_once "../app/Includes/menu.php"; 
 ?> 
 
-<main class="container" style="margin-top: 110px !important; margin-left: 280px !important; margin-bottom: 50px; padding: 20px;"> 
+<main class="container" style="margin-top: 110px !important; margin-left: 240px !important; margin-bottom: 50px; padding: 20px;"> 
     <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 600px; margin: 0 auto;"> 
         
         <h1 style="color: #e74c3c; margin-bottom: 5px;">🚨 Teste de Disparo: Pet Perdido</h1> 

@@ -11,16 +11,19 @@ if (!isset($_SESSION["usuario_id"])) {
 
 require_once "../app/Controllers/EmpresaController.php";
 require_once "../app/Controllers/ProdutoController.php";
+require_once "../app/Helpers/EmpresaAcesso.php";
+require_once "../app/Models/Usuario.php";
 
 $empresaController = new EmpresaController();
 $produtoController  = new ProdutoController();
+$pdo = Database::conectar();
 
 $usuarioId = (int) $_SESSION["usuario_id"];
 $empresaId = (int) ($_GET["empresa_id"] ?? 0);
 
 $empresa = $empresaController->buscarPorId($empresaId);
 
-if ($empresa === null || (int) $empresa["usuario_id"] !== $usuarioId) {
+if ($empresa === null || !EmpresaAcesso::temAcesso($pdo, $empresaId, $usuarioId)) {
     $_SESSION["erro_empresa"] = "Empresa não encontrada.";
     header("Location: minhas_empresas.php");
     exit;

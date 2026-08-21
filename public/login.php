@@ -6,6 +6,11 @@ session_start();
 $mensagem = "";
 $tipoMensagem = "";
 
+if (isset($_GET['senha_redefinida'])) {
+    $mensagem = "Senha redefinida com sucesso! Faça login com sua nova senha.";
+    $tipoMensagem = "sucesso";
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
     $email = trim($_POST['email'] ?? ''); 
     $password = $_POST['password'] ?? ''; 
@@ -14,10 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensagem = "Por favor, preencha todos os campos."; 
         $tipoMensagem = "erro"; 
     } else {
-        // 1. Busca o registro unicamente na tabela oficial do seu banco (usuarios)
-        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?"); 
+        // 1. Busca o usuário JUNTO com o tipo de perfil dele (tabela perfis)
+        $stmt = $pdo->prepare(
+            "SELECT u.*, p.tipo AS perfil_tipo
+             FROM usuarios u
+             LEFT JOIN perfis p ON p.usuario_id = u.id
+             WHERE u.email = ?"
+        );
         $stmt->execute([$email]); 
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC); 
 
         // 2. Valida a senha usando apenas hash bcrypt (seguro)
         $senhaValida = false;
@@ -34,9 +44,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario_id']    = $user['id']; 
             $_SESSION['usuario_nome']  = $user['nome'] ?? 'Usuário'; 
             $_SESSION['usuario_email'] = $user['email']; 
-            $_SESSION['perfil_tipo']   = $user['tipo_usuario'] ?? 'tutor'; 
+            // Usa o tipo real da tabela perfis; se não existir registro, assume 'cliente' (tutor comum)
+            // Se não existir registro em `perfis`, usa usuarios.tipo_usuario como fonte
+            // de verdade antes de cair no padrão 'cliente' — evita usuário com tipo_usuario
+            // definido (ex: 'empresa') ser tratado como cliente comum por falta de linha em perfis.
+            $_SESSION['perfil_tipo']   = $user['perfil_tipo'] ?? $user['tipo_usuario'] ?? 'cliente'; 
 
-            // 3. REDIRECIONAMENTO DIRETO E INCONDICIONAL PARA O DASHBOARD PRINCIPAL
             header("Location: dashboard.php");
             exit(); 
         } else { 
@@ -53,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Ecossistema Pet</title>
     <style>
-        /* Mantém o fundo cinza escuro para certificar que você está no arquivo certo */
         body { font-family: Arial, sans-serif; background-color: #1a1f2c !important; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
         h2 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
@@ -64,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .btn:hover { background: #27ae60; }
         .mensagem { padding: 10px; margin-bottom: 15px; border-radius: 6px; text-align: center; font-size: 14px; font-weight: bold; }
         .mensagem.erro { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .mensagem.sucesso { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     </style>
 </head>
 <body>
@@ -84,6 +97,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" id="password" name="password" required placeholder="Digite sua senha">
             </div>
             <button type="submit" class="btn">Entrar no Ecossistema</button>
+            <p style="text-align:center; margin-top:12px; font-size:14px;">
+                <a href="esqueci_senha.php" style="color:#7f8c8d; text-decoration:none;">Esqueci minha senha</a>
+            </p>
         </form>
     </div>
 </body>

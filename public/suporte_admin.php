@@ -13,14 +13,20 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $tipoUsuarioLogado = $_SESSION['perfil_tipo'] ?? 'tutor'; 
 
-// Chave mestra de testes: o Sérgio (ID 16) ou qualquer administrador pode entrar
-if ($tipoUsuarioLogado !== 'administrador' && (int)$_SESSION['usuario_id'] !== 16) { 
+// Apenas administradores globais de verdade da plataforma
+if ($tipoUsuarioLogado !== 'administrador') { 
     die("<h1 style='color:red; text-align:center; margin-top:50px;'>🚨 Acesso Negado: Apenas administradores do suporte interno podem acessar esta área.</h1>"); 
 } 
 
-// 3. BUSCAR AS ORGANIZAÇÕES NO BANCO REAL (Substituindo o $pdo->query antigo)
-$stmtOrgs = $pdo->query("SELECT * FROM organizations ORDER BY name ASC"); 
-$organizations = $stmtOrgs->fetchAll(PDO::FETCH_ASSOC); 
+// 3. BUSCAR AS EMPRESAS NO BANCO REAL
+$stmtEmpresas = $pdo->query("SELECT * FROM empresas ORDER BY nome_fantasia ASC"); 
+$empresasSuporte = $stmtEmpresas->fetchAll(PDO::FETCH_ASSOC); 
+
+// 3b. BUSCAR OS CHAMADOS DE SUPORTE DOS CLIENTES/EMPRESAS
+require_once __DIR__ . '/../app/Controllers/SuporteController.php';
+$suporteController = new SuporteController();
+$chamados = $suporteController->listarTodos();
+$totalAbertos = count(array_filter($chamados, fn($c) => $c['status'] !== 'Resolvido' && $c['status'] !== 'Fechado'));
 
 // 4. INCLUI O CABEÇALHO E MENU DO PROJETO 1
 include __DIR__ . '/../app/Includes/header.php'; 
@@ -28,7 +34,7 @@ include __DIR__ . '/../app/Includes/menu.php';
 ?>
 
 <!-- 5. MARGEM PARA EMPURRAR O CONTEÚDO PARA A DIREITA DO MENU -->
-<main class="container" style="margin-top: 30px; margin-bottom: 50px; margin-left: 280px; padding: 20px;">
+<main class="container" style="margin-top: 100px !important; margin-bottom: 50px; margin-left: 240px; padding: 20px;">
     
     <div class="card" style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); max-width: 700px; margin: 0 auto;"> 
         <h1>👥 Central de Suporte Interno</h1> 
@@ -40,27 +46,53 @@ include __DIR__ . '/../app/Includes/menu.php';
 
         <h3>Selecione uma empresa para dar suporte:</h3> 
         
-        <?php if (count($organizations) > 0): ?> 
-            <?php foreach ($organizations as $org): ?> 
-                <div class="org-item" style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 10px;"> 
+        <?php if (count($empresasSuporte) > 0): ?> 
+            <?php foreach ($empresasSuporte as $emp): ?> 
+                <div id="empresa-<?php echo (int) $emp['id']; ?>" class="org-item" style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 10px;"> 
                     <div> 
-                        <strong>🏢 <?php echo htmlspecialchars($org['name']); ?></strong><br> 
-                        <span style="font-size:12px; color:#7f8c8d;">CNPJ: <?php echo $org['cnpj'] ? $org['cnpj'] : 'Não informado'; ?></span> 
+                        <strong>🏢 <?php echo htmlspecialchars($emp['nome_fantasia']); ?></strong><br> 
+                        <span style="font-size:12px; color:#7f8c8d;">CNPJ: <?php echo $emp['cnpj'] ? htmlspecialchars($emp['cnpj']) : 'Não informado'; ?></span> 
                     </div> 
                     
                     <!-- Formulário individual para capturar a justificativa obrigatória --> 
                     <form action="processa_impersonate.php" method="POST" onsubmit="return confirmarAcesso(this)"> 
-                        <input type="hidden" name="organization_id" value="<?php echo $org['id']; ?>"> 
-                        <input type="hidden" name="org_name" value="<?php echo htmlspecialchars($org['name']); ?>"> 
+                        <input type="hidden" name="empresa_id" value="<?php echo $emp['id']; ?>"> 
+                        <input type="hidden" name="empresa_nome" value="<?php echo htmlspecialchars($emp['nome_fantasia']); ?>"> 
                         <input type="text" name="justificativa" class="reason-input" style="width: 100%; padding: 8px; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; display: none;" placeholder="Motivo do suporte..." required> 
                         <button type="button" class="btn-impersonate" style="background: #e67e22; color: white; padding: 8px 12px; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: bold; border: none; cursor: pointer;" onclick="solicitarMotivo(this)">Acessar Painel</button> 
                     </form> 
                 </div> 
             <?php endforeach; ?> 
         <?php else: ?> 
-            <p style="color:#95a5a6; text-align:center;">Nenhuma organização registrada no sistema.</p> 
+            <p style="color:#95a5a6; text-align:center;">Nenhuma empresa registrada no sistema.</p> 
         <?php endif; ?> 
     </div> 
+
+    <div class="card" style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); max-width: 700px; margin: 25px auto 0 auto;">
+        <h3 style="margin-top:0;">💬 Chamados de Clientes/Empresas <?php if ($totalAbertos > 0): ?><span class="badge-status" style="background:#e74c3c;"><?= $totalAbertos; ?> em aberto</span><?php endif; ?></h3>
+
+        <?php if (count($chamados) > 0): ?>
+            <?php foreach ($chamados as $chamado):
+                $corStatus = [
+                    'Aberto' => '#3498db',
+                    'Em Atendimento' => '#f39c12',
+                    'Resolvido' => '#2ecc71',
+                    'Fechado' => '#95a5a6',
+                ][$chamado['status']] ?? '#95a5a6';
+            ?>
+                <div class="org-item" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong><?= htmlspecialchars($chamado['assunto']); ?></strong>
+                        <span class="badge-status" style="background:<?= $corStatus; ?>; margin-left:6px;"><?= htmlspecialchars($chamado['status']); ?></span><br>
+                        <span style="font-size:12px; color:#7f8c8d;"><?= htmlspecialchars($chamado['usuario_nome']); ?> • Prioridade: <?= htmlspecialchars($chamado['prioridade']); ?> • <?= date('d/m/Y H:i', strtotime($chamado['criado_em'])); ?></span>
+                    </div>
+                    <a href="chamado.php?id=<?= (int) $chamado['id']; ?>" class="btn-acao" style="background:#3498db; color:white;">Ver / Responder</a>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p style="color:#95a5a6; text-align:center;">Nenhum chamado aberto no momento.</p>
+        <?php endif; ?>
+    </div>
 
 </main>
 

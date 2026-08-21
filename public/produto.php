@@ -2,15 +2,23 @@
 
 declare(strict_types=1);
 
+session_start();
+
 require_once "../app/Controllers/ProdutoController.php";
+require_once "../app/Models/FavoritoProduto.php";
 
 $controller = new ProdutoController();
+$favoritoModel = new FavoritoProduto();
 
 $id = isset($_GET["id"]) ? (int) $_GET["id"] : 0;
 
 $produto = $controller->buscarPorId($id);
 $imagens = $produto ? $controller->buscarImagens($id) : [];
 $estoque = $produto ? $controller->buscarEstoque($id) : null;
+
+$jaFavoritado = ($produto && isset($_SESSION['usuario_id']))
+    ? $favoritoModel->existe((int) $_SESSION['usuario_id'], $id)
+    : false;
 
 $temPromocao = $produto && !empty($produto["preco_promocional"]);
 $precoFinal  = $produto ? ($temPromocao ? $produto["preco_promocional"] : $produto["preco_venda"]) : 0;
@@ -190,9 +198,9 @@ $precoFinal  = $produto ? ($temPromocao ? $produto["preco_promocional"] : $produ
                         Adicionar ao Carrinho
                     </a>
 
-                    <a href="favoritar_produto.php?produto_id=<?= (int)$produto['id'] ?>&acao=adicionar" class="btn btn-light btn-lg ms-2">
-                        <i class="bi bi-heart"></i>
-                        Favoritar
+                    <a href="favoritar_produto.php?produto_id=<?= (int)$produto['id'] ?>&acao=<?= $jaFavoritado ? 'remover' : 'adicionar' ?>" class="btn <?= $jaFavoritado ? 'btn-danger' : 'btn-light' ?> btn-lg ms-2">
+                        <i class="bi bi-heart<?= $jaFavoritado ? '-fill' : '' ?>"></i>
+                        <?= $jaFavoritado ? 'Remover dos Favoritos' : 'Favoritar' ?>
                     </a>
 
                 <?php else: ?>

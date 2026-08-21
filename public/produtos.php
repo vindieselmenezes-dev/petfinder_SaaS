@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
+session_start();
+
 require_once "../app/Controllers/ProdutoController.php";
+require_once "../app/Models/FavoritoProduto.php";
 
 $controller = new ProdutoController();
+$favoritoModel = new FavoritoProduto();
 
 $subcategorias = $controller->listarSubcategorias();
 $marcas        = $controller->listarMarcas();
@@ -206,11 +210,23 @@ $produtos = $controller->listarAtivos($busca, $subcategoriaId, $marcaId, $precoM
 
                             </div>
 
-                            <div class="card-footer bg-white">
-                                <a href="produto.php?id=<?= (int) $produto['id'] ?>" class="btn btn-outline-primary w-100">
+                            <div class="card-footer bg-white d-flex gap-2">
+                                <a href="produto.php?id=<?= (int) $produto['id'] ?>" class="btn btn-outline-primary flex-grow-1">
                                     <i class="bi bi-eye"></i>
                                     Ver Produto
                                 </a>
+                                <?php if (isset($_SESSION['usuario_id'])): ?>
+                                    <?php $jaFavoritado = $favoritoModel->existe((int) $_SESSION['usuario_id'], (int) $produto['id']); ?>
+                                    <a href="favoritar_produto.php?produto_id=<?= (int) $produto['id'] ?>&acao=<?= $jaFavoritado ? 'remover' : 'adicionar' ?>"
+                                        class="btn <?= $jaFavoritado ? 'btn-danger' : 'btn-outline-danger' ?>"
+                                        title="<?= $jaFavoritado ? 'Remover dos favoritos' : 'Favoritar' ?>">
+                                        <i class="bi bi-heart<?= $jaFavoritado ? '-fill' : '' ?>"></i>
+                                    </a>
+                                <?php else: ?>
+                                    <a href="login.php" class="btn btn-outline-danger" title="Entre para favoritar">
+                                        <i class="bi bi-heart"></i>
+                                    </a>
+                                <?php endif; ?>
                             </div>
 
                         </div>

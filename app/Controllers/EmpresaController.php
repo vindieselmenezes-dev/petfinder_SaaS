@@ -200,7 +200,21 @@ class EmpresaController
         $dados['estado'] = $dados['estado'] ?? '';
         $dados['cep'] = $dados['cep'] ?? '';
 
-        return $this->empresa->cadastrar($dados);
+        $novoId = $this->empresa->cadastrar($dados);
+
+        // Toda empresa nova já entra na equipe como 'proprietario' de quem a cadastrou.
+        // Isso é o que permite um usuário administrar várias empresas com papéis
+        // diferentes em cada uma (ver empresa_equipe).
+        if ($novoId !== false && !empty($dados['usuario_id'])) {
+            $pdo = Database::conectar();
+            $stmt = $pdo->prepare("
+                INSERT INTO empresa_equipe (empresa_id, usuario_id, papel, status)
+                VALUES (?, ?, 'proprietario', 'ativo')
+            ");
+            $stmt->execute([$novoId, (int)$dados['usuario_id']]);
+        }
+
+        return $novoId;
     }
 
     public function buscarPorId(int $id): ?array
