@@ -32,7 +32,7 @@ if (!$pet || (int) $pet['usuario_id'] !== $usuarioId) {
 }
 
 // Volta o status do pet pro normal e encerra qualquer alerta ativo dele
-$controller->atualizarStatus($petId, 'Com Tutor');
+$controller->atualizarStatus($petId, 'Com Tutor', $usuarioId, 'Marcado como recuperado pelo tutor');
 
 $stmt = $pdo->prepare("UPDATE pet_alertas_perdidos SET status = 'Encontrado' WHERE pet_id = ? AND status = 'Ativo'");
 $stmt->execute([$petId]);

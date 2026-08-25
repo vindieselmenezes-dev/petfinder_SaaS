@@ -213,6 +213,14 @@ $corStatus = $pet ? ($statusCores[$pet["status"]] ?? "secondary") : "secondary";
                     </div>
                 <?php endif; ?>
 
+                <?php if ($pet): ?>
+                    <p class="mb-4">
+                        <a href="historico_pet.php?id=<?= (int) $pet["id"]; ?>" class="text-decoration-none text-secondary">
+                            <i class="bi bi-clock-history"></i> Ver histórico completo deste pet
+                        </a>
+                    </p>
+                <?php endif; ?>
+
                 <h5>Tutor responsável</h5>
 
                 <p class="mb-3">

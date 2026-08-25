@@ -94,7 +94,7 @@ class FavoritoProduto
             FROM produto_favoritos pf
             INNER JOIN produtos p ON p.id = pf.produto_id
             WHERE pf.usuario_id = :usuario_id
-            ORDER BY pf.criado_em DESC
+            ORDER BY pf.criado_em DESC, pf.id DESC
         ";
 
         $stmt = $this->pdo->prepare($sql);

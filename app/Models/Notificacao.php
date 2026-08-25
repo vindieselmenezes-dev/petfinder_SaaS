@@ -50,7 +50,7 @@ class Notificacao
             SELECT id, titulo, mensagem, link, tipo, lida, criado_em
             FROM notificacoes
             WHERE usuario_id = :usuario_id
-            ORDER BY criado_em DESC
+            ORDER BY criado_em DESC, id DESC
             LIMIT :limite
         ";
 

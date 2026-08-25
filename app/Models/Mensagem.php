@@ -35,7 +35,7 @@ class Mensagem
             FROM mensagens m
             INNER JOIN usuarios u ON u.id = m.remetente_id
             WHERE m.conversa_id = :conversa_id
-            ORDER BY m.enviado_em ASC
+            ORDER BY m.enviado_em ASC, m.id ASC
         ");
         $stmt->execute([':conversa_id' => $conversaId]);
 

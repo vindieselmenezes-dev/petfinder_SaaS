@@ -70,7 +70,7 @@ class SolicitacaoAdocao
             FROM solicitacoes_adocao sa
             INNER JOIN pets p ON p.id = sa.pet_id
             WHERE sa.usuario_solicitante_id = :usuario_id
-            ORDER BY sa.criado_em DESC
+            ORDER BY sa.criado_em DESC, sa.id DESC
         ");
         $stmt->execute([':usuario_id' => $usuarioId]);
 

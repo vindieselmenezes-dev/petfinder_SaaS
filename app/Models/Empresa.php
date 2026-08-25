@@ -200,7 +200,7 @@ class Empresa
                 ON ee.empresa_id = e.id AND ee.usuario_id = :usuario_id_equipe AND ee.status = 'ativo'
             WHERE e.usuario_id = :usuario_id
                OR ee.usuario_id IS NOT NULL
-            ORDER BY e.criado_em DESC
+            ORDER BY e.criado_em DESC, e.id DESC
         ";
 
         $stmt = $this->pdo->prepare($sql);
@@ -330,7 +330,7 @@ class Empresa
             $params[':busca'] = '%' . $busca . '%';
         }
 
-        $sql .= " ORDER BY e.verificada DESC, e.avaliacao DESC, e.criado_em DESC ";
+        $sql .= " ORDER BY e.verificada DESC, e.avaliacao DESC, e.criado_em DESC, e.id DESC ";
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);

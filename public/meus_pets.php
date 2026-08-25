@@ -115,6 +115,7 @@ function especieIcone(?string $especie): string {
                             </td> 
                             <td style="padding: 15px; text-align: center; white-space: nowrap;"> 
                                 <a href="editar_pet.php?id=<?= (int) $pet['id']; ?>" class="btn-acao" style="display: inline-block; background: #3498db; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">✏️ Editar</a> 
+                                <a href="historico_pet.php?id=<?= (int) $pet['id']; ?>" class="btn-acao" style="display: inline-block; background: #9b59b6; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">🕒 Histórico</a> 
                                 <?php if (($pet['status'] ?? '') !== 'Perdido'): ?>
                                     <a href="alerta_perdido.php?pet_id=<?= (int) $pet['id']; ?>" class="btn-acao" style="display: inline-block; background: #e67e22; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">🚨 Perdido</a>
                                 <?php else: ?>

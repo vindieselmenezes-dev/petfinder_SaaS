@@ -43,7 +43,7 @@ try {
     $stmt->execute([$petId, $usuarioId, $location, $lat, $lng, $description]); 
 
     // Atualiza o status do pet para 'Perdido' na tabela central de animais
-    $petController->atualizarStatus($petId, 'Perdido');
+    $petController->atualizarStatus($petId, 'Perdido', $usuarioId, 'Alerta de pet perdido emitido pelo tutor');
 
     $petName = $pet['nome'] ?? 'Animal';
 

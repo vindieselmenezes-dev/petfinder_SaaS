@@ -56,14 +56,14 @@ class Conversa
                 c.*,
                 CASE WHEN c.usuario_origem = :usuario_id THEN ud.nome ELSE uo.nome END AS outro_nome,
                 CASE WHEN c.usuario_origem = :usuario_id2 THEN c.usuario_destino ELSE c.usuario_origem END AS outro_id,
-                (SELECT mensagem FROM mensagens WHERE conversa_id = c.id ORDER BY enviado_em DESC LIMIT 1) AS ultima_mensagem,
-                (SELECT enviado_em FROM mensagens WHERE conversa_id = c.id ORDER BY enviado_em DESC LIMIT 1) AS ultima_mensagem_em,
+                (SELECT mensagem FROM mensagens WHERE conversa_id = c.id ORDER BY enviado_em DESC, id DESC LIMIT 1) AS ultima_mensagem,
+                (SELECT enviado_em FROM mensagens WHERE conversa_id = c.id ORDER BY enviado_em DESC, id DESC LIMIT 1) AS ultima_mensagem_em,
                 (SELECT COUNT(*) FROM mensagens WHERE conversa_id = c.id AND lida = 0 AND remetente_id != :usuario_id3) AS nao_lidas
             FROM conversas c
             INNER JOIN usuarios uo ON uo.id = c.usuario_origem
             INNER JOIN usuarios ud ON ud.id = c.usuario_destino
             WHERE c.usuario_origem = :usuario_id4 OR c.usuario_destino = :usuario_id5
-            ORDER BY ultima_mensagem_em DESC, c.criado_em DESC
+            ORDER BY ultima_mensagem_em DESC, c.criado_em DESC, c.id DESC
         ");
         $stmt->execute([
             ':usuario_id'  => $usuarioId,

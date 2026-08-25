@@ -127,7 +127,7 @@ class Favorito
             INNER JOIN usuarios u
                 ON u.id = p.usuario_id
             WHERE f.usuario_id = :usuario_id
-            ORDER BY f.criado_em DESC
+            ORDER BY f.criado_em DESC, f.id DESC
         ";
 
         $stmt = $this->pdo->prepare($sql);

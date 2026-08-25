@@ -43,7 +43,7 @@ class Suporte
             SELECT *
             FROM suporte
             WHERE usuario_id = :usuario_id
-            ORDER BY criado_em DESC
+            ORDER BY criado_em DESC, id DESC
         ";
 
         $stmt = $this->pdo->prepare($sql);
@@ -69,7 +69,7 @@ class Suporte
 
         $sql .= " ORDER BY
             FIELD(s.prioridade, 'Urgente', 'Alta', 'Média', 'Baixa'),
-            s.criado_em DESC
+            s.criado_em DESC, s.id DESC
         ";
 
         $stmt = $this->pdo->prepare($sql);
@@ -123,7 +123,7 @@ class Suporte
             FROM suporte_respostas r
             INNER JOIN usuarios u ON u.id = r.usuario_id
             WHERE r.chamado_id = :chamado_id
-            ORDER BY r.criado_em ASC
+            ORDER BY r.criado_em ASC, r.id ASC
         ";
 
         $stmt = $this->pdo->prepare($sql);

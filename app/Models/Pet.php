@@ -118,7 +118,7 @@ class Pet
             INNER JOIN especies e ON e.id = p.especie_id
             INNER JOIN racas r ON r.id = p.raca_id
             INNER JOIN usuarios u ON u.id = p.usuario_id
-            ORDER BY p.criado_em DESC
+            ORDER BY p.criado_em DESC, p.id DESC
         ";
 
         $stmt = $this->pdo->query($sql);
@@ -155,7 +155,7 @@ class Pet
                 ON end.usuario_id = p.usuario_id
                 AND end.principal = 1
             WHERE p.usuario_id = :usuario
-            ORDER BY p.criado_em DESC
+            ORDER BY p.criado_em DESC, p.id DESC
         ";
 
         $stmt = $this->pdo->prepare($sql);
@@ -268,7 +268,11 @@ class Pet
             return false;
         }
 
-        return (int) $this->pdo->lastInsertId();
+        $novoId = (int) $this->pdo->lastInsertId();
+
+        $this->registrarHistoricoStatus($novoId, null, $dados['status'], $dados['usuario_id'] ?? null, 'Cadastro do pet');
+
+        return $novoId;
     }
 
     /**
@@ -394,6 +398,11 @@ class Pet
      */
     public function atualizar(int $id, array $dados): bool
     {
+        // Busca o status atual antes de sobrescrever, pra saber se mudou
+        $stmtAtual = $this->pdo->prepare("SELECT status FROM pets WHERE id = :id");
+        $stmtAtual->execute([':id' => $id]);
+        $statusAntigo = $stmtAtual->fetchColumn();
+
         $sql = "
             UPDATE pets
             SET
@@ -416,7 +425,7 @@ class Pet
 
         $stmt = $this->pdo->prepare($sql);
 
-        return $stmt->execute([
+        $ok = $stmt->execute([
             ':nome'            => $dados['nome'],
             ':especie_id'      => $dados['especie_id'],
             ':raca_id'         => $dados['raca_id'],
@@ -433,6 +442,54 @@ class Pet
             ':id'              => $id,
             ':usuario_id'      => $dados['usuario_id']
         ]);
+
+        if ($ok && $statusAntigo !== false && $statusAntigo !== $dados['status']) {
+            $this->registrarHistoricoStatus($id, (string) $statusAntigo, $dados['status'], $dados['usuario_id'] ?? null);
+        }
+
+        return $ok;
+    }
+
+    /**
+     * Registra uma mudança de status no histórico append-only. Chamado
+     * internamente sempre que o status realmente muda, não precisa ser
+     * chamado manualmente de fora.
+     */
+    private function registrarHistoricoStatus(int $petId, ?string $statusAnterior, string $statusNovo, ?int $usuarioId, ?string $motivo = null): void
+    {
+        $sql = "
+            INSERT INTO pets_status_historico (pet_id, status_anterior, status_novo, alterado_por, motivo)
+            VALUES (:pet_id, :status_anterior, :status_novo, :usuario_id, :motivo)
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':pet_id'          => $petId,
+            ':status_anterior' => $statusAnterior,
+            ':status_novo'     => $statusNovo,
+            ':usuario_id'      => $usuarioId,
+            ':motivo'          => $motivo,
+        ]);
+    }
+
+    /**
+     * Busca o histórico completo de mudanças de status de um pet,
+     * mais recente primeiro
+     */
+    public function buscarHistoricoStatus(int $petId): array
+    {
+        $sql = "
+            SELECT h.*, u.nome AS alterado_por_nome
+            FROM pets_status_historico h
+            LEFT JOIN usuarios u ON u.id = h.alterado_por
+            WHERE h.pet_id = :pet_id
+            ORDER BY h.criado_em DESC, h.id DESC
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':pet_id' => $petId]);
+
+        return $stmt->fetchAll();
     }
 
     /**
@@ -684,7 +741,7 @@ class Pet
             INNER JOIN usuarios u
                 ON u.id = p.usuario_id
             WHERE p.status = :status
-            ORDER BY p.criado_em DESC
+            ORDER BY p.criado_em DESC, p.id DESC
         ";
 
         $stmt = $this->pdo->prepare($sql);
@@ -720,8 +777,12 @@ class Pet
      * Atualiza somente o status de um pet
      * (usado para marcar como Perdido, Encontrado, Adotado, etc.)
      */
-    public function atualizarStatus(int $petId, string $status): bool
+    public function atualizarStatus(int $petId, string $status, ?int $usuarioId = null, ?string $motivo = null): bool
     {
+        $stmtAtual = $this->pdo->prepare("SELECT status FROM pets WHERE id = :id");
+        $stmtAtual->execute([':id' => $petId]);
+        $statusAntigo = $stmtAtual->fetchColumn();
+
         $sql = "
             UPDATE pets
             SET status = :status
@@ -730,10 +791,16 @@ class Pet
 
         $stmt = $this->pdo->prepare($sql);
 
-        return $stmt->execute([
+        $ok = $stmt->execute([
             ':status' => $status,
             ':id'     => $petId
         ]);
+
+        if ($ok && $statusAntigo !== false && $statusAntigo !== $status) {
+            $this->registrarHistoricoStatus($petId, (string) $statusAntigo, $status, $usuarioId, $motivo);
+        }
+
+        return $ok;
     }
 
     /**

@@ -116,7 +116,7 @@ class SolicitacaoAdocaoController
 
         // Transfere a posse do pet e marca como adotado
         $this->pet->transferirTutor($petId, $novoTutorId);
-        $this->pet->atualizarStatus($petId, 'Adotado');
+        $this->pet->atualizarStatus($petId, 'Adotado', $usuarioDonoId, 'Solicitação de adoção #' . $solicitacaoId . ' aprovada');
 
         $this->solicitacao->atualizarStatus($solicitacaoId, 'Aprovada');
         $this->solicitacao->rejeitarDemaisPendentes($petId, $solicitacaoId);

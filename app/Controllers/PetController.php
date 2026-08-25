@@ -416,13 +416,18 @@ class PetController
     /**
      * Atualiza o status de um pet (ex: marcar como Perdido)
      */
-    public function atualizarStatus(int $petId, string $status): bool
+    public function atualizarStatus(int $petId, string $status, ?int $usuarioId = null, ?string $motivo = null): bool
     {
         if (!in_array($status, self::STATUS_VALIDOS, true)) {
             return false;
         }
 
-        return $this->pet->atualizarStatus($petId, $status);
+        return $this->pet->atualizarStatus($petId, $status, $usuarioId, $motivo);
+    }
+
+    public function buscarHistoricoStatus(int $petId): array
+    {
+        return $this->pet->buscarHistoricoStatus($petId);
     }
 
     public function transferirTutor(int $petId, int $novoTutorId): bool
