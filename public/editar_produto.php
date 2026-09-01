@@ -12,9 +12,12 @@ if (!isset($_SESSION["usuario_id"])) {
 require_once "../app/Controllers/EmpresaController.php";
 require_once "../app/Controllers/ProdutoController.php";
 require_once "../app/Helpers/Csrf.php";
+require_once "../app/Helpers/EmpresaAcesso.php";
+require_once "../app/Models/Usuario.php";
 
 $empresaController = new EmpresaController();
 $produtoController  = new ProdutoController();
+$pdo = Database::conectar();
 
 $usuarioId = (int) $_SESSION["usuario_id"];
 $produtoId = (int) ($_GET["id"] ?? 0);
@@ -23,11 +26,12 @@ $produto = $produtoController->buscarPorId($produtoId);
 
 /*
 |--------------------------------------------------------------------------
-| Segurança: produto precisa existir e a empresa dele pertencer ao usuário
+| Segurança: produto precisa existir e o usuário precisa ter acesso à
+| empresa dona dele (dono OU equipe, via empresa_equipe)
 |--------------------------------------------------------------------------
 */
 
-if ($produto === null || (int) $produto["empresa_usuario_id"] !== $usuarioId) {
+if ($produto === null || !EmpresaAcesso::temAcesso($pdo, (int) $produto["empresa_id"], $usuarioId)) {
     $_SESSION["erro_empresa"] = "Produto não encontrado.";
     header("Location: minhas_empresas.php");
     exit;
@@ -99,27 +103,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 }
 
+$tituloPagina = "Editar Produto";
+
 require_once "../app/Includes/header.php";
 require_once "../app/Includes/menu.php";
 ?>
-
-<!DOCTYPE html>
-
-<html lang="pt-BR">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Editar Produto</title>
-
-<link rel="stylesheet" href="../assets/css/style.css">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-
-</head>
-
-<body>
 
 <main class="conteudo">
 
@@ -148,7 +136,7 @@ require_once "../app/Includes/menu.php";
     <div class="col-md-6">
         <div class="grupo-form">
             <label for="nome">Nome do Produto *</label>
-            <input type="text" id="nome" name="nome" class="form-control" maxlength="200" required
+            <input type="text" id="nome" name="nome" class="form-control" maxlength="200" required autocomplete="off"
                 value="<?= htmlspecialchars($produto["nome"] ?? '') ?>">
         </div>
     </div>
@@ -185,7 +173,7 @@ require_once "../app/Includes/menu.php";
 
 <div class="grupo-form">
     <label for="descricao">Descrição</label>
-    <textarea id="descricao" name="descricao" rows="4" class="form-control"><?= htmlspecialchars($produto["descricao"] ?? '') ?></textarea>
+    <textarea id="descricao" name="descricao" rows="4" class="form-control" autocomplete="off"><?= htmlspecialchars($produto["descricao"] ?? '') ?></textarea>
 </div>
 
 <div class="row">
@@ -193,7 +181,7 @@ require_once "../app/Includes/menu.php";
     <div class="col-md-6">
         <div class="grupo-form">
             <label for="sku">SKU (código interno)</label>
-            <input type="text" id="sku" name="sku" class="form-control" maxlength="80"
+            <input type="text" id="sku" name="sku" class="form-control" maxlength="80" autocomplete="off"
                 value="<?= htmlspecialchars($produto["sku"] ?? '') ?>">
         </div>
     </div>
@@ -201,7 +189,7 @@ require_once "../app/Includes/menu.php";
     <div class="col-md-6">
         <div class="grupo-form">
             <label for="codigo_barras">Código de Barras</label>
-            <input type="text" id="codigo_barras" name="codigo_barras" class="form-control" maxlength="50"
+            <input type="text" id="codigo_barras" name="codigo_barras" class="form-control" maxlength="50" autocomplete="off"
                 value="<?= htmlspecialchars($produto["codigo_barras"] ?? '') ?>">
         </div>
     </div>

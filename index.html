@@ -46,6 +46,22 @@
     <link rel="icon" href="assets/img/favicon.png">
 
     <!-- ========================= -->
+    <!-- PWA -->
+    <!-- ========================= -->
+
+    <link rel="manifest" href="manifest.json">
+
+    <meta name="theme-color" content="#015C1E">
+
+    <link rel="apple-touch-icon" href="assets/img/icons/apple-touch-icon.png">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <meta name="apple-mobile-web-app-title" content="PetFinder">
+
+    <!-- ========================= -->
     <!-- GOOGLE FONTS -->
     <!-- ========================= -->
 
@@ -263,8 +279,8 @@
 
                                 <i class="bi bi-heart"></i>
 
-                                <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                <span id="badgeFavoritos"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;">
 
                                     0
 
@@ -295,10 +311,10 @@
 
                                 <i class="bi bi-bell"></i>
 
-                                <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">
+                                <span id="badgeNotificacoes"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning" style="display:none;">
 
-                                    3
+                                    0
 
                                 </span>
 
@@ -306,7 +322,7 @@
 
                             <!-- Login -->
 
-                            <a href="public/login.php" class="btn btn-outline-primary">
+                            <a href="public/login.php" id="btnHeaderLogin" class="btn btn-outline-primary">
 
                                 Login
 
@@ -314,7 +330,7 @@
 
                             <!-- Cadastro -->
 
-                            <a href="public/cadastro.php" class="btn btn-primary">
+                            <a href="public/cadastro.php" id="btnHeaderCadastro" class="btn btn-primary">
 
                                 Cadastro
 
@@ -322,7 +338,7 @@
 
                             <!-- Perfil -->
 
-                            <div class="dropdown">
+                            <div class="dropdown" id="btnHeaderPerfil" style="display:none;">
 
                                 <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
 
@@ -334,7 +350,7 @@
 
                                     <li>
 
-                                        <a class="dropdown-item" href="public/endereco.php">
+                                        <a class="dropdown-item" href="public/meu_perfil.php">
 
                                             Meu Perfil
 
@@ -354,7 +370,7 @@
 
                                     <li>
 
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" href="public/em_breve.php?recurso=Pedidos">
 
                                             Pedidos
 
@@ -364,7 +380,7 @@
 
                                     <li>
 
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" href="public/meus_favoritos.php">
 
                                             Favoritos
 
@@ -541,6 +557,83 @@
         </section>
 
         <!-- ========================================================= -->
+        <!-- BAIXE O APP -->
+        <!-- ========================================================= -->
+
+        <section id="baixe-o-app" class="py-5" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
+
+            <div class="container">
+
+                <div class="row align-items-center text-white">
+
+                    <div class="col-lg-7">
+
+                        <span class="badge bg-warning text-dark mb-3 px-3 py-2">
+                            <i class="bi bi-stars"></i>
+                            Novidade
+                        </span>
+
+                        <h2 class="fw-bold display-6">
+                            Leve o PetFinder Brasil no bolso
+                        </h2>
+
+                        <p class="fs-5 opacity-75 mb-4">
+                            Baixe o nosso app e tenha adoção, achados e perdidos, agenda do
+                            pet e a lojinha sempre à mão, com notificações em tempo real.
+                        </p>
+
+                        <div class="d-flex flex-wrap gap-3">
+
+                            <button type="button" id="btnInstalarApp" class="btn-app-download" style="display:none; border:none; cursor:pointer;">
+                                <i class="bi bi-download fs-3"></i>
+                                <span class="text-start">
+                                    <small class="d-block text-muted" style="font-size:.7rem;">Instalar agora</small>
+                                    <strong>Adicionar à tela</strong>
+                                </span>
+                            </button>
+
+                            <a href="public/em_breve.php?recurso=App PetFinder Brasil (App Store)"
+                                id="btnAppStore" class="btn-app-download">
+                                <i class="bi bi-apple fs-3"></i>
+                                <span class="text-start">
+                                    <small class="d-block text-muted" style="font-size:.7rem;">Disponível na</small>
+                                    <strong>App Store</strong>
+                                </span>
+                            </a>
+
+                            <a href="public/em_breve.php?recurso=App PetFinder Brasil (Google Play)"
+                                id="btnGooglePlay" class="btn-app-download">
+                                <i class="bi bi-google-play fs-4"></i>
+                                <span class="text-start">
+                                    <small class="d-block text-muted" style="font-size:.7rem;">Disponível no</small>
+                                    <strong>Google Play</strong>
+                                </span>
+                            </a>
+
+                        </div>
+
+                        <p id="msgJaInstalado" class="mt-3 mb-0 opacity-75" style="display:none;">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Você já instalou o app neste dispositivo.
+                        </p>
+
+                    </div>
+
+                    <div class="col-lg-5 text-center mt-5 mt-lg-0">
+
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-white bg-opacity-10 p-5">
+                            <i class="bi bi-phone display-1"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
         <!-- PETS PARA ADOÇÃO -->
         <!-- ========================================================= -->
 
@@ -576,15 +669,11 @@
 
                             <div class="row g-3 align-items-end">
                                 <div class="col-12 col-lg-3">
-                                    <label class="form-label" for="selectCidadeAdocao">Cidade</label>
-                                    <select class="form-select" id="selectCidadeAdocao">
-                                        <option value="">Selecione sua cidade</option>
-                                        <option>São Paulo</option>
-                                        <option>Rio de Janeiro</option>
-                                        <option>Belo Horizonte</option>
-                                        <option>Brasília</option>
-                                        <option>Curitiba</option>
-                                    </select>
+                                    <label class="form-label" for="inputCidadeAdocao">Cidade</label>
+                                    <input type="text" class="form-control" id="inputCidadeAdocao"
+                                        list="listaCidadesAdocao" autocomplete="off"
+                                        placeholder="Digite sua cidade">
+                                    <datalist id="listaCidadesAdocao"></datalist>
                                 </div>
                                 <div class="col-12 col-lg-3">
                                     <label class="form-label" for="selectEspecieAdocao">Espécie</label>
@@ -2344,6 +2433,33 @@
 
 
 
+    <!-- ========================= -->
+    <!-- MODAL: instruções de instalação (iOS) -->
+    <!-- ========================= -->
+
+    <div class="modal fade" id="modalInstalarIos" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-apple"></i>
+                        Instalar no iPhone/iPad
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>No iOS a instalação é feita direto pelo Safari, sem passar pela App Store:</p>
+                    <ol class="mb-0">
+                        <li class="mb-2">Abra este site no <strong>Safari</strong>.</li>
+                        <li class="mb-2">Toque no ícone de compartilhar <i class="bi bi-box-arrow-up"></i>.</li>
+                        <li class="mb-2">Escolha <strong>"Adicionar à Tela de Início"</strong>.</li>
+                        <li>Pronto! O ícone do PetFinder aparece na sua tela como um app.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
     </div>
 
     <!-- ========================= -->
@@ -2354,10 +2470,17 @@
     </script>
 
     <!-- ========================= -->
+    <!-- PWA: registro do Service Worker + botões de instalar -->
+    <!-- ========================= -->
+
+    <script src="assets/js/pwa.js"></script>
+
+    <!-- ========================= -->
     <!-- JAVASCRIPT -->
     <!-- ========================= -->
 
-    <script src="assets/js/script.js">
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/geolocalizacao.js">
     </script>
 
     <!-- ========================= -->
@@ -2371,7 +2494,7 @@
             const container = document.getElementById("listaAdocao");
             const form = document.getElementById("formBuscaAdocao");
             const inputBusca = document.getElementById("inputBuscaAdocao");
-            const selectCidade = document.getElementById("selectCidadeAdocao");
+            const inputCidade = document.getElementById("inputCidadeAdocao");
             const selectEspecie = document.getElementById("selectEspecieAdocao");
             const selectRaca = document.getElementById("selectRacaAdocao");
             const selectSexo = document.getElementById("selectSexoAdocao");
@@ -2403,11 +2526,9 @@
                     if (texto) params.set("busca", texto);
                 }
 
-                if (selectCidade) {
-                    const cidade = selectCidade.value;
-                    if (cidade && cidade !== "Selecione sua cidade") {
-                        params.set("cidade", cidade);
-                    }
+                if (inputCidade) {
+                    const cidade = inputCidade.value.trim();
+                    if (cidade) params.set("cidade", cidade);
                 }
 
                 if (selectEspecie && selectEspecie.value) {
@@ -2493,6 +2614,16 @@
                     const cor = pet.cor ? escapeHtml(pet.cor) : "Cor não informada";
                     const telefone = pet.tutor_telefone ? String(pet.tutor_telefone).replace(/\D/g, "") : "";
 
+                    const coresPorStatus = {
+                        "Para Adoção": "bg-warning text-dark",
+                        "Com Tutor": "bg-success",
+                        "Perdido": "bg-danger",
+                        "Encontrado": "bg-info text-dark",
+                        "Adotado": "bg-secondary"
+                    };
+                    const statusPet = pet.status || "Para Adoção";
+                    const classeBadge = coresPorStatus[statusPet] || "bg-secondary";
+
                     html += `
                         <div class="col-lg-4 col-md-6">
                             <div class="card empresa-card h-100 shadow-sm">
@@ -2500,7 +2631,7 @@
                                     <img src="${foto}" class="card-img-top" alt="${escapeHtml(pet.nome)}">
                                 </a>
                                 <div class="card-body">
-                                    <span class="badge bg-success mb-3">Para Adoção</span>
+                                    <span class="badge ${classeBadge} mb-3">${escapeHtml(statusPet)}</span>
                                     <h4>
                                         <a href="public/pet.php?id=${pet.id}" class="text-decoration-none text-dark">
                                             ${escapeHtml(pet.nome)}
@@ -2599,6 +2730,16 @@
 
                         popularRacas(selectEspecie ? selectEspecie.value : "");
 
+                        const listaCidades = document.getElementById("listaCidadesAdocao");
+                        if (listaCidades && Array.isArray(dados.cidades)) {
+                            listaCidades.innerHTML = "";
+                            dados.cidades.forEach(function (cidade) {
+                                const option = document.createElement("option");
+                                option.value = cidade;
+                                listaCidades.appendChild(option);
+                            });
+                        }
+
                     });
 
             }
@@ -2695,8 +2836,12 @@
                 }
             });
 
-            if (selectCidade) {
-                selectCidade.addEventListener("change", buscarPets);
+            if (inputCidade) {
+                let timeoutBusca;
+                inputCidade.addEventListener("input", function () {
+                    clearTimeout(timeoutBusca);
+                    timeoutBusca = setTimeout(buscarPets, 400);
+                });
             }
 
             if (btnLimpar) {
@@ -2705,8 +2850,8 @@
                         form.reset();
                     }
 
-                    if (selectCidade) {
-                        selectCidade.value = "Selecione sua cidade";
+                    if (inputCidade) {
+                        inputCidade.value = "";
                     }
 
                     if (selectEspecie) {
@@ -2731,52 +2876,43 @@
     </script>
 
 
-    <!-- saved from url=(0061)file:///C:/Users/vindi/Downloads/Fix_posicao_sugestoes_3.html -->
-    <html>
+    <!-- Reposiciona a lista de sugestões de busca junto do campo de texto -->
+    <script>
+        (function () {
 
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script>
-            (function () {
+            function corrigirPosicaoListas() {
 
-                function corrigirPosicaoListas() {
+                document.querySelectorAll('.lista-sugestoes').forEach(function (lista) {
 
-                    document.querySelectorAll('.lista-sugestoes').forEach(function (lista) {
+                    const campo = lista.parentElement ? lista.parentElement.querySelector('input') : null;
 
-                        const campo = lista.parentElement ? lista.parentElement.querySelector('input') : null;
+                    if (!campo) return;
 
-                        if (!campo) return;
+                    const rect = campo.getBoundingClientRect();
 
-                        const rect = campo.getBoundingClientRect();
+                    lista.style.position = 'fixed';
+                    lista.style.top = rect.bottom + 'px';
+                    lista.style.left = rect.left + 'px';
+                    lista.style.width = rect.width + 'px';
+                    lista.style.zIndex = '99999';
+                    lista.style.margin = '4px 0 0 0';
 
-                        lista.style.position = 'fixed';
-                        lista.style.top = rect.bottom + 'px';
-                        lista.style.left = rect.left + 'px';
-                        lista.style.width = rect.width + 'px';
-                        lista.style.zIndex = '99999';
-                        lista.style.margin = '4px 0 0 0';
+                });
 
-                    });
+            }
 
-                }
+            // Reposiciona toda vez que alguém digita em qualquer campo
+            // (dá um tempinho pro script.js criar/atualizar a lista antes)
+            document.addEventListener('input', function () {
+                setTimeout(corrigirPosicaoListas, 10);
+            }, true);
 
-                // Reposiciona toda vez que alguém digita em qualquer campo
-                // (dá um tempinho pro script.js criar/atualizar a lista antes)
-                document.addEventListener('input', function () {
-                    setTimeout(corrigirPosicaoListas, 10);
-                }, true);
+            // Reposiciona também se a pessoa rolar a página ou redimensionar a janela
+            window.addEventListener('scroll', corrigirPosicaoListas, true);
+            window.addEventListener('resize', corrigirPosicaoListas);
 
-                // Reposiciona também se a pessoa rolar a página ou redimensionar a janela
-                window.addEventListener('scroll', corrigirPosicaoListas, true);
-                window.addEventListener('resize', corrigirPosicaoListas);
-
-            })();
-        </script>
-    </head>
-
-    <body></body>
-
-    </html>
+        })();
+    </script>
     <!-- ========================================================= -->
     <!-- MOSTRA BOTÕES DO HEADER SÓ PARA USUÁRIOS LOGADOS -->
     <!-- ========================================================= -->
@@ -2797,12 +2933,51 @@
                             }
                         });
 
+                        // Logado: some com Login/Cadastro, mostra o dropdown de Perfil
+                        const btnLogin = document.getElementById("btnHeaderLogin");
+                        const btnCadastro = document.getElementById("btnHeaderCadastro");
+                        const btnPerfil = document.getElementById("btnHeaderPerfil");
+                        if (btnLogin) btnLogin.style.display = "none";
+                        if (btnCadastro) btnCadastro.style.display = "none";
+                        if (btnPerfil) btnPerfil.style.display = "";
+
+                        atualizarBadge("app/ajax/contar_favoritos.php", "badgeFavoritos");
+                        atualizarBadge("app/ajax/contar_notificacoes.php", "badgeNotificacoes");
+
+                        if (window.PetfinderLocalizacao) {
+                            window.PetfinderLocalizacao.solicitarSeNecessario();
+                        }
+
                     }
 
                 })
                 .catch(function () {
                     // se der erro na checagem, mantém os botões escondidos por segurança
                 });
+
+            // Busca o total de um contador (favoritos, notificações, etc.) e
+            // mostra o número real no balãozinho, escondendo quando for zero
+            // pra não poluir a tela com um "0" sem necessidade.
+            function atualizarBadge(url, idBadge) {
+                fetch(url)
+                    .then(function (resposta) { return resposta.json(); })
+                    .then(function (dados) {
+                        const badge = document.getElementById(idBadge);
+                        if (!badge) {
+                            return;
+                        }
+                        const total = dados && dados.total ? parseInt(dados.total, 10) : 0;
+                        if (total > 0) {
+                            badge.textContent = total > 99 ? "99+" : String(total);
+                            badge.style.display = "";
+                        } else {
+                            badge.style.display = "none";
+                        }
+                    })
+                    .catch(function () {
+                        // se der erro, mantém o badge escondido
+                    });
+            }
 
         })();
     </script>

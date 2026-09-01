@@ -1,70 +1,60 @@
-<?php 
-// 1. CONEXÃO COM O BANCO DO PROJETO 1
-require_once __DIR__ . '/../app/Models/Usuario.php'; 
-$pdo = Database::conectar(); 
+<?php
+require_once __DIR__ . '/../app/Models/Usuario.php';
+$pdo = Database::conectar();
 
-session_start(); 
+session_start();
 
 // 2. SEGURANÇA E VALIDAÇÃO DE ACESSO
-if (!isset($_SESSION['user_id']) || !isset($_GET['org_id'])) { 
-    header("Location: login.php"); 
-    exit(); 
-} 
-
-// Captura o ID da organização da URL. Se vier vazio, menor ou igual a zero, assume o ID 1 da clinicapet por segurança!
-$orgId = (int)($_GET['org_id'] ?? 1);
-if ($orgId <= 0) {
-    $orgId = 1;
+if (!isset($_SESSION['usuario_id']) || !isset($_GET['empresa_id'])) {
+    header("Location: login.php");
+    exit();
 }
 
-$userId = $_SESSION['user_id'];
- 
-$authorized = false; 
-$orgData = null; 
+$empresaId = (int)($_GET['empresa_id'] ?? 0);
+$usuarioId = (int)$_SESSION['usuario_id'];
 
-// ====== VALIDAÇÃO INTELIGENTE DE ACESSO COMPATÍVEL ======
-if ((isset($_SESSION['perfil_tipo']) && $_SESSION['perfil_tipo'] === 'empresa') || (isset($_SESSION['usuario_id']) && (int)$_SESSION['usuario_id'] === 16)) {
-    // Chave Mestra Absoluta: Como você é o Sérgio (ID 16), o acesso à clinicapet (ID 1) está 100% liberado sempre!
-    $authorized = true; 
-    $orgData = [
-        'organization_id' => 1,
-        'org_name' => 'clinicapet',
-        'org_status' => 'Ativo',
-        'role_name' => 'Administrador Master'
-    ];
-} elseif (isset($_SESSION['is_impersonating']) && $_SESSION['is_impersonating'] === true && (int)$_SESSION['impersonated_org_id'] === $orgId) { 
+$authorized = false;
+$empresaData = null;
 
-    $authorized = true; 
-    $stmtOrgCheck = $pdo->prepare("SELECT name as org_name, status as org_status FROM organizations WHERE id = ?"); 
-    $stmtOrgCheck->execute([$orgId]); 
-    $dbOrg = $stmtOrgCheck->fetch(); 
-    $orgData = [ 
-        'organization_id' => $orgId, 
-        'org_name' => $dbOrg['org_name'] ?? 'Clínica', 
-        'org_status' => $dbOrg['org_status'] ?? 'Ativo', 
-        'role_name' => 'Suporte Técnico (Master Admin)' 
-    ]; 
-} else { 
-    if (isset($_SESSION['user_bindings']) && is_array($_SESSION['user_bindings'])) {
-        foreach ($_SESSION['user_bindings'] as $binding) { 
-            if ((int)($binding['organization_id'] ?? 0) === $orgId) { 
-                $authorized = true; 
-                $orgData = $binding; 
-                break; 
-            } 
-        } 
+// ====== VALIDAÇÃO DE ACESSO VIA EMPRESA_EQUIPE ======
+$stmtAcesso = $pdo->prepare("
+    SELECT e.id AS empresa_id, e.nome_fantasia, e.ativo, e.status_pagamento, ee.papel
+    FROM empresa_equipe ee
+    JOIN empresas e ON e.id = ee.empresa_id
+    WHERE ee.empresa_id = ? AND ee.usuario_id = ? AND ee.status = 'ativo'
+");
+$stmtAcesso->execute([$empresaId, $usuarioId]);
+$empresaData = $stmtAcesso->fetch();
+
+if ($empresaData) {
+    $authorized = true;
+} elseif (isset($_SESSION['is_impersonating']) && $_SESSION['is_impersonating'] === true && (int)($_SESSION['impersonated_empresa_id'] ?? 0) === $empresaId) {
+    $stmtEmpCheck = $pdo->prepare("SELECT id AS empresa_id, nome_fantasia, ativo, status_pagamento FROM empresas WHERE id = ?");
+    $stmtEmpCheck->execute([$empresaId]);
+    $dbEmp = $stmtEmpCheck->fetch();
+    if ($dbEmp) {
+        $authorized = true;
+        $empresaData = [
+            'empresa_id' => $dbEmp['empresa_id'],
+            'nome_fantasia' => $dbEmp['nome_fantasia'],
+            'ativo' => $dbEmp['ativo'],
+            'status_pagamento' => $dbEmp['status_pagamento'],
+            'papel' => 'suporte técnico (via impersonate)'
+        ];
     }
-} 
+}
 // ========================================================
- 
 
+if (!$authorized) {
+    die("<h1 style='color:red; text-align:center; margin-top:50px;'>🚨 Erro de Segurança: Você não tem permissão para acessar os dados desta empresa.</h1>");
+}
 
-if (!$authorized) { 
-    die("<h1 style='color:red; text-align:center; margin-top:50px;'>🚨 Erro de Segurança: Você não tem permissão para acessar os dados desta Organização.</h1>"); 
-} 
-
-$orgStatusAtual = $orgData['org_status'] ?? 'Ativo';
-$readOnly = ($orgStatusAtual === 'Atrasado' || $orgStatusAtual === 'Suspenso'); 
+// Empresa fica em modo somente-leitura se estiver inativa OU com o
+// faturamento atrasado/suspenso (empresas.status_pagamento).
+$statusPagamento = $empresaData['status_pagamento'] ?? 'Ativo';
+$readOnly = empty($empresaData['ativo']) || $statusPagamento !== 'Ativo';
+$papelUsuario = $empresaData['papel'] ?? '';
+$podeGerenciarFaturamento = in_array($papelUsuario, ['proprietario', 'administrador', 'suporte técnico (via impersonate)'], true);
 
 // 3. INCLUI O CABEÇALHO E MENU DO PROJETO 1
 include __DIR__ . '/../app/Includes/header.php'; 
@@ -72,34 +62,70 @@ include __DIR__ . '/../app/Includes/menu.php';
 ?>
 
 <!-- CONTEÚDO DO PAINEL B2B -->
-<main class="container" style="margin-top: 30px; margin-bottom: 50px; margin-left: 280px; padding: 20px;">
+<main class="container" style="margin-top: 100px !important; margin-bottom: 50px; margin-left: 240px; padding: 20px; display: block !important;">
 
     <h2>Painel Corporativo B2B</h2>
-    <p>Organização: <strong><?php echo htmlspecialchars($orgData['org_name'] ?? 'Minha Clínica'); ?></strong> (Perfil: <?php echo htmlspecialchars($orgData['role_name'] ?? 'Administrador'); ?>)</p>
+    <p>
+        Empresa: <strong><?php echo htmlspecialchars($empresaData['nome_fantasia'] ?? 'Minha Empresa'); ?></strong>
+        (Perfil: <?php echo htmlspecialchars(ucfirst($empresaData['papel'] ?? 'colaborador')); ?>)
+        <?php
+            $corStatus = ['Ativo' => '#2ecc71', 'Atrasado' => '#f39c12', 'Suspenso' => '#e74c3c'][$statusPagamento] ?? '#95a5a6';
+        ?>
+        <span style="background: <?php echo $corStatus; ?>; color: white; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; margin-left: 8px;">
+            💳 <?php echo htmlspecialchars($statusPagamento); ?>
+        </span>
+    </p>
 
-    
+    <?php if ($readOnly): ?>
+        <div class="mensagem erro" style="margin-bottom: 20px;">
+            ⚠️ Esta empresa está em modo somente-leitura porque o faturamento está <strong><?php echo htmlspecialchars($statusPagamento); ?></strong>.
+            Novos registros clínicos ficam bloqueados até a situação ser regularizada.
+        </div>
+    <?php endif; ?>
+
+    <?php if ($podeGerenciarFaturamento): ?>
+        <div class="org-item" style="margin-bottom: 25px;">
+            <strong style="display:block; margin-bottom:10px;">💳 Simulador de Faturamento (teste)</strong>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <a href="simular_faturamento.php?empresa_id=<?php echo $empresaId; ?>&status=Ativo" class="btn-acao" style="background:#2ecc71; color:white;">Marcar Ativo</a>
+                <a href="simular_faturamento.php?empresa_id=<?php echo $empresaId; ?>&status=Atrasado" class="btn-acao" style="background:#f39c12; color:white;">Marcar Atrasado</a>
+                <a href="simular_faturamento.php?empresa_id=<?php echo $empresaId; ?>&status=Suspenso" class="btn-acao" style="background:#e74c3c; color:white;">Marcar Suspenso</a>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <!-- BOTÃO NOVO ATENDIMENTO --> 
     <div style="margin-bottom: 30px;">
         <?php if ($readOnly): ?> 
-            <a href="#" class="btn btn-disabled" style="background: #ccc; color: #666; cursor: not-allowed; padding: 10px 20px; text-decoration: none; border-radius: 4px;" onclick="alert('Funcionalidade bloqueada por inadimplência.')">➕ Novo Registro Clínico</a> 
+            <a href="#" class="btn btn-disabled" style="background: #ccc; color: #666; cursor: not-allowed; padding: 10px 20px; text-decoration: none; border-radius: 4px;" onclick="alert('Empresa inativa no momento.')">➕ Novo Registro Clínico</a> 
         <?php else: ?> 
-            <a href="novo_prontuario.php?org_id=<?php echo $orgId; ?>" class="btn" style="background: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">➕ Novo Registro Clínico</a> 
+            <a href="novo_prontuario.php?empresa_id=<?php echo $empresaId; ?>" class="btn" style="background: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block; margin-right: 10px;">➕ Novo Registro Clínico</a> 
         <?php endif; ?> 
+        <a href="meus_produtos.php?empresa_id=<?php echo $empresaId; ?>" class="btn" style="background: #2ecc71; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">🛒 Catálogo de Produtos/Serviços</a>
     </div>
 
     <!-- HISTÓRICO EM FORMATO DE CARDS MOBILE --> 
     <h3 class="section-title">📋 Prontuários (Append-Only)</h3> 
     
     <?php 
-        // Consulta adaptada à estrutura exata do seu banco de dados
+        // Prontuário se liga à empresa através da consulta (consultas.empresa_id),
+        // não mais pela coluna legada prontuarios.organizacao_id.
+        //
+        // Mostra só a VERSÃO ATUAL de cada prontuário: exclui qualquer linha que
+        // já tenha sido retificada (ou seja, que apareça como retificacao_de_id
+        // de outra linha mais nova). O original nunca é apagado, só deixa de
+        // aparecer na lista principal — dá pra ver o histórico completo clicando.
     $stmtHistory = $pdo->prepare(" 
     SELECT pr.* 
     FROM prontuarios pr 
-    WHERE pr.organizacao_id = ? 
+    JOIN consultas c ON c.id = pr.consulta_id
+    WHERE c.empresa_id = ?
+    AND pr.id NOT IN (
+        SELECT retificacao_de_id FROM prontuarios WHERE retificacao_de_id IS NOT NULL
+    )
     ORDER BY pr.id DESC 
 "); 
-$stmtHistory->execute([$orgId]); 
+$stmtHistory->execute([$empresaId]); 
 $historicos = $stmtHistory->fetchAll(); 
 
 
@@ -108,7 +134,11 @@ $historicos = $stmtHistory->fetchAll();
     ?> 
     <div class="record-card" style="background: white; border: 1px solid #eee; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);"> 
         <div class="record-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px;"> 
-            <h4 style="margin: 0;">📋 <strong>Atendimento #<?php echo $reg['id']; ?></strong> (Consulta: #<?php echo $reg['consulta_id']; ?>)</h4> 
+            <h4 style="margin: 0;">📋 <strong>Atendimento #<?php echo $reg['id']; ?></strong> (Consulta: #<?php echo $reg['consulta_id']; ?>)
+                <?php if (!empty($reg['retificacao_de_id'])): ?>
+                    <span class="badge-status" style="background:#f39c12; margin-left:6px;">retificado</span>
+                <?php endif; ?>
+            </h4> 
         </div> 
         <div class="record-body"> 
             <p style="margin: 5px 0;"><strong>Diagnóstico:</strong> <?php echo htmlspecialchars($reg['diagnostico'] ?? 'Não informado'); ?></p> 
@@ -117,8 +147,11 @@ $historicos = $stmtHistory->fetchAll();
             <?php if (!empty($reg['recomendacoes'])): ?>
                 <p style="margin: 5px 0; font-size: 13px; color: #777;"><strong>Recomendações:</strong> <?php echo htmlspecialchars($reg['recomendacoes']); ?></p>
             <?php endif; ?>
+            <?php if (!empty($reg['retificacao_de_id'])): ?>
+                <a href="historico_prontuario.php?empresa_id=<?php echo $empresaId; ?>&prontuario_id=<?php echo $reg['id']; ?>" style="color:#7f8c8d; text-decoration:none; font-size:13px; display:inline-block; margin-top:8px;">🕒 Ver histórico de versões</a>
+            <?php endif; ?>
             <?php if (!$readOnly): ?> 
-                <a href="retificar_prontuario.php?prontuario_id=<?php echo $reg['id']; ?>&org_id=<?php echo $orgId; ?>" class="btn-rectify" style="color: #e67e22; text-decoration: none; font-size: 14px; display: inline-block; margin-top: 10px;">✏️ Retificar Registro</a> 
+                <a href="retificar_prontuario.php?prontuario_id=<?php echo $reg['id']; ?>&empresa_id=<?php echo $empresaId; ?>" class="btn-rectify" style="color: #e67e22; text-decoration: none; font-size: 14px; display: inline-block; margin-top: 10px; margin-left: 12px;">✏️ Retificar Registro</a> 
             <?php endif; ?> 
         </div> 
     </div> 
@@ -126,7 +159,7 @@ $historicos = $stmtHistory->fetchAll();
         endforeach;
     else:
     ?>
-        <p style="color: #777; font-style: italic;">Nenhum prontuário registrado para esta organização ainda.</p>
+        <p style="color: #777; font-style: italic;">Nenhum prontuário registrado para esta empresa ainda.</p>
     <?php
     endif;
     ?>

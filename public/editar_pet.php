@@ -112,25 +112,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
+$tituloPagina = "Editar Pet";
+
 ?>
-
-<!DOCTYPE html>
-
-<html lang="pt-BR">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Editar Pet</title>
-
-<link rel="stylesheet" href="../assets/css/style.css">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-
-</head>
-
-<body>
 
 <?php require_once "../app/Includes/header.php"; ?>
 <?php require_once "../app/Includes/menu.php"; ?>
@@ -173,12 +157,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <?php if (!empty($imagensExistentes)): ?>
                 <div class="d-flex flex-wrap gap-2 mb-3">
                     <?php foreach ($imagensExistentes as $imagem): ?>
-                        <img
-                            src="../uploads/pets/<?= htmlspecialchars($imagem["arquivo"] ?? "") ?>"
-                            width="70"
-                            height="70"
-                            style="object-fit:cover; border-radius:8px;"
-                            alt="Foto adicional">
+                        <div style="position:relative; width:70px; height:70px;">
+                            <img
+                                src="../uploads/pets/<?= htmlspecialchars($imagem["arquivo"] ?? "") ?>"
+                                width="70"
+                                height="70"
+                                style="object-fit:cover; border-radius:8px;"
+                                alt="Foto adicional">
+                            <a href="excluir_imagem_pet.php?pet_id=<?= $petId; ?>&imagem_id=<?= (int) $imagem['id']; ?>"
+                               onclick="return confirm('Remover esta foto?');"
+                               title="Remover foto"
+                               style="position:absolute; top:-6px; right:-6px; background:#e74c3c; color:white; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; text-decoration:none; line-height:1;">✕</a>
+                        </div>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
@@ -206,6 +196,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 id="nome"
                 name="nome"
                 class="form-control"
+                autocomplete="off"
                 required
                 value="<?= htmlspecialchars($pet["nome"] ?? '') ?>">
 

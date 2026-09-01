@@ -186,6 +186,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <title>Cadastre sua Empresa - PetFinder Brasil</title>
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="../assets/css/style.css">
 <link rel="stylesheet" href="../assets/css/dashboard.css">
 
@@ -232,7 +234,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="col-md-6">
         <div class="grupo-form">
             <label for="nome">Seu nome *</label>
-            <input type="text" id="nome" name="nome" class="form-control" maxlength="150" required
+            <input type="text" id="nome" name="nome" class="form-control" maxlength="150" autocomplete="off" required
                 value="<?= htmlspecialchars($_POST['nome'] ?? '') ?>">
         </div>
     </div>
@@ -240,7 +242,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="col-md-6">
         <div class="grupo-form">
             <label for="sobrenome">Sobrenome *</label>
-            <input type="text" id="sobrenome" name="sobrenome" class="form-control" maxlength="150" required
+            <input type="text" id="sobrenome" name="sobrenome" class="form-control" maxlength="150" autocomplete="off" required
                 value="<?= htmlspecialchars($_POST['sobrenome'] ?? '') ?>">
         </div>
     </div>
@@ -297,7 +299,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="col-md-6">
         <div class="grupo-form">
             <label for="nome_fantasia">Nome Fantasia *</label>
-            <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" maxlength="180" required
+            <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" maxlength="180" autocomplete="off" required
                 value="<?= htmlspecialchars($_POST['nome_fantasia'] ?? '') ?>">
         </div>
     </div>
@@ -341,7 +343,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <div class="grupo-form">
     <label for="descricao">Descrição</label>
-    <textarea id="descricao" name="descricao" rows="3" class="form-control"
+    <textarea id="descricao" name="descricao" rows="3" class="form-control" autocomplete="off"
         placeholder="Conte um pouco sobre a empresa e os serviços oferecidos"><?= htmlspecialchars($_POST['descricao'] ?? '') ?></textarea>
 </div>
 
@@ -511,6 +513,8 @@ if (cnpjInput) {
 }
 
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

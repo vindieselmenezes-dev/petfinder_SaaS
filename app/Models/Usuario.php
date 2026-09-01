@@ -28,18 +28,26 @@ class Usuario
     /**
      * Verifica se o e-mail já existe
      */
-    public function emailExiste(string $email): bool
+    public function emailExiste(string $email, ?int $excetoId = null): bool
     {
         $sql = "SELECT id
                 FROM usuarios
-                WHERE email = :email
-                LIMIT 1";
+                WHERE email = :email";
+
+        if ($excetoId !== null) {
+            $sql .= " AND id != :exceto_id";
+        }
+
+        $sql .= " LIMIT 1";
 
         $stmt = $this->pdo->prepare($sql);
 
-        $stmt->execute([
-            ':email' => $email
-        ]);
+        $params = [':email' => $email];
+        if ($excetoId !== null) {
+            $params[':exceto_id'] = $excetoId;
+        }
+
+        $stmt->execute($params);
 
         return $stmt->fetch() !== false;
     }
@@ -209,5 +217,69 @@ class Usuario
         $stmt = $this->pdo->prepare($sql);
 
         return $stmt->execute([':id' => $id]);
+    }
+
+    /**
+     * Salva a última localização (GPS) conhecida do usuário.
+     * Usada tanto pro raio de 5km de alertas de pet perdido quanto
+     * pra indicar empresas/serviços próximos.
+     */
+    public function salvarLocalizacao(int $usuarioId, float $latitude, float $longitude): bool
+    {
+        $sql = "
+            UPDATE usuarios
+            SET latitude = :latitude, longitude = :longitude
+            WHERE id = :id
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        return $stmt->execute([
+            ':latitude'  => $latitude,
+            ':longitude' => $longitude,
+            ':id'        => $usuarioId,
+        ]);
+    }
+
+    /**
+     * Atualiza os dados básicos de um usuário (uso administrativo)
+     */
+    public function atualizarDados(int $id, string $nome, string $sobrenome, string $email, ?string $telefone): bool
+    {
+        $sql = "
+            UPDATE usuarios
+            SET nome = :nome, sobrenome = :sobrenome, email = :email, telefone = :telefone
+            WHERE id = :id
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        return $stmt->execute([
+            ':nome'      => $nome,
+            ':sobrenome' => $sobrenome,
+            ':email'     => $email,
+            ':telefone'  => $telefone,
+            ':id'        => $id,
+        ]);
+    }
+
+    /**
+     * Lista os IDs de todos os administradores da plataforma (usados,
+     * por exemplo, pra notificar todo mundo quando um chamado é aberto).
+     * Considera perfis.tipo quando existir, senão cai pra usuarios.tipo_usuario
+     * (mesma regra de fallback usada no login).
+     */
+    public function listarIdsAdministradores(): array
+    {
+        $sql = "
+            SELECT DISTINCT u.id
+            FROM usuarios u
+            LEFT JOIN perfis p ON p.usuario_id = u.id
+            WHERE COALESCE(p.tipo, u.tipo_usuario) = 'administrador'
+        ";
+
+        $stmt = $this->pdo->query($sql);
+
+        return array_column($stmt->fetchAll(), 'id');
     }
 }

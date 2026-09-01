@@ -1,233 +1,624 @@
 /* ==========================================================
    PETFINDER BRASIL
    DASHBOARD ADMINISTRATIVO
+   Unificado com a identidade visual do site público
+   (mesmas variáveis de assets/css/style.css)
    ========================================================== */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --azul-escuro: #1B365D;
+    --azul-claro: #4FA3FF;
+    --verde: #2ECC71;
+    --laranja: #FF8C42;
+    --vermelho: #E74C3C;
+    --branco: #FFFFFF;
+    --cinza-claro: #F5F7FA;
+    --cinza: #E5E7EB;
+    --cinza-escuro: #2C3E50;
+    --texto: #343A40;
+    --preto: #1A1A1A;
+    --sombra: 0 10px 25px rgba(0, 0, 0, .08);
+    --sombra-leve: 0 2px 8px rgba(0, 0, 0, .06);
+    --transicao: .25s ease;
+    --raio: 12px;
 }
 
-body{
-
-    font-family:Arial, Helvetica, sans-serif;
-
-    background:#f5f7fb;
-
-    color:#333;
-
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.wrapper{
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--cinza-claro);
+    color: var(--texto);
+}
 
-    min-height:100vh;
-
+.wrapper {
+    min-height: 100vh;
 }
 
 /* ==========================================================
    TOPO
    ========================================================== */
 
-.topo{
-
-    height:80px;
-
-    background:#ffffff;
-
-    border-bottom:1px solid #e5e5e5;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:0 30px;
-
-    position:fixed;
-
-    left:0;
-
-    right:0;
-
-    top:0;
-
-    z-index:1000;
-
+.topo {
+    height: 80px;
+    background: var(--branco);
+    border-bottom: 1px solid var(--cinza);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--sombra-leve);
 }
 
-.logo-area h2{
-
-    color:#1B365D;
-
-    margin-bottom:5px;
-
+.logo-area h2 {
+    color: var(--azul-escuro);
+    margin-bottom: 2px;
+    font-weight: 700;
+    font-size: 20px;
 }
 
-.logo-area span{
-
-    color:#777;
-
-    font-size:14px;
-
+.logo-area h2 a {
+    color: inherit;
+    text-decoration: none;
 }
 
-.usuario-area{
+.logo-area span {
+    color: #777;
+    font-size: 13px;
+}
 
-    font-size:16px;
+.usuario-area {
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
+/* Botão de menu (hambúrguer), só aparece no mobile */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--azul-escuro);
+    cursor: pointer;
+    padding: 4px 8px;
 }
 
 /* ==========================================================
    MENU LATERAL
    ========================================================== */
 
-.sidebar{
-
-    position:fixed;
-
-    top:80px;
-
-    left:0;
-
-    width:240px;
-
-    bottom:0;
-
-    background:#1B365D;
-
-    padding-top:20px;
-
+.sidebar {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 240px;
+    bottom: 0;
+    background: var(--azul-escuro);
+    padding: 20px 0;
+    overflow-y: auto;
+    transition: transform var(--transicao);
+    z-index: 900;
 }
 
-.sidebar ul{
-
-    list-style:none;
-
+.sidebar ul {
+    list-style: none;
 }
 
-.sidebar li{
-
-    margin-bottom:5px;
-
+.sidebar li {
+    margin-bottom: 2px;
 }
 
-.sidebar a{
-
-    display:block;
-
-    color:#fff;
-
-    padding:15px 25px;
-
-    text-decoration:none;
-
-    transition:.3s;
-
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255, 255, 255, .85);
+    padding: 13px 25px;
+    text-decoration: none;
+    font-size: 14.5px;
+    border-left: 3px solid transparent;
+    transition: background var(--transicao), border-color var(--transicao), color var(--transicao);
 }
 
-.sidebar a:hover{
+.sidebar a:hover {
+    background: rgba(255, 255, 255, .08);
+    color: var(--branco);
+    border-left-color: var(--verde);
+}
 
-    background:#2ECC71;
+.sidebar li.ativo a,
+.sidebar a.ativo {
+    background: rgba(46, 204, 113, .15);
+    color: var(--branco);
+    border-left-color: var(--verde);
+    font-weight: 600;
+}
 
+/* Overlay escuro atrás do menu, só visível quando aberto no mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .45);
+    z-index: 800;
 }
 
 /* ==========================================================
    CONTEÚDO
    ========================================================== */
 
-.conteudo{
-
-    margin-left:240px;
-
-    margin-top:80px;
-
-    padding:35px;
-
+.conteudo,
+main.container {
+    margin-left: 240px !important;
+    margin-top: 100px !important;
+    padding: 30px !important;
+    display: block !important;
 }
 
-.conteudo h1{
-
-    margin-bottom:30px;
-
-    color:#1B365D;
-
+.conteudo h1,
+main.container h1,
+main.container h2 {
+    margin-bottom: 22px;
+    color: var(--azul-escuro);
+    font-weight: 700;
 }
 
 /* ==========================================================
-   CARDS
+   CARDS (visão geral / dashboard)
    ========================================================== */
 
-.cards{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-
-    gap:25px;
-
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
 }
 
-.card{
-
-    background:#fff;
-
-    border-radius:15px;
-
-    padding:25px;
-
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-
-    transition:.3s;
-
+.card {
+    background: var(--branco);
+    border-radius: var(--raio);
+    padding: 25px;
+    box-shadow: var(--sombra);
+    transition: transform var(--transicao);
 }
 
-.card:hover{
-
-    transform:translateY(-5px);
-
+.card:hover {
+    transform: translateY(-4px);
 }
 
-.icone{
-
-    font-size:40px;
-
-    margin-bottom:15px;
-
+.icone {
+    font-size: 36px;
+    margin-bottom: 12px;
 }
 
-.numero{
+.numero {
+    margin-top: 12px;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--verde);
+}
 
-    margin-top:15px;
+/* ==========================================================
+   FORMULÁRIOS — .grupo-form
+   (usado em cadastrar/editar pet, produto, empresa e afins;
+   antes não existia definição nenhuma pra essa classe)
+   ========================================================== */
 
-    font-size:32px;
+.grupo-form {
+    margin-bottom: 18px;
+}
 
-    font-weight:bold;
+.grupo-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--cinza-escuro);
+    font-size: 14px;
+}
 
-    color:#2ECC71;
+.grupo-form .form-control,
+.grupo-form .form-select,
+.grupo-form textarea {
+    border-radius: 8px;
+    border: 1px solid var(--cinza);
+    padding: 10px 14px;
+}
 
+.grupo-form .form-control:focus,
+.grupo-form .form-select:focus {
+    border-color: var(--azul-claro);
+    box-shadow: 0 0 0 3px rgba(79, 163, 255, .15);
+}
+
+.formulario-cadastro,
+.formulario-endereco {
+    background: var(--branco);
+    border-radius: var(--raio);
+    padding: 30px;
+    box-shadow: var(--sombra);
+    margin-bottom: 25px;
+}
+
+.cabecalho {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.cabecalho h1 {
+    color: var(--azul-escuro);
+}
+
+/* ==========================================================
+   MENSAGENS DE FEEDBACK (sucesso / erro)
+   ========================================================== */
+
+.mensagem {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    border: 1px solid transparent;
+}
+
+.mensagem.sucesso {
+    background: #e8f9f0;
+    color: #1a8449;
+    border-color: #b7ecd0;
+}
+
+.mensagem.erro {
+    background: #fdecea;
+    color: #b02a1f;
+    border-color: #f6c4bf;
+}
+
+/* ==========================================================
+   TABELAS (ex: meus pets, meus produtos)
+   ========================================================== */
+
+.tabela-pets {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--branco);
+    border-radius: var(--raio);
+    overflow: hidden;
+    box-shadow: var(--sombra-leve);
+}
+
+.tabela-pets thead {
+    background: var(--azul-escuro);
+}
+
+.tabela-pets thead th {
+    color: var(--branco);
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.tabela-pets tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--cinza);
+    font-size: 14.5px;
+    vertical-align: middle;
+}
+
+.tabela-pets tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabela-pets tbody tr {
+    transition: background-color .15s ease;
+}
+
+.tabela-pets tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Botões de ação dentro das tabelas */
+.btn-acao,
+.btn-editar,
+.btn-excluir {
+    display: inline-block;
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    transition: opacity var(--transicao), transform .1s ease;
+}
+
+.btn-acao:hover,
+.btn-editar:hover,
+.btn-excluir:hover {
+    opacity: .85;
+    transform: translateY(-1px);
+}
+
+.btn-editar {
+    background: var(--azul-claro);
+    color: var(--branco);
+}
+
+.btn-excluir {
+    background: var(--vermelho);
+    color: var(--branco);
+    margin-left: 6px;
+}
+
+.btn-rectify {
+    color: var(--laranja);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.btn-rectify:hover {
+    text-decoration: underline;
+}
+
+.btn-impersonate {
+    background: var(--laranja);
+    color: var(--branco);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-disabled {
+    background: var(--cinza) !important;
+    color: #888 !important;
+    cursor: not-allowed !important;
+}
+
+/* ==========================================================
+   BADGES DE STATUS
+   ========================================================== */
+
+.badge-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--branco);
+}
+
+.badge-com-tutor {
+    background: var(--verde);
+}
+
+.badge-perdido {
+    background: var(--vermelho);
+}
+
+.badge-para-adocao {
+    background: var(--laranja);
+}
+
+.badge-encontrado {
+    background: var(--azul-claro);
+}
+
+.badge-adotado {
+    background: var(--cinza-escuro);
+}
+
+.type-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    color: var(--branco);
+    background: #9b59b6;
+    font-weight: 600;
+}
+
+/* ==========================================================
+   CARDS DE PRODUTO / VITRINE
+   ========================================================== */
+
+.product-card {
+    background: var(--branco);
+    padding: 20px;
+    border-radius: var(--raio);
+    margin-bottom: 15px;
+    box-shadow: var(--sombra-leve);
+    border-left: 5px solid var(--verde);
+}
+
+.price {
+    font-size: 18px;
+    color: var(--verde);
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+.miniatura-produto {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.nav-btn {
+    display: block;
+    text-align: center;
+    background: var(--azul-claro);
+    color: var(--branco);
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    margin-top: 20px;
+    transition: background var(--transicao);
+}
+
+.nav-btn:hover {
+    background: var(--azul-escuro);
+}
+
+/* ==========================================================
+   PRONTUÁRIO / PAINEL B2B
+   ========================================================== */
+
+.record-card {
+    background: var(--branco);
+    border: 1px solid var(--cinza);
+    padding: 18px;
+    border-radius: var(--raio);
+    margin-bottom: 15px;
+    box-shadow: var(--sombra-leve);
+}
+
+.record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--cinza);
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.record-body p {
+    margin: 6px 0;
+}
+
+/* ==========================================================
+   ORGANIZAÇÕES / EMPRESAS (cards em minhas_empresas, suporte)
+   ========================================================== */
+
+.org-item {
+    background: var(--branco);
+    border-radius: var(--raio);
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: var(--sombra-leve);
+}
+
+/* ==========================================================
+   NOTIFICAÇÕES
+   ========================================================== */
+
+.notificacao-item {
+    background: var(--branco);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--sombra-leve);
+    border-left: 4px solid var(--azul-claro);
+}
+
+.notificacao-item.lida {
+    opacity: .6;
+    border-left-color: var(--cinza);
+}
+
+.notificacao-clicavel:hover {
+    box-shadow: var(--sombra);
+    transform: translateY(-2px);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+/* ==========================================================
+   LINKS AUXILIARES
+   ========================================================== */
+
+.back-link {
+    text-align: left;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.back-link a,
+.footer-link {
+    color: #7f8c8d;
+    text-decoration: none;
+}
+
+.back-link a:hover,
+.footer-link:hover {
+    text-decoration: underline;
 }
 
 /* ==========================================================
    RODAPÉ
    ========================================================== */
 
-.rodape{
-
-    margin-left:240px;
-
-    padding:20px;
-
-    text-align:center;
-
-    color:#777;
-
+.rodape {
+    margin-left: 240px;
+    padding: 20px;
+    text-align: center;
+    color: #777;
+    font-size: 13px;
 }
-/* FORÇA ESTABILIZAÇÃO GRÁFICA DO MOTOR DO NAVEGADOR - PARALISA A PISCADEIRA */
-.container, .wrapper, main, table, tr, td, div {
-    animation: none !important;
-    transition: none !important;
-    backface-visibility: hidden !important;
-    transform: translate3d(0, 0, 0) !important;
+
+/* ==========================================================
+   RESPONSIVO — MOBILE
+   ========================================================== */
+
+@media (max-width: 900px) {
+
+    .menu-toggle {
+        display: inline-block;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+        box-shadow: var(--sombra);
+    }
+
+    .sidebar.aberto {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.ativo {
+        display: block;
+    }
+
+    .conteudo,
+    main.container {
+        margin-left: 0 !important;
+        padding: 20px !important;
+    }
+
+    .rodape {
+        margin-left: 0;
+    }
+
+    .logo-area span {
+        display: none;
+    }
+
+    .tabela-pets {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+/* Reduz movimento pra quem tem essa preferência ativada no navegador */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
 }

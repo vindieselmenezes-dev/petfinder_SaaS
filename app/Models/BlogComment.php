@@ -62,7 +62,7 @@ class BlogComment
                 FROM blog_comentarios bc
                 JOIN usuarios u ON u.id = bc.usuario_id
                 WHERE bc.post_id = :post_id
-                ORDER BY bc.criado_em DESC";
+                ORDER BY bc.criado_em DESC, bc.id DESC";
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':post_id' => $postId]);

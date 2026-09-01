@@ -77,11 +77,24 @@ class FavoritoProduto
     public function listarPorUsuario(int $usuarioId): array
     {
         $sql = "
-            SELECT pf.id, p.id AS produto_id, p.nome, p.preco_venda, p.preco_promocional, p.ativo, pf.criado_em
+            SELECT
+                pf.id,
+                p.id AS produto_id,
+                p.nome,
+                p.preco_venda,
+                p.preco_promocional,
+                p.ativo,
+                (
+                    SELECT imagem FROM produto_imagens
+                    WHERE produto_id = p.id
+                    ORDER BY principal DESC, ordem ASC
+                    LIMIT 1
+                ) AS imagem_principal,
+                pf.criado_em
             FROM produto_favoritos pf
             INNER JOIN produtos p ON p.id = pf.produto_id
             WHERE pf.usuario_id = :usuario_id
-            ORDER BY pf.criado_em DESC
+            ORDER BY pf.criado_em DESC, pf.id DESC
         ";
 
         $stmt = $this->pdo->prepare($sql);

@@ -2,11 +2,6 @@
 declare(strict_types=1);
 session_start();
 
-if (!isset($_SESSION["usuario_id"])) {
-    header("Location: login.php");
-    exit;
-}
-
 require_once "../app/Controllers/PetController.php";
 require_once "../app/Models/Favorito.php";
 
@@ -16,10 +11,12 @@ $favoritoModel = new Favorito();
 $pets = $controller->listarPorStatus("Adotado");
 
 require_once "../app/Includes/header.php";
-require_once "../app/Includes/menu.php";
+if (isset($_SESSION['usuario_id'])) {
+    require_once "../app/Includes/menu.php";
+}
 ?>
 
-<main class="container" style="margin-top: 100px !important; margin-left: 280px !important; padding: 20px !important; display: block !important;">
+<main class="container" style="margin-top: 100px !important; margin-left: <?= isset($_SESSION['usuario_id']) ? '240px' : '0'; ?> !important; padding: 20px !important; display: block !important;">
 
     <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 40px auto 0 auto !important; position: relative !important; display: block !important;">
 
@@ -65,10 +62,15 @@ require_once "../app/Includes/menu.php";
                                 <?= !empty($pet["criado_em"]) ? date("d/m/Y", strtotime($pet["criado_em"])) : 'Não informado'; ?>
                             </td>
                             <td style="padding: 15px; text-align: center; white-space: nowrap;">
-                                <?php if ($favoritoModel->existe((int) $_SESSION['usuario_id'], (int) $pet['id'])): ?>
-                                    <a href="favoritar.php?pet_id=<?= (int) $pet['id']; ?>&acao=remover" style="display: inline-block; background: #e74c3c; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">⭐ Remover</a>
+                                <a href="pet.php?id=<?= (int) $pet['id']; ?>" style="display: inline-block; background: #3498db; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-bottom: 4px;">👁️ Ver Perfil</a>
+                                <?php if (isset($_SESSION['usuario_id'])): ?>
+                                    <?php if ($favoritoModel->existe((int) $_SESSION['usuario_id'], (int) $pet['id'])): ?>
+                                        <a href="favoritar.php?pet_id=<?= (int) $pet['id']; ?>&acao=remover" style="display: inline-block; background: #e74c3c; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">⭐ Remover</a>
+                                    <?php else: ?>
+                                        <a href="favoritar.php?pet_id=<?= (int) $pet['id']; ?>&acao=adicionar" style="display: inline-block; background: #f39c12; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">☆ Favoritar</a>
+                                    <?php endif; ?>
                                 <?php else: ?>
-                                    <a href="favoritar.php?pet_id=<?= (int) $pet['id']; ?>&acao=adicionar" style="display: inline-block; background: #f39c12; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">☆ Favoritar</a>
+                                    <a href="login.php" style="display: inline-block; background: #7f8c8d; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">Entrar pra favoritar</a>
                                 <?php endif; ?>
                             </td>
                         </tr>

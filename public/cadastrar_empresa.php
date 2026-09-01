@@ -108,25 +108,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 }
 
+$tituloPagina = "Cadastrar Empresa";
+
 ?>
-
-<!DOCTYPE html>
-
-<html lang="pt-BR">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Cadastrar Empresa</title>
-
-<link rel="stylesheet" href="../assets/css/style.css">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-
-</head>
-
-<body>
 
 <?php require_once "../app/Includes/header.php"; ?>
 
@@ -197,7 +181,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <div class="grupo-form">
     <label for="descricao">Descrição</label>
-    <textarea id="descricao" name="descricao" rows="4" class="form-control" placeholder="Conte um pouco sobre a empresa, os serviços oferecidos, diferenciais..."></textarea>
+    <textarea id="descricao" name="descricao" rows="4" class="form-control" autocomplete="off" placeholder="Conte um pouco sobre a empresa, os serviços oferecidos, diferenciais..."></textarea>
 </div>
 
 <hr>

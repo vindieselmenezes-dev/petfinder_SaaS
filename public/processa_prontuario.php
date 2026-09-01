@@ -1,87 +1,88 @@
 <?php 
-// 1. CONEXÃO COM O BANCO DO PROJETO 1
 require_once __DIR__ . '/../app/Models/Usuario.php'; 
+require_once __DIR__ . '/../app/Models/Veterinario.php';
+require_once __DIR__ . '/../app/Helpers/EmpresaAcesso.php';
+require_once __DIR__ . '/../app/Helpers/Csrf.php';
 $pdo = Database::conectar(); 
 
 session_start(); 
 
-// Verifica se o usuário está logado e se a requisição é do tipo POST
-if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') { 
+if (!isset($_SESSION['usuario_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') { 
     die("Acesso não autorizado."); 
 } 
 
-// CAPTURA INTELIGENTE DOS DADOS DO FORMULÁRIO (Linhas antigas corrigidas)
-$orgId        = (int)($_POST['organization_id'] ?? 1); // Pega o ID oculto enviado pela tela anterior!
-$petId        = (int)($_POST['pet_id'] ?? 1); 
+if (!Csrf::validar($_POST['csrf_token'] ?? null)) { 
+    die("Erro: token de segurança inválido ou expirado. Atualize a página e tente novamente."); 
+} 
+
+$empresaId    = (int)($_POST['empresa_id'] ?? 0);
+$petId        = (int)($_POST['pet_id'] ?? 0); 
+$motivo       = trim($_POST['motivo'] ?? "Atendimento Clínico");
 $diagnostico  = trim($_POST['diagnostico'] ?? ""); 
 $tratamento   = trim($_POST['tratamento'] ?? ""); 
-$medicamentos = trim($_POST['tratamento'] ?? ""); 
-$userId       = $_SESSION['user_id']; 
+$medicamentos = trim($_POST['medicamentos'] ?? ""); 
+$recomendacoes = trim($_POST['recomendacoes'] ?? "");
+$retorno      = trim($_POST['retorno'] ?? "") ?: null;
+$usuarioId    = (int)$_SESSION['usuario_id']; 
 
-if (empty($diagnostico) || empty($tratamento)) { 
-    die("Preencha todos os campos do atendimento clínico."); 
+if ($empresaId <= 0 || $petId <= 0 || empty($diagnostico)) { 
+    die("Preencha ao menos o pet e o diagnóstico do atendimento clínico."); 
 } 
+
+// Só quem é da equipe da empresa (dono, admin ou veterinário) pode registrar
+if (!EmpresaAcesso::temAcesso($pdo, $empresaId, $usuarioId, ['proprietario', 'administrador', 'veterinario'])) {
+    die("Erro: você não tem permissão pra registrar prontuários nesta empresa.");
+}
+
+// Precisa ter um registro de veterinário (CRMV) pra assinar a consulta
+$veterinarioModel = new Veterinario();
+$meuRegistroVet = $veterinarioModel->buscarPorUsuario($usuarioId);
+if (!$meuRegistroVet) {
+    die("Erro: complete seu cadastro de veterinário (CRMV) antes de registrar prontuários.");
+}
+$veterinarioId = (int)$meuRegistroVet['id'];
 
 try { 
     $pdo->beginTransaction(); 
 
-    // 1. BUSCA QUEM É O DONO (USUÁRIO) DO PET SELECIONADO
+    // 1. Busca o tutor (dono) real do pet selecionado
     $stmtDono = $pdo->prepare("SELECT usuario_id FROM pets WHERE id = ? LIMIT 1");
     $stmtDono->execute([$petId]);
     $petDono = $stmtDono->fetch(PDO::FETCH_ASSOC);
-    
-    // BLINDAGEM MÁGICA: Se o dono foi apagado ou não existir, amarra o pet ao seu ID 16 (Sérgio)
-    $idDonoReal = 16; 
-    if ($petDono && !empty($petDono['usuario_id'])) {
-        // Verifica se o dono do pet realmente existe na tabela de usuários para não dar erro
-        $stmtCheckUser = $pdo->prepare("SELECT id FROM usuarios WHERE id = ? LIMIT 1");
-        $stmtCheckUser->execute([$petDono['usuario_id']]);
-        if ($stmtCheckUser->fetch()) {
-            $idDonoReal = (int)$petDono['usuario_id'];
-        }
-    }
 
-    // 2. GERA A CONSULTA OBRIGATÓRIA INJETANDO O VETERINÁRIO (16) E O DONO VÁLIDO
-    $idVeterinarioValido = 16; 
-    
-         // 2. GERA A CONSULTA OBRIGATÓRIA INJETANDO O DONO, VETERINÁRIO, PET E TEXTOS PADRÃO
-    $idVeterinarioValido = 16; 
-    $motivoPadrao = "Atendimento Clínico - Emitido via Painel SaaS B2B";
-    
+    if (!$petDono) {
+        throw new Exception("Pet não encontrado.");
+    }
+    $tutorId = (int)$petDono['usuario_id'];
+
+    // 2. Cria a consulta (o prontuário sempre se liga a uma consulta)
     $stmtConsulta = $pdo->prepare("
-        INSERT INTO consultas (usuario_id, veterinario_id, pet_id, data_consulta, status, motivo, observacoes, criado_em) 
-        VALUES (?, ?, ?, CURRENT_DATE, 'Concluída', ?, ?, CURRENT_TIMESTAMP)
+        INSERT INTO consultas (usuario_id, veterinario_id, empresa_id, pet_id, data_consulta, hora_consulta, status, motivo, observacoes, criado_em) 
+        VALUES (?, ?, ?, ?, CURRENT_DATE, CURRENT_TIME, 'Concluída', ?, ?, CURRENT_TIMESTAMP)
     ");
-    $stmtConsulta->execute([$idDonoReal, $idVeterinarioValido, $petId, $motivoPadrao, $diagnostico]);
+    $stmtConsulta->execute([$tutorId, $veterinarioId, $empresaId, $petId, $motivo, $diagnostico]);
     $novoIdConsulta = $pdo->lastInsertId(); 
 
-
-    // 3. GRAVA O PRONTUÁRIO AMARRANDO A CONSULTA E A EMPRESA (organizacao_id)
+    // 3. Grava o prontuário, amarrado à consulta
     $stmtPront = $pdo->prepare("
-        INSERT INTO prontuarios (consulta_id, organizacao_id, diagnostico, tratamento, medicamentos, criado_em) 
-        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        INSERT INTO prontuarios (consulta_id, diagnostico, tratamento, medicamentos, recomendacoes, retorno, criado_em) 
+        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     "); 
-    // Ajustado para preencher 'diagnostico' e 'tratamento' de acordo com as colunas reais do banco 1
-    $stmtPront->execute([$novoIdConsulta, $orgId, $diagnostico, $tratamento, $medicamentos]); 
+    $stmtPront->execute([$novoIdConsulta, $diagnostico, $tratamento, $medicamentos, $recomendacoes, $retorno]); 
     $prontuarioId = $pdo->lastInsertId(); 
 
-        // 4. REGRA DO PRD: Alimentar a tabela de Trilha de Auditoria (Audit Log) 
-    // Injetamos o ID 1 do Administrador master do SaaS para respeitar a chave estrangeira da tabela antiga
-    $idAdminSaasValido = 1; 
-    
+    // 4. Trilha de auditoria
     $stmtAudit = $pdo->prepare("
-        INSERT INTO audit_logs (table_name, record_id, action, user_id, payload_anterior) 
-        VALUES ('prontuarios', ?, 'INSERT', ?, NULL)
+        INSERT INTO auditoria (usuario_id, tabela, acao, registro_id, detalhes) 
+        VALUES (?, 'prontuarios', 'INSERT', ?, ?)
     "); 
-    $stmtAudit->execute([$prontuarioId, $idAdminSaasValido]); 
-
+    $stmtAudit->execute([$usuarioId, $prontuarioId, "Prontuário registrado para o pet #$petId"]); 
 
     $pdo->commit(); 
 
-    // Alerta de sucesso e redirecionamento de volta para o seu Painel B2B
     echo "<script>
-        alert('Registro clínico salvo e blindado com sucesso!'); 
-        window.location.href='painel_b2b.php?org_id=" . $orgId . "';
+        alert('Registro clínico salvo com sucesso!'); 
+        window.location.href='painel_b2b.php?empresa_id=" . $empresaId . "';
     </script>"; 
 
 } catch (Exception $e) { 

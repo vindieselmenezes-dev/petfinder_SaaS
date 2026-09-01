@@ -52,7 +52,8 @@ if ($petId > 0) {
                     (int) $pet['usuario_id'],
                     'Seu pet foi favoritado! ⭐',
                     $nomeQuemFavoritou . ' favoritou o seu pet ' . $pet['nome'] . '.',
-                    'Sistema'
+                    'Sistema',
+                    'editar_pet.php?id=' . $petId
                 );
 
             }
@@ -63,5 +64,6 @@ if ($petId > 0) {
 
 }
 
-header('Location: meus_favoritos.php');
+$voltar = $_SERVER['HTTP_REFERER'] ?? 'meus_favoritos.php';
+header('Location: ' . $voltar);
 exit;

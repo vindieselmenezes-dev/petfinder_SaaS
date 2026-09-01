@@ -7,12 +7,18 @@ $mensagem = "";
 $tipoMensagem = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
-    $nome = trim($_POST['name'] ?? ''); 
+    $nomeCompleto = trim($_POST['name'] ?? '');
+    // A tela só pede "Nome Completo" num campo só, mas a coluna
+    // usuarios.sobrenome é obrigatória (NOT NULL) — separamos aqui pra
+    // não quebrar o INSERT abaixo.
+    $partesNome = preg_split('/\s+/', $nomeCompleto, 2);
+    $nome = $partesNome[0] ?? '';
+    $sobrenome = $partesNome[1] ?? '';
     $email = trim($_POST['email'] ?? ''); 
     $password = $_POST['password'] ?? ''; 
     $perfil = $_POST['perfil'] ?? 'tutor'; // administrador, empresa, tutor
 
-    if (empty($nome) || empty($email) || empty($password)) { 
+    if (empty($nomeCompleto) || empty($email) || empty($password)) { 
         $mensagem = "Por favor, preencha todos os campos."; 
         $tipoMensagem = "erro"; 
     } elseif (strlen($password) < 6) {
@@ -34,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
                 // Grava diretamente na tabela 'usuarios' usando as colunas reais do banco
-                $stmtUser = $pdo->prepare("INSERT INTO usuarios (nome, email, senha, tipo_usuario, status) VALUES (?, ?, ?, ?, 'ativo')");
-                $stmtUser->execute([$nome, $email, $hashedPassword, $perfil]);
+                $stmtUser = $pdo->prepare("INSERT INTO usuarios (nome, sobrenome, email, senha, tipo_usuario, status) VALUES (?, ?, ?, ?, ?, 'ativo')");
+                $stmtUser->execute([$nome, $sobrenome, $email, $hashedPassword, $perfil]);
                 $userId = $pdo->lastInsertId();
 
                 // Cria o registro assessório na tabela intermediária do SaaS

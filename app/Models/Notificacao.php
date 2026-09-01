@@ -23,11 +23,11 @@ class Notificacao
     /**
      * Cria uma nova notificação para um usuário
      */
-    public function criar(int $usuarioId, string $titulo, string $mensagem, string $tipo = 'Sistema'): bool
+    public function criar(int $usuarioId, string $titulo, string $mensagem, string $tipo = 'Sistema', ?string $link = null): bool
     {
         $sql = "
-            INSERT INTO notificacoes (usuario_id, titulo, mensagem, tipo, lida)
-            VALUES (:usuario_id, :titulo, :mensagem, :tipo, 0)
+            INSERT INTO notificacoes (usuario_id, titulo, mensagem, link, tipo, lida)
+            VALUES (:usuario_id, :titulo, :mensagem, :link, :tipo, 0)
         ";
 
         $stmt = $this->pdo->prepare($sql);
@@ -36,6 +36,7 @@ class Notificacao
             ':usuario_id' => $usuarioId,
             ':titulo'     => $titulo,
             ':mensagem'   => $mensagem,
+            ':link'       => $link,
             ':tipo'       => $tipo
         ]);
     }
@@ -46,10 +47,10 @@ class Notificacao
     public function listarPorUsuario(int $usuarioId, int $limite = 50): array
     {
         $sql = "
-            SELECT id, titulo, mensagem, tipo, lida, criado_em
+            SELECT id, titulo, mensagem, link, tipo, lida, criado_em
             FROM notificacoes
             WHERE usuario_id = :usuario_id
-            ORDER BY criado_em DESC
+            ORDER BY criado_em DESC, id DESC
             LIMIT :limite
         ";
 

@@ -188,7 +188,7 @@ class Produto
             LEFT JOIN subcategorias s ON s.id = p.subcategoria_id
             LEFT JOIN estoque est ON est.produto_id = p.id
             WHERE p.empresa_id = :empresa_id
-            ORDER BY p.criado_em DESC
+            ORDER BY p.criado_em DESC, p.id DESC
         ";
 
         $stmt = $this->pdo->prepare($sql);
@@ -350,7 +350,7 @@ class Produto
                 $sql .= " ORDER BY p.nome ASC ";
                 break;
             default:
-                $sql .= " ORDER BY p.destaque DESC, p.criado_em DESC ";
+                $sql .= " ORDER BY p.destaque DESC, p.criado_em DESC, p.id DESC ";
         }
 
         $stmt = $this->pdo->prepare($sql);

@@ -16,11 +16,19 @@ class Favorito
 
     private function garantirTabelaFavoritos(): void
     {
+        // A tabela real e oficial do sistema é `favoritos` — mais genérica,
+        // já preparada pra favoritar empresa/produto/veterinário além de pet.
+        // (Havia uma tabela paralela `pet_favoritos` sendo criada aqui por
+        // engano, onde nada nunca era escrito — listarPorUsuario() lia dela
+        // e por isso "Meus Favoritos" sempre aparecia vazio.)
         $sql = "
-            CREATE TABLE IF NOT EXISTS pet_favoritos (
+            CREATE TABLE IF NOT EXISTS favoritos (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 usuario_id INT NOT NULL,
                 pet_id INT NOT NULL,
+                empresa_id INT NULL,
+                produto_id INT NULL,
+                veterinario_id INT NULL,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE KEY uq_favorito (usuario_id, pet_id),
                 FOREIGN KEY (usuario_id)
@@ -93,23 +101,33 @@ class Favorito
     {
         $sql = "
             SELECT
-                pf.id,
+                f.id,
                 p.id AS pet_id,
                 p.nome,
                 p.foto,
                 p.status,
                 e.nome AS especie,
                 r.nome AS raca,
-                pf.criado_em
-            FROM pet_favoritos pf
+                (
+                    SELECT cidade FROM enderecos
+                    WHERE usuario_id = p.usuario_id
+                    ORDER BY principal DESC, id ASC
+                    LIMIT 1
+                ) AS cidade,
+                u.nome AS tutor_nome,
+                u.telefone AS tutor_telefone,
+                f.criado_em
+            FROM favoritos f
             INNER JOIN pets p
-                ON p.id = pf.pet_id
+                ON p.id = f.pet_id
             INNER JOIN especies e
                 ON e.id = p.especie_id
             INNER JOIN racas r
                 ON r.id = p.raca_id
-            WHERE pf.usuario_id = :usuario_id
-            ORDER BY pf.criado_em DESC
+            INNER JOIN usuarios u
+                ON u.id = p.usuario_id
+            WHERE f.usuario_id = :usuario_id
+            ORDER BY f.criado_em DESC, f.id DESC
         ";
 
         $stmt = $this->pdo->prepare($sql);

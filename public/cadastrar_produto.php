@@ -12,9 +12,12 @@ if (!isset($_SESSION["usuario_id"])) {
 require_once "../app/Controllers/EmpresaController.php";
 require_once "../app/Controllers/ProdutoController.php";
 require_once "../app/Helpers/Csrf.php";
+require_once "../app/Helpers/EmpresaAcesso.php";
+require_once "../app/Models/Usuario.php";
 
 $empresaController = new EmpresaController();
 $produtoController  = new ProdutoController();
+$pdo = Database::conectar();
 
 $usuarioId = (int) $_SESSION["usuario_id"];
 $empresaId = (int) ($_GET["empresa_id"] ?? 0);
@@ -23,11 +26,13 @@ $empresa = $empresaController->buscarPorId($empresaId);
 
 /*
 |--------------------------------------------------------------------------
-| Segurança: empresa precisa existir e pertencer ao usuário logado
+| Segurança: empresa precisa existir e o usuário precisa ser dono OU
+| fazer parte da equipe dela (empresa_equipe) — permite que mais de uma
+| pessoa administre a mesma empresa.
 |--------------------------------------------------------------------------
 */
 
-if ($empresa === null || (int) $empresa["usuario_id"] !== $usuarioId) {
+if ($empresa === null || !EmpresaAcesso::temAcesso($pdo, $empresaId, $usuarioId)) {
     $_SESSION["erro_empresa"] = "Empresa não encontrada.";
     header("Location: minhas_empresas.php");
     exit;
@@ -106,27 +111,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 }
 
+$tituloPagina = "Cadastrar Produto";
+
 require_once "../app/Includes/header.php";
 require_once "../app/Includes/menu.php";
 ?>
-
-<!DOCTYPE html>
-
-<html lang="pt-BR">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Cadastrar Produto</title>
-
-<link rel="stylesheet" href="../assets/css/style.css">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-
-</head>
-
-<body>
 
 <main class="conteudo">
 
@@ -155,7 +144,7 @@ require_once "../app/Includes/menu.php";
     <div class="col-md-6">
         <div class="grupo-form">
             <label for="nome">Nome do Produto *</label>
-            <input type="text" id="nome" name="nome" class="form-control" maxlength="200" required>
+            <input type="text" id="nome" name="nome" class="form-control" maxlength="200" required autocomplete="off">
         </div>
     </div>
 
@@ -187,7 +176,7 @@ require_once "../app/Includes/menu.php";
 
 <div class="grupo-form">
     <label for="descricao">Descrição</label>
-    <textarea id="descricao" name="descricao" rows="4" class="form-control"></textarea>
+    <textarea id="descricao" name="descricao" rows="4" class="form-control" autocomplete="off"></textarea>
 </div>
 
 <div class="row">
@@ -195,14 +184,14 @@ require_once "../app/Includes/menu.php";
     <div class="col-md-6">
         <div class="grupo-form">
             <label for="sku">SKU (código interno)</label>
-            <input type="text" id="sku" name="sku" class="form-control" maxlength="80">
+            <input type="text" id="sku" name="sku" class="form-control" maxlength="80" autocomplete="off">
         </div>
     </div>
 
     <div class="col-md-6">
         <div class="grupo-form">
             <label for="codigo_barras">Código de Barras</label>
-            <input type="text" id="codigo_barras" name="codigo_barras" class="form-control" maxlength="50">
+            <input type="text" id="codigo_barras" name="codigo_barras" class="form-control" maxlength="50" autocomplete="off">
         </div>
     </div>
 
