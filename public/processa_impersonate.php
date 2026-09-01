@@ -1,6 +1,7 @@
 <?php 
 // 1. CONEXÃO COM O BANCO DO PROJETO 1
 require_once __DIR__ . '/../app/Models/Usuario.php'; 
+require_once __DIR__ . '/../app/Helpers/Csrf.php'; 
 $pdo = Database::conectar(); 
 
 session_start(); 
@@ -23,6 +24,10 @@ $empresaId     = (int)($_POST['empresa_id'] ?? 0);
 $empresaNome   = trim($_POST['empresa_nome'] ?? 'Empresa'); 
 $justificativa = trim($_POST['justificativa'] ?? ""); 
 $usuarioId     = (int)$_SESSION['usuario_id']; 
+
+if (!Csrf::validar($_POST['csrf_token'] ?? null)) { 
+    die("Erro: token de segurança inválido ou expirado. Atualize a página e tente novamente."); 
+} 
 
 if (empty($justificativa) || $empresaId === 0) { 
     die("Erro: É obrigatório digitar uma justificativa para fins de suporte e auditoria."); 

@@ -12,6 +12,11 @@ if (!isset($_SESSION["usuario_id"]) || $_SERVER["REQUEST_METHOD"] !== "POST") {
 require_once "../app/Controllers/SuporteController.php";
 require_once "../app/Controllers/NotificacaoController.php";
 require_once "../app/Models/Usuario.php";
+require_once "../app/Helpers/Csrf.php";
+
+if (!Csrf::validar($_POST["csrf_token"] ?? null)) {
+    die("Erro: token de segurança inválido ou expirado. Atualize a página e tente novamente.");
+}
 
 $controller = new SuporteController();
 $usuarioId  = (int) $_SESSION["usuario_id"];

@@ -2471,3 +2471,20 @@ img {
 .lista-sugestoes .list-group-item:hover {
     background-color: #f0f4ff;
 }
+/* ===== Botões de download do app (seção "Baixe o App" na home) ===== */
+.btn-app-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 24px;
+    background: #fff;
+    color: #212529;
+    border-radius: 12px;
+    text-decoration: none;
+    line-height: 1.2;
+}
+
+.btn-app-download:hover {
+    background: #f0f0f0;
+    color: #212529;
+}

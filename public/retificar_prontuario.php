@@ -1,6 +1,7 @@
 <?php 
 require_once __DIR__ . '/../app/Models/Usuario.php'; 
 require_once __DIR__ . '/../app/Helpers/EmpresaAcesso.php';
+require_once __DIR__ . '/../app/Helpers/Csrf.php';
 $pdo = Database::conectar(); 
 
 session_start(); 
@@ -47,6 +48,7 @@ include __DIR__ . '/../app/Includes/menu.php';
         </div> 
 
         <form action="processa_retificacao.php" method="POST"> 
+        <?= Csrf::campoHtml() ?>
             <input type="hidden" name="empresa_id" value="<?php echo $empresaId; ?>"> 
             <input type="hidden" name="prontuario_id" value="<?php echo $prontuarioId; ?>"> 
 

@@ -1,6 +1,7 @@
 <?php 
 // 1. CONEXÃO COM O BANCO DO PROJETO 1
 require_once __DIR__ . '/../app/Models/Usuario.php'; 
+require_once __DIR__ . '/../app/Helpers/Csrf.php'; 
 $pdo = Database::conectar(); 
 
 session_start(); 
@@ -56,6 +57,7 @@ include __DIR__ . '/../app/Includes/menu.php';
                     
                     <!-- Formulário individual para capturar a justificativa obrigatória --> 
                     <form action="processa_impersonate.php" method="POST" onsubmit="return confirmarAcesso(this)"> 
+                    <?= Csrf::campoHtml() ?>
                         <input type="hidden" name="empresa_id" value="<?php echo $emp['id']; ?>"> 
                         <input type="hidden" name="empresa_nome" value="<?php echo htmlspecialchars($emp['nome_fantasia']); ?>"> 
                         <input type="text" name="justificativa" class="reason-input" style="width: 100%; padding: 8px; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; display: none;" placeholder="Motivo do suporte..." required> 

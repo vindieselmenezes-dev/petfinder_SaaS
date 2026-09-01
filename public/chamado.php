@@ -12,6 +12,7 @@ if (!isset($_SESSION["usuario_id"])) {
 require_once "../app/Controllers/SuporteController.php";
 require_once "../app/Controllers/NotificacaoController.php";
 require_once "../app/Models/Usuario.php";
+require_once "../app/Helpers/Csrf.php";
 
 $controller = new SuporteController();
 $usuarioId  = (int) $_SESSION["usuario_id"];
@@ -29,6 +30,10 @@ if (!$chamado) {
 }
 
 $respostas = $controller->listarRespostas($chamadoId);
+
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' && !Csrf::validar($_POST['csrf_token'] ?? null)) {
+    die("Erro: token de segurança inválido ou expirado. Atualize a página e tente novamente.");
+}
 
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['resposta'])) {
     $controller->responder($chamadoId, $usuarioId, $_POST['resposta']);
@@ -117,6 +122,7 @@ $corStatus = [
 
         <?php if ($ehAdmin): ?>
             <form method="POST" style="margin:15px 0; display:flex; gap:8px; align-items:center;">
+                <?= Csrf::campoHtml() ?>
                 <label for="novo_status" style="margin:0; font-size:13px; color:#555;">Mudar status:</label>
                 <select name="novo_status" id="novo_status" class="form-select" style="width:auto;" onchange="this.form.submit()">
                     <?php foreach ($controller->statusValidos() as $statusOpcao): ?>
@@ -146,6 +152,7 @@ $corStatus = [
 
         <?php if ($chamado['status'] !== 'Fechado'): ?>
             <form method="POST" style="margin-top:20px;">
+                <?= Csrf::campoHtml() ?>
                 <div class="grupo-form">
                     <label for="resposta">Sua resposta</label>
                     <textarea name="resposta" id="resposta" class="form-control" rows="3" required autocomplete="off"></textarea>

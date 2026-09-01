@@ -8,7 +8,12 @@ if (!isset($_SESSION["usuario_id"]) || $_SERVER["REQUEST_METHOD"] !== "POST") {
 require_once "../app/Models/Usuario.php"; 
 require_once "../app/Controllers/PetController.php";
 require_once "../app/Controllers/NotificacaoController.php";
+require_once "../app/Helpers/Csrf.php";
 $pdo = Database::conectar(); 
+
+if (!Csrf::validar($_POST["csrf_token"] ?? null)) {
+    die("Erro: token de segurança inválido ou expirado. Atualize a página e tente novamente.");
+}
 
 $petId       = (int)($_POST["pet_id"] ?? 0); 
 $usuarioId   = (int)$_SESSION["usuario_id"]; 

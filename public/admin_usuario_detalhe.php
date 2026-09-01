@@ -8,6 +8,7 @@ if (!isset($_SESSION['usuario_id']) || ($_SESSION['perfil_tipo'] ?? '') !== 'adm
 
 require_once '../app/Models/Usuario.php';
 require_once '../app/Models/Empresa.php';
+require_once '../app/Helpers/Csrf.php';
 $pdo = Database::conectar();
 
 $usuarioModel = new Usuario();
@@ -34,6 +35,11 @@ $perfilAtual = $stmtPerfil->fetchColumn() ?: ($usuario['tipo_usuario'] ?? 'clien
 // ==========================================================
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
+        $mensagem = 'Sessão expirada. Atualize a página e tente novamente.';
+        $tipoMensagem = 'erro';
+    } else {
 
     $acao = $_POST['acao'] ?? '';
 
@@ -74,6 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mensagem = 'A nova senha precisa ter pelo menos 6 caracteres.';
             $tipoMensagem = 'erro';
         }
+    }
+
     }
 }
 
@@ -116,6 +124,7 @@ require_once '../app/Includes/menu.php';
         <div class="formulario-cadastro" style="flex:1; min-width:320px;">
             <h3 style="margin-top:0;">Dados da conta</h3>
             <form method="POST">
+                <?= Csrf::campoHtml() ?>
                 <input type="hidden" name="acao" value="atualizar_dados">
 
                 <div class="grupo-form">
@@ -145,6 +154,7 @@ require_once '../app/Includes/menu.php';
 
             <h3>Perfil de acesso</h3>
             <form method="POST" style="display:flex; gap:8px; align-items:center;">
+                <?= Csrf::campoHtml() ?>
                 <input type="hidden" name="acao" value="atualizar_perfil">
                 <select name="perfil" class="form-select" style="width:auto;">
                     <?php foreach (['cliente', 'empresa', 'veterinario', 'administrador'] as $tipoOpcao): ?>
@@ -158,6 +168,7 @@ require_once '../app/Includes/menu.php';
 
             <h3>Redefinir senha</h3>
             <form method="POST" onsubmit="return confirm('Definir uma nova senha pra este usuário?');">
+                <?= Csrf::campoHtml() ?>
                 <input type="hidden" name="acao" value="redefinir_senha">
                 <div class="grupo-form">
                     <label for="nova_senha">Nova senha (mín. 6 caracteres)</label>

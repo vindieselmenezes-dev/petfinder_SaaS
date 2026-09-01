@@ -12,6 +12,7 @@ if (!isset($_SESSION["usuario_id"])) {
 $tituloPagina = "Novo Chamado";
 
 require_once "../app/Includes/header.php";
+require_once "../app/Helpers/Csrf.php";
 require_once "../app/Includes/menu.php";
 ?>
 
@@ -22,6 +23,7 @@ require_once "../app/Includes/menu.php";
         <h1>➕ Abrir Novo Chamado</h1>
 
         <form action="processa_chamado.php" method="POST">
+        <?= Csrf::campoHtml() ?>
 
             <div class="grupo-form">
                 <label for="assunto">Assunto</label>

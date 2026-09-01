@@ -7,6 +7,7 @@ if (!isset($_SESSION["usuario_id"])) {
 } 
 
 require_once "../app/Models/Usuario.php"; 
+require_once "../app/Helpers/Csrf.php"; 
 $pdo = Database::conectar(); 
 
 // Puxa um pet qualquer do banco para podermos testar o envio
@@ -26,6 +27,7 @@ require_once "../app/Includes/menu.php";
 
         <?php if ($petParaTeste): ?>
             <form action="processa_alerta.php" method="POST" style="display: flex; flex-direction: column; gap: 15px;"> 
+                <?= Csrf::campoHtml() ?>
                 <!-- Envia o ID do pet encontrado no banco -->
                 <input type="hidden" name="pet_id" value="<?= $petParaTeste['id']; ?>"> 
 

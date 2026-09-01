@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../app/Controllers/PetController.php';
+require_once __DIR__ . '/../app/Helpers/Csrf.php';
 $petController = new PetController();
 session_start();
 
@@ -51,6 +52,7 @@ if (!$pet || (int)$pet['usuario_id'] !== $usuarioId) {
         </div>
 
         <form action="processa_alerta.php" method="POST" id="formAlerta">
+            <?= Csrf::campoHtml() ?>
             <input type="hidden" name="pet_id" value="<?php echo $petId; ?>">
             <input type="hidden" name="lost_latitude" id="lost_latitude" value="">
             <input type="hidden" name="lost_longitude" id="lost_longitude" value="">

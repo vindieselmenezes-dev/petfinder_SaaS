@@ -1,12 +1,17 @@
 <?php 
 require_once __DIR__ . '/../app/Models/Usuario.php'; 
 require_once __DIR__ . '/../app/Helpers/EmpresaAcesso.php';
+require_once __DIR__ . '/../app/Helpers/Csrf.php';
 $pdo = Database::conectar(); 
 
 session_start(); 
 
 if (!isset($_SESSION['usuario_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') { 
     die("Acesso não autorizado."); 
+} 
+
+if (!Csrf::validar($_POST['csrf_token'] ?? null)) { 
+    die("Erro: token de segurança inválido ou expirado. Atualize a página e tente novamente."); 
 } 
 
 $empresaId    = (int)($_POST['empresa_id'] ?? 0); 

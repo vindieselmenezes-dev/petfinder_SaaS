@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../app/Models/Usuario.php'; 
 require_once __DIR__ . '/../app/Models/Veterinario.php';
 require_once __DIR__ . '/../app/Helpers/EmpresaAcesso.php';
+require_once __DIR__ . '/../app/Helpers/Csrf.php';
 $pdo = Database::conectar(); 
 
 session_start(); 
@@ -62,6 +63,7 @@ include __DIR__ . '/../app/Includes/menu.php';
         <div class="formulario-cadastro">
             <h2 style="text-align:center; color:#2c3e50;">📋 Emitir Novo Prontuário Médico</h2>
             <form action="processa_prontuario.php" method="POST">
+                <?= Csrf::campoHtml() ?>
                 <input type="hidden" name="empresa_id" value="<?php echo $empresaId; ?>">
 
                 <div class="grupo-form">
