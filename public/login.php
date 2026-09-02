@@ -11,6 +11,17 @@ if (isset($_GET['senha_redefinida'])) {
     $tipoMensagem = "sucesso";
 }
 
+function voltarSeguro(?string $url): ?string {
+    // só aceita caminho relativo dentro do próprio site — nunca uma URL
+    // completa, pra não virar um open-redirect.
+    if (!$url || preg_match('#^(https?:)?//#i', $url) || str_starts_with($url, '\\')) {
+        return null;
+    }
+    return $url;
+}
+
+$voltar = voltarSeguro($_GET['voltar'] ?? $_POST['voltar'] ?? null);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
     $email = trim($_POST['email'] ?? ''); 
     $password = $_POST['password'] ?? ''; 
@@ -50,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // definido (ex: 'empresa') ser tratado como cliente comum por falta de linha em perfis.
             $_SESSION['perfil_tipo']   = $user['perfil_tipo'] ?? $user['tipo_usuario'] ?? 'cliente'; 
 
-            header("Location: dashboard.php");
+            header("Location: " . ($voltar ?? "dashboard.php"));
             exit(); 
         } else { 
             $mensagem = "E-mail ou senha incorretos."; 
@@ -88,6 +99,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form action="" method="POST" autocomplete="off">
+            <?php if ($voltar): ?>
+                <input type="hidden" name="voltar" value="<?= htmlspecialchars($voltar) ?>">
+            <?php endif; ?>
             <div class="form-group">
                 <label for="email">E-mail</label>
                 <input type="email" id="email" name="email" required placeholder="Digite seu e-mail">

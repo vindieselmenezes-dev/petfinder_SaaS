@@ -280,7 +280,8 @@
                                 <i class="bi bi-heart"></i>
 
                                 <span id="badgeFavoritos"
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;">
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    style="display:none;">
 
                                     0
 
@@ -290,12 +291,12 @@
 
                             <!-- Carrinho -->
 
-                            <a href="public/em_breve.php?recurso=Carrinho" id="btnHeaderCarrinho"
-                                class="btn btn-light position-relative" style="display:none;">
+                            <a href="public/carrinho.php" id="btnHeaderCarrinho" class="btn btn-light position-relative"
+                                style="display:none;">
 
                                 <i class="bi bi-cart3"></i>
 
-                                <span
+                                <span id="badgeCarrinho"
                                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
 
                                     0
@@ -312,7 +313,8 @@
                                 <i class="bi bi-bell"></i>
 
                                 <span id="badgeNotificacoes"
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning" style="display:none;">
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning"
+                                    style="display:none;">
 
                                     0
 
@@ -584,7 +586,8 @@
 
                         <div class="d-flex flex-wrap gap-3">
 
-                            <button type="button" id="btnInstalarApp" class="btn-app-download" style="display:none; border:none; cursor:pointer;">
+                            <button type="button" id="btnInstalarApp" class="btn-app-download"
+                                style="display:none; border:none; cursor:pointer;">
                                 <i class="bi bi-download fs-3"></i>
                                 <span class="text-start">
                                     <small class="d-block text-muted" style="font-size:.7rem;">Instalar agora</small>
@@ -592,8 +595,8 @@
                                 </span>
                             </button>
 
-                            <a href="public/em_breve.php?recurso=App PetFinder Brasil (App Store)"
-                                id="btnAppStore" class="btn-app-download">
+                            <a href="public/em_breve.php?recurso=App PetFinder Brasil (App Store)" id="btnAppStore"
+                                class="btn-app-download">
                                 <i class="bi bi-apple fs-3"></i>
                                 <span class="text-start">
                                     <small class="d-block text-muted" style="font-size:.7rem;">Disponível na</small>
@@ -601,8 +604,8 @@
                                 </span>
                             </a>
 
-                            <a href="public/em_breve.php?recurso=App PetFinder Brasil (Google Play)"
-                                id="btnGooglePlay" class="btn-app-download">
+                            <a href="public/em_breve.php?recurso=App PetFinder Brasil (Google Play)" id="btnGooglePlay"
+                                class="btn-app-download">
                                 <i class="bi bi-google-play fs-4"></i>
                                 <span class="text-start">
                                     <small class="d-block text-muted" style="font-size:.7rem;">Disponível no</small>
@@ -621,7 +624,8 @@
 
                     <div class="col-lg-5 text-center mt-5 mt-lg-0">
 
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-white bg-opacity-10 p-5">
+                        <div
+                            class="d-inline-flex align-items-center justify-content-center rounded-4 bg-white bg-opacity-10 p-5">
                             <i class="bi bi-phone display-1"></i>
                         </div>
 
@@ -671,8 +675,7 @@
                                 <div class="col-12 col-lg-3">
                                     <label class="form-label" for="inputCidadeAdocao">Cidade</label>
                                     <input type="text" class="form-control" id="inputCidadeAdocao"
-                                        list="listaCidadesAdocao" autocomplete="off"
-                                        placeholder="Digite sua cidade">
+                                        list="listaCidadesAdocao" autocomplete="off" placeholder="Digite sua cidade">
                                     <datalist id="listaCidadesAdocao"></datalist>
                                 </div>
                                 <div class="col-12 col-lg-3">
@@ -1500,8 +1503,7 @@
 
                                     </button>
 
-                                    <button class="btn btn-outline-primary"
-                                        data-href="public/em_breve.php?recurso=Carrinho">
+                                    <button class="btn btn-outline-primary" data-href="public/produtos.php">
 
                                         <i class="bi bi-cart-plus"></i>
 
@@ -1573,8 +1575,7 @@
 
                                     </button>
 
-                                    <button class="btn btn-outline-primary"
-                                        data-href="public/em_breve.php?recurso=Carrinho">
+                                    <button class="btn btn-outline-primary" data-href="public/produtos.php">
 
                                         <i class="bi bi-cart-plus"></i>
 
@@ -1646,8 +1647,7 @@
 
                                     </button>
 
-                                    <button class="btn btn-outline-primary"
-                                        data-href="public/em_breve.php?recurso=Carrinho">
+                                    <button class="btn btn-outline-primary" data-href="public/produtos.php">
 
                                         <i class="bi bi-cart-plus"></i>
 
@@ -1719,8 +1719,7 @@
 
                                     </button>
 
-                                    <button class="btn btn-outline-primary"
-                                        data-href="public/em_breve.php?recurso=Carrinho">
+                                    <button class="btn btn-outline-primary" data-href="public/produtos.php">
 
                                         <i class="bi bi-cart-plus"></i>
 
@@ -2433,32 +2432,32 @@
 
 
 
-    <!-- ========================= -->
-    <!-- MODAL: instruções de instalação (iOS) -->
-    <!-- ========================= -->
+        <!-- ========================= -->
+        <!-- MODAL: instruções de instalação (iOS) -->
+        <!-- ========================= -->
 
-    <div class="modal fade" id="modalInstalarIos" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-apple"></i>
-                        Instalar no iPhone/iPad
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    <p>No iOS a instalação é feita direto pelo Safari, sem passar pela App Store:</p>
-                    <ol class="mb-0">
-                        <li class="mb-2">Abra este site no <strong>Safari</strong>.</li>
-                        <li class="mb-2">Toque no ícone de compartilhar <i class="bi bi-box-arrow-up"></i>.</li>
-                        <li class="mb-2">Escolha <strong>"Adicionar à Tela de Início"</strong>.</li>
-                        <li>Pronto! O ícone do PetFinder aparece na sua tela como um app.</li>
-                    </ol>
+        <div class="modal fade" id="modalInstalarIos" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="bi bi-apple"></i>
+                            Instalar no iPhone/iPad
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>No iOS a instalação é feita direto pelo Safari, sem passar pela App Store:</p>
+                        <ol class="mb-0">
+                            <li class="mb-2">Abra este site no <strong>Safari</strong>.</li>
+                            <li class="mb-2">Toque no ícone de compartilhar <i class="bi bi-box-arrow-up"></i>.</li>
+                            <li class="mb-2">Escolha <strong>"Adicionar à Tela de Início"</strong>.</li>
+                            <li>Pronto! O ícone do PetFinder aparece na sua tela como um app.</li>
+                        </ol>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
     </div>
 
@@ -2943,6 +2942,7 @@
 
                         atualizarBadge("app/ajax/contar_favoritos.php", "badgeFavoritos");
                         atualizarBadge("app/ajax/contar_notificacoes.php", "badgeNotificacoes");
+                        atualizarBadge("app/ajax/contar_carrinho.php", "badgeCarrinho");
 
                         if (window.PetfinderLocalizacao) {
                             window.PetfinderLocalizacao.solicitarSeNecessario();
@@ -2959,7 +2959,7 @@
             // mostra o número real no balãozinho, escondendo quando for zero
             // pra não poluir a tela com um "0" sem necessidade.
             function atualizarBadge(url, idBadge) {
-                fetch(url)
+                fetch(url, { cache: "no-store" })
                     .then(function (resposta) { return resposta.json(); })
                     .then(function (dados) {
                         const badge = document.getElementById(idBadge);
@@ -2978,6 +2978,17 @@
                         // se der erro, mantém o badge escondido
                     });
             }
+
+            function atualizarBadgeCarrinho() {
+                atualizarBadge("app/ajax/contar_carrinho.php", "badgeCarrinho");
+            }
+
+            window.addEventListener("pageshow", atualizarBadgeCarrinho);
+            document.addEventListener("visibilitychange", function () {
+                if (document.visibilityState === "visible") {
+                    atualizarBadgeCarrinho();
+                }
+            });
 
         })();
     </script>

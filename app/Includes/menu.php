@@ -12,6 +12,8 @@ if (!isset($pdo) || !($pdo instanceof PDO)) {
             <!-- Links Comuns para Todos os Usuários --> 
             <li><a href="dashboard.php">🏠 Dashboard</a></li> 
             <li><a href="buscar_pets.php">🔎 Buscar Pets</a></li> 
+            <li><a href="carrinho.php">🛒 Carrinho</a></li>
+            <li><a href="meus_pedidos.php">📦 Meus Pedidos</a></li>
 
             <?php 
             // CAPTURA INTELIGENTE E COMPATÍVEL DO PERFIL (Aceita os dois formatos de sessão dos projetos)

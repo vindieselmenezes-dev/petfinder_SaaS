@@ -15,6 +15,17 @@ require_once "../app/Helpers/Csrf.php";
 $controller = new EnderecoController();
 $usuarioId  = (int) $_SESSION["usuario_id"];
 
+function voltarSeguro(?string $url): ?string {
+    // só aceita caminho relativo dentro do próprio site — nunca uma URL
+    // completa, pra não virar um open-redirect.
+    if (!$url || preg_match('#^(https?:)?//#i', $url) || str_starts_with($url, '\\')) {
+        return null;
+    }
+    return $url;
+}
+
+$voltar = voltarSeguro($_GET['voltar'] ?? $_POST['voltar'] ?? null);
+
 $mensagem     = "";
 $tipoMensagem = "";
 
@@ -33,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             "logradouro"  => trim($_POST["logradouro"] ?? ""),
             "numero"      => trim($_POST["numero"] ?? ""),
             "complemento" => trim($_POST["complemento"] ?? ""),
+            "referencia"  => trim($_POST["referencia"] ?? ""),
             "bairro"      => trim($_POST["bairro"] ?? ""),
             "cidade"      => trim($_POST["cidade"] ?? ""),
             "estado"      => trim($_POST["estado"] ?? "")
@@ -84,11 +96,19 @@ if ($tipoUsuarioPerfil !== 'empresa'):
             <?= htmlspecialchars($mensagem); ?>
         </div>
 
+        <?php if ($tipoMensagem === 'sucesso' && $voltar): ?>
+            <p><a href="<?= htmlspecialchars($voltar) ?>">Continuar para a finalização da compra &rarr;</a></p>
+        <?php endif; ?>
+
     <?php endif; ?>
 
     <form method="POST" action="" class="formulario-endereco">
 
         <?= Csrf::campoHtml() ?>
+
+        <?php if ($voltar): ?>
+            <input type="hidden" name="voltar" value="<?= htmlspecialchars($voltar) ?>">
+        <?php endif; ?>
 
         <div class="grupo-form">
             <label for="cep">CEP</label>
@@ -129,6 +149,17 @@ if ($tipoUsuarioPerfil !== 'empresa'):
                 name="complemento"
                 maxlength="255"
                 value="<?= htmlspecialchars($endereco["complemento"] ?? ''); ?>">
+        </div>
+
+        <div class="grupo-form">
+            <label for="referencia">Ponto de referência</label>
+            <input
+                type="text"
+                id="referencia"
+                name="referencia"
+                maxlength="255"
+                placeholder="Ex: perto da padaria, portão azul, próximo à praça..."
+                value="<?= htmlspecialchars($endereco["referencia"] ?? ''); ?>">
         </div>
 
         <div class="grupo-form">

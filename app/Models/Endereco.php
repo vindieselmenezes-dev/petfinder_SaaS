@@ -82,6 +82,7 @@ class Endereco
                 bairro,
                 cidade,
                 estado,
+                referencia,
                 principal
             )
             VALUES
@@ -94,6 +95,7 @@ class Endereco
                 :bairro,
                 :cidade,
                 :estado,
+                :referencia,
                 1
             )
         ";
@@ -108,7 +110,8 @@ class Endereco
             ':complemento'  => $dados['complemento'],
             ':bairro'       => $dados['bairro'],
             ':cidade'       => $dados['cidade'],
-            ':estado'       => $dados['estado']
+            ':estado'       => $dados['estado'],
+            ':referencia'   => $dados['referencia'] ?? null,
         ]);
     }
 
@@ -126,7 +129,8 @@ class Endereco
                 complemento = :complemento,
                 bairro = :bairro,
                 cidade = :cidade,
-                estado = :estado
+                estado = :estado,
+                referencia = :referencia
             WHERE id = :id
         ";
 
@@ -140,6 +144,7 @@ class Endereco
             ':bairro'       => $dados['bairro'],
             ':cidade'       => $dados['cidade'],
             ':estado'       => $dados['estado'],
+            ':referencia'   => $dados['referencia'] ?? null,
             ':id'           => $enderecoId
         ]);
     }

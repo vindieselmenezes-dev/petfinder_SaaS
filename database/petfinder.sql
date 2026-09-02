@@ -461,6 +461,7 @@ CREATE TABLE `enderecos` (
   `bairro` varchar(150) DEFAULT NULL,
   `cidade` varchar(150) DEFAULT NULL,
   `estado` char(2) DEFAULT NULL,
+  `referencia` varchar(255) DEFAULT NULL,
   `latitude` decimal(10,8) DEFAULT NULL,
   `longitude` decimal(11,8) DEFAULT NULL,
   `principal` tinyint(1) DEFAULT 1
@@ -803,6 +804,8 @@ CREATE TABLE `pedidos` (
   `valor_desconto` decimal(10,2) DEFAULT 0.00,
   `valor_total` decimal(10,2) DEFAULT 0.00,
   `status` enum('Aguardando Pagamento','Pago','Separação','Enviado','Entregue','Cancelado') DEFAULT 'Aguardando Pagamento',
+  `previsao_entrega` date DEFAULT NULL,
+  `endereco_id` int(11) DEFAULT NULL,
   `observacoes` text DEFAULT NULL,
   `criado_em` timestamp NOT NULL DEFAULT current_timestamp(),
   `atualizado_em` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -1737,7 +1740,8 @@ ALTER TABLE `pedidos`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `numero_pedido` (`numero_pedido`),
   ADD KEY `idx_pedido_usuario` (`usuario_id`),
-  ADD KEY `idx_pedido_status` (`status`);
+  ADD KEY `idx_pedido_status` (`status`),
+  ADD KEY `idx_pedido_endereco` (`endereco_id`);
 
 --
 -- Índices de tabela `pedido_itens`
@@ -2480,7 +2484,8 @@ ALTER TABLE `pagamentos`
 -- Restrições para tabelas `pedidos`
 --
 ALTER TABLE `pedidos`
-  ADD CONSTRAINT `fk_pedido_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
+  ADD CONSTRAINT `fk_pedido_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `fk_pedido_endereco` FOREIGN KEY (`endereco_id`) REFERENCES `enderecos` (`id`) ON DELETE SET NULL;
 
 --
 -- Restrições para tabelas `pedido_itens`
