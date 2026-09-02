@@ -213,17 +213,17 @@ class PetController
         |--------------------------------------------------------------
         */
 
-        $dados["cor"]             = $dados["cor"] ?? "";
-        $dados["status"]          = in_array($dados["status"] ?? "", self::STATUS_VALIDOS, true)
+        $dados["cor"] = $dados["cor"] ?? "";
+        $dados["status"] = in_array($dados["status"] ?? "", self::STATUS_VALIDOS, true)
             ? $dados["status"]
             : "Com Tutor";
-        $dados["peso"]            = $dados["peso"] ?? null;
-        $dados["altura"]          = $dados["altura"] ?? null;
+        $dados["peso"] = $dados["peso"] ?? null;
+        $dados["altura"] = $dados["altura"] ?? null;
         $dados["data_nascimento"] = $dados["data_nascimento"] ?? null;
-        $dados["microchip"]       = $dados["microchip"] ?? null;
-        $dados["castrado"]        = $dados["castrado"] ?? 0;
-        $dados["observacoes"]     = $dados["observacoes"] ?? "";
-        $dados["foto"]            = $dados["foto"] ?? "sem-foto.png";
+        $dados["microchip"] = $dados["microchip"] ?? null;
+        $dados["castrado"] = $dados["castrado"] ?? 0;
+        $dados["observacoes"] = $dados["observacoes"] ?? "";
+        $dados["foto"] = $dados["foto"] ?? "sem-foto.png";
 
         /*
         |--------------------------------------------------------------
@@ -306,17 +306,17 @@ class PetController
             return false;
         }
 
-        $dados["cor"]             = $dados["cor"] ?? "";
-        $dados["status"]          = in_array($dados["status"] ?? "", self::STATUS_VALIDOS, true)
+        $dados["cor"] = $dados["cor"] ?? "";
+        $dados["status"] = in_array($dados["status"] ?? "", self::STATUS_VALIDOS, true)
             ? $dados["status"]
             : "Com Tutor";
-        $dados["peso"]            = $dados["peso"] ?? null;
-        $dados["altura"]          = $dados["altura"] ?? null;
+        $dados["peso"] = $dados["peso"] ?? null;
+        $dados["altura"] = $dados["altura"] ?? null;
         $dados["data_nascimento"] = $dados["data_nascimento"] ?? null;
-        $dados["microchip"]       = $dados["microchip"] ?? null;
-        $dados["castrado"]        = $dados["castrado"] ?? 0;
-        $dados["observacoes"]     = $dados["observacoes"] ?? "";
-        $dados["foto"]            = $dados["foto"] ?? "sem-foto.png";
+        $dados["microchip"] = $dados["microchip"] ?? null;
+        $dados["castrado"] = $dados["castrado"] ?? 0;
+        $dados["observacoes"] = $dados["observacoes"] ?? "";
+        $dados["foto"] = $dados["foto"] ?? "sem-foto.png";
 
         $atualizado = $this->pet->atualizar($id, $dados);
 
@@ -428,6 +428,16 @@ class PetController
     public function buscarHistoricoStatus(int $petId): array
     {
         return $this->pet->buscarHistoricoStatus($petId);
+    }
+
+    public function registrarEventoHistorico(int $petId, string $tipo, string $descricao, ?string $detalhes = null, ?string $dataEvento = null, ?int $usuarioId = null): bool
+    {
+        return $this->pet->registrarEventoHistorico($petId, $tipo, $descricao, $detalhes, $dataEvento, $usuarioId);
+    }
+
+    public function buscarHistoricoCompleto(int $petId): array
+    {
+        return $this->pet->buscarHistoricoCompleto($petId);
     }
 
     public function transferirTutor(int $petId, int $novoTutorId): bool

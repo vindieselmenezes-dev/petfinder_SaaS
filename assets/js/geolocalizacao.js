@@ -36,7 +36,7 @@
     }
 
     function salvarLocalizacaoNoServidor(latitude, longitude, caminhoEndpoint) {
-        fetch(caminhoEndpoint, {
+        return fetch(caminhoEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ latitude: latitude, longitude: longitude })
@@ -97,7 +97,10 @@
 
             navigator.geolocation.getCurrentPosition(
                 function (posicao) {
-                    salvarLocalizacaoNoServidor(posicao.coords.latitude, posicao.coords.longitude, caminhoEndpoint);
+                    salvarLocalizacaoNoServidor(posicao.coords.latitude, posicao.coords.longitude, caminhoEndpoint)
+                        .then(function () {
+                            window.dispatchEvent(new CustomEvent('petfinder:localizacao-atualizada'));
+                        });
                 },
                 function () {
                     // usuário aceitou o banner mas negou o popup nativo, ou GPS indisponível — sem problema
@@ -115,6 +118,25 @@
     // Só mostra o banner se: a pessoa está logada, o navegador suporta
     // geolocalização, e ela ainda não respondeu antes nesse navegador.
     window.PetfinderLocalizacao = {
+        solicitarAgora: function (caminhoEndpoint) {
+            caminhoEndpoint = caminhoEndpoint || 'app/ajax/salvar_localizacao.php';
+            if (!navigator.geolocation) {
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                function (posicao) {
+                    salvarLocalizacaoNoServidor(posicao.coords.latitude, posicao.coords.longitude, caminhoEndpoint)
+                        .then(function () {
+                            window.dispatchEvent(new CustomEvent('petfinder:localizacao-atualizada'));
+                        });
+                },
+                function () {
+                    window.dispatchEvent(new CustomEvent('petfinder:localizacao-negada'));
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+            );
+        },
         solicitarSeNecessario: function (caminhoEndpoint) {
             caminhoEndpoint = caminhoEndpoint || 'app/ajax/salvar_localizacao.php';
             if (jaRespondeu() || !navigator.geolocation) {

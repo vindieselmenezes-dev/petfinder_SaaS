@@ -2471,6 +2471,7 @@ img {
 .lista-sugestoes .list-group-item:hover {
     background-color: #f0f4ff;
 }
+
 /* ===== Botões de download do app (seção "Baixe o App" na home) ===== */
 .btn-app-download {
     display: inline-flex;

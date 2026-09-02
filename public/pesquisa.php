@@ -3,14 +3,26 @@
 declare(strict_types=1);
 
 require_once "../app/Controllers/EmpresaController.php";
+require_once "../app/Controllers/ProdutoController.php";
+require_once "../app/Controllers/PetController.php";
 
-$controller = new EmpresaController();
+$empresaController = new EmpresaController();
+$produtoController = new ProdutoController();
+$petController = new PetController();
 
 $q = trim($_GET['q'] ?? '');
 $cidade = trim($_GET['cidade'] ?? '');
 $categoriaId = isset($_GET['categoria_id']) ? (int) $_GET['categoria_id'] : 0;
 
-$empresas = $controller->listarAtivas($categoriaId, $cidade, $q);
+$categorias = $empresaController->listarCategorias();
+$topicos = array_values(array_filter($categorias, static function (array $categoria) use ($q): bool {
+    return $q !== '' && stripos($categoria['nome'], $q) !== false;
+}));
+
+$empresas = $empresaController->listarAtivas($categoriaId, $cidade, $q);
+$produtos = $produtoController->listarAtivos($q, 0, 0, 0.0, 0.0, 'recente', $cidade);
+$pets = $petController->buscarAdocaoPublico(busca: $q, cidade: $cidade, status: 'Todos');
+$temResultados = $topicos || $empresas || $produtos || $pets;
 
 ?>
 
@@ -51,13 +63,37 @@ $empresas = $controller->listarAtivas($categoriaId, $cidade, $q);
         <h1 class="fw-bold mb-1">Pesquisa</h1>
         <p class="text-muted">Resultados para "<?= htmlspecialchars($q) ?>"</p>
 
-        <div class="row g-4">
+        <?php if (!$temResultados): ?>
+            <div class="alert alert-info">Nenhum resultado encontrado para esta pesquisa.</div>
+        <?php endif; ?>
 
-            <?php if (count($empresas) === 0): ?>
-                <div class="col-12 text-center text-muted py-5">
-                    Nenhuma empresa encontrada.
-                </div>
-            <?php else: ?>
+        <?php if ($topicos): ?>
+            <h2 class="h4 mt-4 mb-3">Tópicos</h2>
+            <div class="row g-3 mb-4">
+                <?php foreach ($topicos as $topico): ?>
+                    <?php
+                    $destinoTopico = match ((int) $topico['id']) {
+                        8 => 'buscar_pets.php',
+                        9 => 'produtos.php',
+                        default => 'empresas.php?categoria_id=' . (int) $topico['id']
+                    };
+                    ?>
+                    <div class="col-md-4">
+                        <a href="<?= htmlspecialchars($destinoTopico) ?>" class="card h-100 text-decoration-none shadow-sm">
+                            <div class="card-body">
+                                <i class="bi <?= htmlspecialchars($topico['icone'] ?? 'bi-grid') ?> fs-3 text-primary"></i>
+                                <h3 class="h5 mt-2 text-dark"><?= htmlspecialchars($topico['nome']) ?></h3>
+                                <p class="text-muted small mb-0"><?= htmlspecialchars($topico['descricao'] ?? '') ?></p>
+                            </div>
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($empresas): ?>
+            <h2 class="h4 mt-4 mb-3">Empresas e serviços</h2>
+            <div class="row g-4 mb-4">
                 <?php foreach ($empresas as $empresa): ?>
                     <?php
                     $capa = !empty($empresa["capa"]) ? "../uploads/empresas/" . $empresa["capa"] : "../assets/img/pets/sem-foto.png";
@@ -104,9 +140,54 @@ $empresas = $controller->listarAtivas($categoriaId, $cidade, $q);
                         </div>
                     </div>
                 <?php endforeach; ?>
-            <?php endif; ?>
+            </div>
+        <?php endif; ?>
 
-        </div>
+        <?php if ($produtos): ?>
+            <h2 class="h4 mt-4 mb-3">Produtos</h2>
+            <div class="row g-4 mb-4">
+                <?php foreach ($produtos as $produto): ?>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <span class="badge bg-success mb-2">Produto</span>
+                                <h3 class="h5">
+                                    <a href="produto.php?id=<?= (int) $produto['id'] ?>" class="text-decoration-none text-dark">
+                                        <?= htmlspecialchars($produto['nome']) ?>
+                                    </a>
+                                </h3>
+                                <p class="small text-muted mb-1"><?= htmlspecialchars($produto['empresa_nome'] ?? '') ?></p>
+                                <strong>R$
+                                    <?= number_format((float) ($produto['preco_promocional'] ?: $produto['preco_venda']), 2, ',', '.') ?></strong>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($pets): ?>
+            <h2 class="h4 mt-4 mb-3">Pets</h2>
+            <div class="row g-4">
+                <?php foreach ($pets as $pet): ?>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <span class="badge bg-warning text-dark mb-2">Pet</span>
+                                <h3 class="h5">
+                                    <a href="pet.php?id=<?= (int) $pet['id'] ?>" class="text-decoration-none text-dark">
+                                        <?= htmlspecialchars($pet['nome']) ?>
+                                    </a>
+                                </h3>
+                                <p class="small text-muted mb-0">
+                                    <?= htmlspecialchars(($pet['especie'] ?? '') . ' - ' . ($pet['raca'] ?? '')) ?>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
 
     </main>
 

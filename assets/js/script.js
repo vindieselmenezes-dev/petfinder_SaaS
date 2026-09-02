@@ -107,48 +107,6 @@ function debounce(fn, delay) {
     };
 }
 
-// Fallback: garante que o campo do header dispare sugestões (útil se iniciarBusca falhar)
-window.addEventListener('load', function () {
-    try {
-        const headerInput = document.getElementById('inputBuscaAdocao');
-        if (!headerInput) return;
-        const parent = headerInput.parentElement;
-        let lista = parent.querySelector('.lista-sugestoes');
-        if (!lista) {
-            lista = document.createElement('ul');
-            lista.className = 'list-group lista-sugestoes';
-            lista.style.position = 'absolute';
-            lista.style.zIndex = '2000';
-            lista.style.width = '100%';
-            lista.style.maxHeight = '240px';
-            lista.style.overflow = 'auto';
-            parent.style.position = 'relative';
-            parent.appendChild(lista);
-        }
-
-        const debounced = debounce(function () { pesquisar(headerInput.value.trim(), lista, headerInput); }, 250);
-
-        console.log('fallback: listener attached to #inputBuscaAdocao');
-
-        headerInput.addEventListener('input', function () {
-            console.log('fallback header input (input event):', headerInput.value);
-            debounced();
-        });
-
-        // keyup como redundância (alguns navegadores/IME podem não disparar input imediatamente)
-        headerInput.addEventListener('keyup', function () {
-            console.log('fallback header input (keyup):', headerInput.value);
-            debounced();
-        });
-
-        headerInput.addEventListener('focus', function () {
-            pesquisar(headerInput.value.trim(), lista, headerInput);
-        });
-    } catch (e) {
-        console.warn('Erro fallback inputBuscaAdocao', e);
-    }
-});
-
 /* ===========================================================
    LOADER
 =========================================================== */
@@ -664,7 +622,10 @@ function pesquisar(texto, lista, campo) {
                 const li = document.createElement('li');
                 li.className = 'list-group-item list-group-item-action';
                 li.style.cursor = 'pointer';
-                li.innerHTML = `<i class="bi bi-search me-2"></i> ${item}`;
+                const texto = typeof item === 'string' ? item : item.texto;
+                const icone = document.createElement('i');
+                icone.className = 'bi bi-search me-2';
+                li.append(icone, document.createTextNode(texto));
                 li.addEventListener('click', function () {
                     selecionarPesquisa(item, lista);
                 });
@@ -695,22 +656,29 @@ function selecionarPesquisa(valor, lista) {
 
     if (!campo) return;
 
-    campo.value = valor;
+    const texto = typeof valor === 'string' ? valor : valor.texto;
+    campo.value = texto;
     lista.innerHTML = '';
-    salvarHistorico(valor);
-    console.log('Pesquisa:', valor);
+    salvarHistorico(texto);
+    console.log('Pesquisa:', texto);
 
-    if (campo.id === 'inputBuscaAdocao') {
-        if (typeof window.buscarPets === 'function') {
-            try { window.buscarPets(); } catch (e) { /* ignore */ }
-        }
-        return;
-    }
+    const tipo = typeof valor === 'string' ? 'geral' : valor.tipo;
+    const id = typeof valor === 'string' ? 0 : parseInt(valor.id, 10);
+    const destinos = {
+        pet: 'public/pet.php?id=' + id,
+        empresa: 'public/empresa.php?id=' + id,
+        produto: 'public/produto.php?id=' + id,
+        especie: 'public/buscar_pets.php?especie_id=' + id,
+        raca: 'public/buscar_pets.php?raca_id=' + id,
+        topico_servico: 'public/empresas.php?categoria_id=' + id,
+        topico_produto: 'public/produtos.php',
+        topico_adocao: 'public/buscar_pets.php',
+        subcategoria_produto: 'public/produtos.php?subcategoria_id=' + id,
+        marca_produto: 'public/produtos.php?marca_id=' + id,
+        cidade: 'public/empresas.php?cidade=' + encodeURIComponent(texto)
+    };
 
-    if (campo.id === 'campoPesquisa') {
-        window.location.href = "public/pesquisa.php?q=" + encodeURIComponent(valor);
-        return;
-    }
+    window.location.href = destinos[tipo] || "public/pesquisa.php?q=" + encodeURIComponent(texto);
 
 }
 

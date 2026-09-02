@@ -338,6 +338,61 @@ class Empresa
         return $stmt->fetchAll();
     }
 
+    public function listarDestaques(int $limite = 6): array
+    {
+        $limite = max(1, min($limite, 20));
+        $sql = "
+            SELECT e.id, e.nome_fantasia, e.logo, e.capa, e.descricao,
+                   e.cidade, e.estado, e.avaliacao, e.total_avaliacoes,
+                   c.nome AS categoria_nome, c.icone AS categoria_icone
+            FROM empresas e
+            INNER JOIN categorias c ON c.id = e.categoria_id
+            WHERE e.ativo = 1
+            ORDER BY e.avaliacao DESC, e.total_avaliacoes DESC, e.verificada DESC, e.id DESC
+            LIMIT {$limite}
+        ";
+
+        return $this->pdo->query($sql)->fetchAll();
+    }
+
+    public function avaliar(int $empresaId, int $usuarioId, int $nota): bool
+    {
+        if ($empresaId <= 0 || $usuarioId <= 0 || $nota < 1 || $nota > 5) {
+            return false;
+        }
+
+        $stmt = $this->pdo->prepare(
+            'SELECT id FROM avaliacoes WHERE empresa_id = :empresa_id AND usuario_id = :usuario_id LIMIT 1'
+        );
+        $stmt->execute([':empresa_id' => $empresaId, ':usuario_id' => $usuarioId]);
+
+        if ($stmt->fetch()) {
+            return false;
+        }
+
+        $this->pdo->beginTransaction();
+        try {
+            $stmt = $this->pdo->prepare(
+                'INSERT INTO avaliacoes (usuario_id, empresa_id, nota) VALUES (:usuario_id, :empresa_id, :nota)'
+            );
+            $stmt->execute([':usuario_id' => $usuarioId, ':empresa_id' => $empresaId, ':nota' => $nota]);
+
+            $stmt = $this->pdo->prepare(
+                'UPDATE empresas SET avaliacao = (SELECT ROUND(AVG(nota), 1) FROM avaliacoes WHERE empresa_id = :empresa_id), total_avaliacoes = (SELECT COUNT(*) FROM avaliacoes WHERE empresa_id = :empresa_id_count) WHERE id = :empresa_id_update'
+            );
+            $stmt->execute([
+                ':empresa_id' => $empresaId,
+                ':empresa_id_count' => $empresaId,
+                ':empresa_id_update' => $empresaId,
+            ]);
+            $this->pdo->commit();
+            return true;
+        } catch (Throwable $e) {
+            $this->pdo->rollBack();
+            return false;
+        }
+    }
+
     /**
      * Conta o total de empresas ativas
      */

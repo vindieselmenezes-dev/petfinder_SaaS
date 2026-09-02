@@ -2,16 +2,21 @@
 
 declare(strict_types=1);
 
+session_start();
+
 require_once "../app/Controllers/EmpresaController.php";
+require_once "../app/Helpers/Csrf.php";
 
 $controller = new EmpresaController();
 
 $id = isset($_GET["id"]) ? (int) $_GET["id"] : 0;
 
 $empresa = $controller->buscarPorId($id);
+$avaliacaoMensagem = $_SESSION['avaliacao_mensagem'] ?? null;
+unset($_SESSION['avaliacao_mensagem']);
 
 $horarios = $empresa ? $controller->buscarHorarios($id) : [];
-$galeria  = $empresa ? $controller->buscarGaleria($id) : [];
+$galeria = $empresa ? $controller->buscarGaleria($id) : [];
 
 $horariosPorDia = [];
 foreach ($horarios as $horario) {
@@ -63,189 +68,212 @@ $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Dom
 
     <main class="mb-5">
 
-    <?php if (!$empresa): ?>
+        <?php if (!$empresa): ?>
 
-        <div class="container">
-            <div class="alert alert-warning text-center py-5">
-                <h2>Empresa não encontrada.</h2>
-                <p class="mb-0">O link pode estar incorreto ou a empresa já não está mais ativa.</p>
+            <div class="container">
+                <div class="alert alert-warning text-center py-5">
+                    <h2>Empresa não encontrada.</h2>
+                    <p class="mb-0">O link pode estar incorreto ou a empresa já não está mais ativa.</p>
+                </div>
             </div>
-        </div>
 
-    <?php else: ?>
+        <?php else: ?>
 
-        <!-- CAPA -->
+            <!-- CAPA -->
 
-        <?php
+            <?php
             $capa = !empty($empresa["capa"])
                 ? "../uploads/empresas/" . $empresa["capa"]
                 : "../assets/img/pets/sem-foto.png";
-        ?>
+            ?>
 
-        <div style="height: 280px; overflow: hidden; background: #e9ecef;">
-            <img src="<?= htmlspecialchars($capa) ?>" style="width:100%; height:100%; object-fit:cover;" alt="Capa">
-        </div>
-
-        <div class="container">
-
-            <div class="row">
-
-                <!-- LOGO + INFO PRINCIPAL -->
-
-                <div class="col-12">
-
-                    <div class="d-flex align-items-end gap-3" style="margin-top:-60px;">
-
-                        <?php if (!empty($empresa["logo"])): ?>
-                            <img
-                                src="../uploads/empresas/<?= htmlspecialchars($empresa["logo"]) ?>"
-                                width="120" height="120"
-                                style="object-fit:cover; border-radius:16px; border:4px solid #fff; background:#fff;"
-                                alt="Logo">
-                        <?php else: ?>
-                            <div style="width:120px; height:120px; border-radius:16px; border:4px solid #fff; background:#f1f3f5; display:flex; align-items:center; justify-content:center;">
-                                <i class="bi bi-shop fs-1 text-muted"></i>
-                            </div>
-                        <?php endif; ?>
-
-                        <div class="pb-2">
-                            <h1 class="fw-bold mb-1"><?= htmlspecialchars($empresa["nome_fantasia"]) ?></h1>
-                            <span class="badge bg-primary">
-                                <i class="bi <?= htmlspecialchars($empresa['categoria_icone'] ?? 'bi-shop') ?>"></i>
-                                <?= htmlspecialchars($empresa["categoria_nome"]) ?>
-                            </span>
-                            <?php if (!empty($empresa["verificada"])): ?>
-                                <span class="badge bg-success">
-                                    <i class="bi bi-patch-check-fill"></i> Verificada
-                                </span>
-                            <?php endif; ?>
-                        </div>
-
-                    </div>
-
-                </div>
-
+            <div style="height: 280px; overflow: hidden; background: #e9ecef;">
+                <img src="<?= htmlspecialchars($capa) ?>" style="width:100%; height:100%; object-fit:cover;" alt="Capa">
             </div>
 
-            <div class="row g-4 mt-2">
+            <div class="container">
 
-                <!-- COLUNA PRINCIPAL -->
+                <div class="row">
 
-                <div class="col-lg-8">
+                    <!-- LOGO + INFO PRINCIPAL -->
 
-                    <?php if (!empty($empresa["descricao"])): ?>
-                        <h5>Sobre</h5>
-                        <p><?= nl2br(htmlspecialchars($empresa["descricao"])) ?></p>
-                        <hr>
-                    <?php endif; ?>
+                    <div class="col-12">
 
-                    <?php if ((float) $empresa["avaliacao"] > 0): ?>
-                        <p>
-                            ⭐ <strong><?= number_format((float) $empresa["avaliacao"], 1) ?></strong>
-                            <span class="text-muted">(<?= (int) $empresa["total_avaliacoes"] ?> avaliações)</span>
-                        </p>
-                    <?php endif; ?>
+                        <div class="d-flex align-items-end gap-3" style="margin-top:-60px;">
 
-                    <!-- GALERIA -->
-
-                    <?php if (!empty($galeria)): ?>
-
-                        <h5 class="mt-4">Galeria de Fotos</h5>
-
-                        <div class="row g-2 mb-4">
-
-                            <?php foreach ($galeria as $imagem): ?>
-                                <div class="col-4 col-md-3">
-                                    <img
-                                        src="../uploads/empresas/<?= htmlspecialchars($imagem["imagem"]) ?>"
-                                        class="img-fluid rounded-3"
-                                        style="width:100%; height:130px; object-fit:cover;"
-                                        alt="Foto da empresa">
+                            <?php if (!empty($empresa["logo"])): ?>
+                                <img src="../uploads/empresas/<?= htmlspecialchars($empresa["logo"]) ?>" width="120"
+                                    height="120"
+                                    style="object-fit:cover; border-radius:16px; border:4px solid #fff; background:#fff;"
+                                    alt="Logo">
+                            <?php else: ?>
+                                <div
+                                    style="width:120px; height:120px; border-radius:16px; border:4px solid #fff; background:#f1f3f5; display:flex; align-items:center; justify-content:center;">
+                                    <i class="bi bi-shop fs-1 text-muted"></i>
                                 </div>
-                            <?php endforeach; ?>
+                            <?php endif; ?>
+
+                            <div class="pb-2">
+                                <h1 class="fw-bold mb-1"><?= htmlspecialchars($empresa["nome_fantasia"]) ?></h1>
+                                <span class="badge bg-primary">
+                                    <i class="bi <?= htmlspecialchars($empresa['categoria_icone'] ?? 'bi-shop') ?>"></i>
+                                    <?= htmlspecialchars($empresa["categoria_nome"]) ?>
+                                </span>
+                                <?php if (!empty($empresa["verificada"])): ?>
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-patch-check-fill"></i> Verificada
+                                    </span>
+                                <?php endif; ?>
+                            </div>
 
                         </div>
 
-                    <?php endif; ?>
-
-                    <!-- HORÁRIO -->
-
-                    <h5>Horário de Funcionamento</h5>
-
-                    <table class="table table-sm w-auto">
-                        <tbody>
-                            <?php foreach ($diasSemana as $dia): ?>
-                                <?php $h = $horariosPorDia[$dia] ?? null; ?>
-                                <tr>
-                                    <td class="fw-semibold pe-4"><?= $dia ?></td>
-                                    <td>
-                                        <?php if ($h && !empty($h['fechado'])): ?>
-                                            <span class="text-danger">Fechado</span>
-                                        <?php elseif ($h && !empty($h['abertura']) && !empty($h['fechamento'])): ?>
-                                            <?= substr($h['abertura'], 0, 5) ?> às <?= substr($h['fechamento'], 0, 5) ?>
-                                        <?php else: ?>
-                                            <span class="text-muted">Não informado</span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                    </div>
 
                 </div>
 
-                <!-- COLUNA LATERAL: CONTATO -->
+                <div class="row g-4 mt-2">
 
-                <div class="col-lg-4">
+                    <!-- COLUNA PRINCIPAL -->
 
-                    <div class="border rounded-3 p-4 sticky-top" style="top: 20px;">
+                    <div class="col-lg-8">
 
-                        <h5>Contato</h5>
+                        <?php if (!empty($empresa["descricao"])): ?>
+                            <h5>Sobre</h5>
+                            <p><?= nl2br(htmlspecialchars($empresa["descricao"])) ?></p>
+                            <hr>
+                        <?php endif; ?>
 
-                        <?php if (!empty($empresa["endereco"])): ?>
-                            <p class="mb-2">
-                                <i class="bi bi-geo-alt-fill"></i>
-                                <?= htmlspecialchars($empresa["endereco"]) ?><?= !empty($empresa["numero"]) ? ", " . htmlspecialchars($empresa["numero"]) : "" ?>
-                                <?php if (!empty($empresa["bairro"])): ?><br><?= htmlspecialchars($empresa["bairro"]) ?><?php endif; ?>
-                                <?php if (!empty($empresa["cidade"])): ?><br><?= htmlspecialchars($empresa["cidade"]) ?> / <?= htmlspecialchars($empresa["estado"]) ?><?php endif; ?>
+                        <?php if ((float) $empresa["avaliacao"] > 0): ?>
+                            <p>
+                                ⭐ <strong><?= number_format((float) $empresa["avaliacao"], 1) ?></strong>
+                                <span class="text-muted">(<?= (int) $empresa["total_avaliacoes"] ?> avaliações)</span>
                             </p>
                         <?php endif; ?>
 
-                        <?php if (!empty($empresa["telefone"])): ?>
-                            <p class="mb-2">
-                                <i class="bi bi-telephone-fill"></i>
-                                <?= htmlspecialchars($empresa["telefone"]) ?>
-                            </p>
+                        <?php if ($avaliacaoMensagem): ?>
+                            <div class="alert alert-info"><?= htmlspecialchars($avaliacaoMensagem) ?></div>
                         <?php endif; ?>
 
-                        <?php if (!empty($empresa["email"])): ?>
-                            <p class="mb-2">
-                                <i class="bi bi-envelope-fill"></i>
-                                <?= htmlspecialchars($empresa["email"]) ?>
-                            </p>
+                        <?php if (isset($_SESSION['usuario_id'])): ?>
+                            <form action="avaliar_empresa.php" method="POST" class="border rounded-3 p-3 mb-4">
+                                <?= Csrf::campoHtml() ?>
+                                <input type="hidden" name="empresa_id" value="<?= (int) $empresa['id'] ?>">
+                                <label for="notaEmpresa" class="form-label fw-semibold">Avalie esta empresa</label>
+                                <div class="d-flex align-items-center gap-2">
+                                    <select id="notaEmpresa" name="nota" class="form-select" style="max-width: 180px" required>
+                                        <option value="">Escolha uma nota</option>
+                                        <?php for ($nota = 5; $nota >= 1; $nota--): ?>
+                                            <option value="<?= $nota ?>">
+                                                <?= str_repeat('★', $nota) ?>            <?= str_repeat('☆', 5 - $nota) ?> (<?= $nota ?>/5)
+                                            </option>
+                                        <?php endfor; ?>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary">Avaliar</button>
+                                </div>
+                            </form>
                         <?php endif; ?>
 
-                        <?php if (!empty($empresa["site"])): ?>
-                            <p class="mb-3">
-                                <i class="bi bi-globe"></i>
-                                <a href="<?= htmlspecialchars($empresa["site"]) ?>" target="_blank" rel="noopener">
-                                    <?= htmlspecialchars($empresa["site"]) ?>
-                                </a>
-                            </p>
-                        <?php endif; ?>
+                        <!-- GALERIA -->
 
-                        <?php if (!empty($empresa["whatsapp"])): ?>
-                            <a href="https://wa.me/55<?= preg_replace('/\D/', '', $empresa["whatsapp"]) ?>"
-                               target="_blank" rel="noopener"
-                               class="btn btn-success w-100">
-                                <i class="bi bi-whatsapp"></i>
-                                Falar no WhatsApp
-                            </a>
-                        <?php else: ?>
-                            <div class="alert alert-secondary mb-0">
-                                WhatsApp não informado.
+                        <?php if (!empty($galeria)): ?>
+
+                            <h5 class="mt-4">Galeria de Fotos</h5>
+
+                            <div class="row g-2 mb-4">
+
+                                <?php foreach ($galeria as $imagem): ?>
+                                    <div class="col-4 col-md-3">
+                                        <img src="../uploads/empresas/<?= htmlspecialchars($imagem["imagem"]) ?>"
+                                            class="img-fluid rounded-3" style="width:100%; height:130px; object-fit:cover;"
+                                            alt="Foto da empresa">
+                                    </div>
+                                <?php endforeach; ?>
+
                             </div>
+
                         <?php endif; ?>
+
+                        <!-- HORÁRIO -->
+
+                        <h5>Horário de Funcionamento</h5>
+
+                        <table class="table table-sm w-auto">
+                            <tbody>
+                                <?php foreach ($diasSemana as $dia): ?>
+                                    <?php $h = $horariosPorDia[$dia] ?? null; ?>
+                                    <tr>
+                                        <td class="fw-semibold pe-4"><?= $dia ?></td>
+                                        <td>
+                                            <?php if ($h && !empty($h['fechado'])): ?>
+                                                <span class="text-danger">Fechado</span>
+                                            <?php elseif ($h && !empty($h['abertura']) && !empty($h['fechamento'])): ?>
+                                                <?= substr($h['abertura'], 0, 5) ?> às <?= substr($h['fechamento'], 0, 5) ?>
+                                            <?php else: ?>
+                                                <span class="text-muted">Não informado</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <!-- COLUNA LATERAL: CONTATO -->
+
+                    <div class="col-lg-4">
+
+                        <div class="border rounded-3 p-4 sticky-top" style="top: 20px;">
+
+                            <h5>Contato</h5>
+
+                            <?php if (!empty($empresa["endereco"])): ?>
+                                <p class="mb-2">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    <?= htmlspecialchars($empresa["endereco"]) ?>        <?= !empty($empresa["numero"]) ? ", " . htmlspecialchars($empresa["numero"]) : "" ?>
+                                    <?php if (!empty($empresa["bairro"])): ?><br><?= htmlspecialchars($empresa["bairro"]) ?><?php endif; ?>
+                                    <?php if (!empty($empresa["cidade"])): ?><br><?= htmlspecialchars($empresa["cidade"]) ?> /
+                                        <?= htmlspecialchars($empresa["estado"]) ?>        <?php endif; ?>
+                                </p>
+                            <?php endif; ?>
+
+                            <?php if (!empty($empresa["telefone"])): ?>
+                                <p class="mb-2">
+                                    <i class="bi bi-telephone-fill"></i>
+                                    <?= htmlspecialchars($empresa["telefone"]) ?>
+                                </p>
+                            <?php endif; ?>
+
+                            <?php if (!empty($empresa["email"])): ?>
+                                <p class="mb-2">
+                                    <i class="bi bi-envelope-fill"></i>
+                                    <?= htmlspecialchars($empresa["email"]) ?>
+                                </p>
+                            <?php endif; ?>
+
+                            <?php if (!empty($empresa["site"])): ?>
+                                <p class="mb-3">
+                                    <i class="bi bi-globe"></i>
+                                    <a href="<?= htmlspecialchars($empresa["site"]) ?>" target="_blank" rel="noopener">
+                                        <?= htmlspecialchars($empresa["site"]) ?>
+                                    </a>
+                                </p>
+                            <?php endif; ?>
+
+                            <?php if (!empty($empresa["whatsapp"])): ?>
+                                <a href="https://wa.me/55<?= preg_replace('/\D/', '', $empresa["whatsapp"]) ?>" target="_blank"
+                                    rel="noopener" class="btn btn-success w-100">
+                                    <i class="bi bi-whatsapp"></i>
+                                    Falar no WhatsApp
+                                </a>
+                            <?php else: ?>
+                                <div class="alert alert-secondary mb-0">
+                                    WhatsApp não informado.
+                                </div>
+                            <?php endif; ?>
+
+                        </div>
 
                     </div>
 
@@ -253,9 +281,7 @@ $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Dom
 
             </div>
 
-        </div>
-
-    <?php endif; ?>
+        <?php endif; ?>
 
     </main>
 

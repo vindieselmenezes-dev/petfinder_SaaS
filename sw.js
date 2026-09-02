@@ -14,7 +14,7 @@
  *   nunca passa pelo cache — vai direto pra rede, do jeito que já era.
  */
 
-const VERSION = "petfinder-v1";
+const VERSION = "petfinder-v2";
 const STATIC_CACHE = `${VERSION}-static`;
 const OFFLINE_URL = "offline.html";
 

@@ -183,7 +183,7 @@
                                 </span>
 
                                 <input type="search" class="form-control" id="inputBuscaAdocao" name="busca"
-                                    autocomplete="off" placeholder="Pesquisar pets para adoção...">
+                                    autocomplete="off" placeholder="Pesquisar clínicas, produtos, pets e serviços...">
 
                                 <button type="button" class="btn btn-outline-secondary" id="btnIrFiltros">
                                     <i class="bi bi-funnel"></i>
@@ -450,39 +450,6 @@
                                 Encontre pet shops, clínicas, veterinários,
                                 hotéis, produtos e serviços perto de você.
                             </p>
-
-                            <!-- =============================== -->
-                            <!-- BUSCA INTELIGENTE -->
-                            <!-- =============================== -->
-
-                            <div class="hero-search">
-
-                                <div class="input-group input-group-lg">
-
-                                    <span class="input-group-text">
-
-                                        <i class="bi bi-search"></i>
-
-                                    </span>
-
-                                    <input type="text" class="form-control" id="campoPesquisa"
-                                        placeholder="O que você procura hoje?">
-
-                                    <button class="btn btn-primary" type="button" id="btnPesquisar">
-
-                                        Pesquisar
-
-                                    </button>
-
-                                    <button class="btn btn-success">
-
-                                        <i class="bi bi-mic-fill"></i>
-
-                                    </button>
-
-                                </div>
-
-                            </div>
 
                         </div>
 
@@ -952,254 +919,271 @@
 
                 <div class="row g-4">
 
-                    <!-- CARD 01 -->
+                    <div class="col-lg-9">
+                        <div class="row g-4" id="empresasDestaqueLista">
 
-                    <div class="col-lg-4 col-md-6">
+                            <!-- CARD 01 -->
 
-                        <div class="card empresa-card h-100 shadow-sm">
+                            <div class="col-lg-4 col-md-6">
 
-                            <img src="assets/img/empresas/petshop01.png" class="card-img-top" alt="Pet Shop">
+                                <div class="card empresa-card h-100 shadow-sm">
 
-                            <div class="card-body">
+                                    <img src="assets/img/empresas/petshop01.png" class="card-img-top" alt="Pet Shop">
 
-                                <span class="badge bg-success mb-3">
+                                    <div class="card-body">
 
-                                    Pet Shop
+                                        <span class="badge bg-success mb-3">
 
-                                </span>
+                                            Pet Shop
 
-                                <h4>
+                                        </span>
 
-                                    Pet Feliz
+                                        <h4>
 
-                                </h4>
+                                            Pet Feliz
 
-                                <p>
+                                        </h4>
 
-                                    Produtos, banho e tosa,
-                                    consultas veterinárias
-                                    e atendimento completo.
+                                        <p>
 
-                                </p>
+                                            Produtos, banho e tosa,
+                                            consultas veterinárias
+                                            e atendimento completo.
 
-                                <div class="mb-3">
+                                        </p>
 
-                                    ⭐⭐⭐⭐⭐
+                                        <div class="mb-3">
 
-                                    <small>
+                                            ⭐⭐⭐⭐⭐
 
-                                        (524 avaliações)
+                                            <small>
 
-                                    </small>
+                                                (524 avaliações)
 
-                                </div>
+                                            </small>
 
-                                <div class="mb-3">
+                                        </div>
 
-                                    <i class="bi bi-geo-alt-fill"></i>
+                                        <div class="mb-3">
 
-                                    2,4 km
+                                            <i class="bi bi-geo-alt-fill"></i>
+
+                                            2,4 km
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="card-footer bg-white">
+
+                                        <div class="d-grid gap-2">
+
+                                            <a href="public/empresa.php?id=1" class="btn btn-success">
+
+                                                <i class="bi bi-whatsapp"></i>
+
+                                                WhatsApp
+
+                                            </a>
+
+                                            <a href="public/empresa.php?id=1" class="btn btn-outline-primary">
+
+                                                Agendar
+
+                                            </a>
+
+                                            <a href="public/empresa.php?id=1" class="btn btn-light">
+
+                                                Ver Perfil
+
+                                            </a>
+
+                                        </div>
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
-                            <div class="card-footer bg-white">
+                            <!-- CARD 02 -->
 
-                                <div class="d-grid gap-2">
+                            <div class="col-lg-4 col-md-6">
 
-                                    <a href="public/empresa.php?id=1" class="btn btn-success">
+                                <div class="card empresa-card h-100 shadow-sm">
 
-                                        <i class="bi bi-whatsapp"></i>
+                                    <img src="assets/img/empresas/vet01.png" class="card-img-top">
 
-                                        WhatsApp
+                                    <div class="card-body">
 
-                                    </a>
+                                        <span class="badge bg-primary mb-3">
 
-                                    <a href="public/empresa.php?id=1" class="btn btn-outline-primary">
+                                            Clínica Veterinária
 
-                                        Agendar
+                                        </span>
 
-                                    </a>
+                                        <h4>
 
-                                    <a href="public/empresa.php?id=1" class="btn btn-light">
+                                            Vet Center
 
-                                        Ver Perfil
+                                        </h4>
 
-                                    </a>
+                                        <p>
+
+                                            Atendimento 24 horas,
+                                            exames, vacinas,
+                                            internação e cirurgias.
+
+                                        </p>
+
+                                        <div class="mb-3">
+
+                                            ⭐⭐⭐⭐⭐
+
+                                            <small>
+
+                                                (1.132 avaliações)
+
+                                            </small>
+
+                                        </div>
+
+                                        <div class="mb-3">
+
+                                            <i class="bi bi-geo-alt-fill"></i>
+
+                                            1,8 km
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="card-footer bg-white">
+
+                                        <div class="d-grid gap-2">
+
+                                            <a href="public/empresa.php?id=2" class="btn btn-success">
+
+                                                WhatsApp
+
+                                            </a>
+
+                                            <a href="public/empresas.php?categoria_id=2"
+                                                class="btn btn-outline-primary">
+
+                                                Agendar
+
+                                            </a>
+
+                                            <a href="public/empresa.php?id=2" class="btn btn-light">
+
+                                                Ver Perfil
+
+                                            </a>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- CARD 03 -->
+
+                            <div class="col-lg-4 col-md-6">
+
+                                <div class="card empresa-card h-100 shadow-sm">
+
+                                    <img src="assets/img/empresas/hotel01.png" class="card-img-top">
+
+                                    <div class="card-body">
+
+                                        <span class="badge bg-warning text-dark mb-3">
+
+                                            Hotel Pet
+
+                                        </span>
+
+                                        <h4>
+
+                                            Hotel Dog House
+
+                                        </h4>
+
+                                        <p>
+
+                                            Hospedagem,
+                                            recreação,
+                                            monitoramento 24h
+                                            e câmeras online.
+
+                                        </p>
+
+                                        <div class="mb-3">
+
+                                            ⭐⭐⭐⭐⭐
+
+                                            <small>
+
+                                                (418 avaliações)
+
+                                            </small>
+
+                                        </div>
+
+                                        <div class="mb-3">
+
+                                            <i class="bi bi-geo-alt-fill"></i>
+
+                                            5,1 km
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="card-footer bg-white">
+
+                                        <div class="d-grid gap-2">
+
+                                            <a href="public/empresa.php?id=3" class="btn btn-success">
+
+                                                WhatsApp
+
+                                            </a>
+
+                                            <a href="public/empresas.php?categoria_id=5"
+                                                class="btn btn-outline-primary">
+
+                                                Reservar
+
+                                            </a>
+
+                                            <a href="public/empresa.php?id=3" class="btn btn-light">
+
+                                                Ver Perfil
+
+                                            </a>
+
+                                        </div>
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
                         </div>
-
                     </div>
 
-                    <!-- CARD 02 -->
-
-                    <div class="col-lg-4 col-md-6">
-
-                        <div class="card empresa-card h-100 shadow-sm">
-
-                            <img src="assets/img/empresas/vet01.png" class="card-img-top">
-
-                            <div class="card-body">
-
-                                <span class="badge bg-primary mb-3">
-
-                                    Clínica Veterinária
-
-                                </span>
-
-                                <h4>
-
-                                    Vet Center
-
-                                </h4>
-
-                                <p>
-
-                                    Atendimento 24 horas,
-                                    exames, vacinas,
-                                    internação e cirurgias.
-
-                                </p>
-
-                                <div class="mb-3">
-
-                                    ⭐⭐⭐⭐⭐
-
-                                    <small>
-
-                                        (1.132 avaliações)
-
-                                    </small>
-
-                                </div>
-
-                                <div class="mb-3">
-
-                                    <i class="bi bi-geo-alt-fill"></i>
-
-                                    1,8 km
-
-                                </div>
-
+                    <aside class="col-lg-3">
+                        <div class="border rounded-3 p-3 h-100">
+                            <h3 class="h5 mb-3">Ranking</h3>
+                            <div id="rankingEmpresasDestaque">
+                                <p class="text-muted small mb-0">Carregando...</p>
                             </div>
-
-                            <div class="card-footer bg-white">
-
-                                <div class="d-grid gap-2">
-
-                                    <a href="public/empresa.php?id=2" class="btn btn-success">
-
-                                        WhatsApp
-
-                                    </a>
-
-                                    <a href="public/empresas.php?categoria_id=2" class="btn btn-outline-primary">
-
-                                        Agendar
-
-                                    </a>
-
-                                    <a href="public/empresa.php?id=2" class="btn btn-light">
-
-                                        Ver Perfil
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
                         </div>
-
-                    </div>
-
-                    <!-- CARD 03 -->
-
-                    <div class="col-lg-4 col-md-6">
-
-                        <div class="card empresa-card h-100 shadow-sm">
-
-                            <img src="assets/img/empresas/hotel01.png" class="card-img-top">
-
-                            <div class="card-body">
-
-                                <span class="badge bg-warning text-dark mb-3">
-
-                                    Hotel Pet
-
-                                </span>
-
-                                <h4>
-
-                                    Hotel Dog House
-
-                                </h4>
-
-                                <p>
-
-                                    Hospedagem,
-                                    recreação,
-                                    monitoramento 24h
-                                    e câmeras online.
-
-                                </p>
-
-                                <div class="mb-3">
-
-                                    ⭐⭐⭐⭐⭐
-
-                                    <small>
-
-                                        (418 avaliações)
-
-                                    </small>
-
-                                </div>
-
-                                <div class="mb-3">
-
-                                    <i class="bi bi-geo-alt-fill"></i>
-
-                                    5,1 km
-
-                                </div>
-
-                            </div>
-
-                            <div class="card-footer bg-white">
-
-                                <div class="d-grid gap-2">
-
-                                    <a href="public/empresa.php?id=3" class="btn btn-success">
-
-                                        WhatsApp
-
-                                    </a>
-
-                                    <a href="public/empresas.php?categoria_id=5" class="btn btn-outline-primary">
-
-                                        Reservar
-
-                                    </a>
-
-                                    <a href="public/empresa.php?id=3" class="btn btn-light">
-
-                                        Ver Perfil
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
+                    </aside>
 
                 </div>
 
@@ -1235,7 +1219,7 @@
 
                 </div>
 
-                <div class="row g-4">
+                <div class="row g-4" id="veterinariosLista">
 
                     <div class="col-lg-3 col-md-6">
 
@@ -2478,8 +2462,117 @@
     <!-- JAVASCRIPT -->
     <!-- ========================= -->
 
-    <script src="assets/js/script.js"></script>
+    <script src="assets/js/script.js?v=2"></script>
     <script src="assets/js/geolocalizacao.js">
+    </script>
+
+    <script>
+        (function () {
+            const lista = document.getElementById('veterinariosLista');
+            if (!lista) return;
+
+            function escapar(texto) {
+                const elemento = document.createElement('span');
+                elemento.textContent = texto || '';
+                return elemento.innerHTML;
+            }
+
+            function estrelas(nota) {
+                const preenchidas = Math.round(Number(nota) || 0);
+                return '★'.repeat(preenchidas) + '☆'.repeat(5 - preenchidas);
+            }
+
+            function carregarVeterinarios() {
+                fetch('app/ajax/listar_veterinarios_proximos.php', { cache: 'no-store' })
+                    .then(function (resposta) {
+                        if (resposta.status === 401) return { localizacao: false, veterinarios: [] };
+                        return resposta.ok ? resposta.json() : { localizacao: true, veterinarios: [] };
+                    })
+                    .then(function (dados) {
+                        if (!dados.localizacao) {
+                            lista.innerHTML = '<div class="col-12"><div class="alert alert-info mb-0">Entre na sua conta para ver veterinários próximos.</div></div>';
+                            return;
+                        }
+                        if (!Array.isArray(dados.veterinarios) || !dados.veterinarios.length) {
+                            lista.innerHTML = '<div class="col-12"><div class="alert alert-info mb-0">Permita o acesso à localização para encontrar veterinários próximos. <button type="button" class="btn btn-sm btn-primary ms-2" id="btnPermitirLocalizacao">Permitir localização</button></div></div>';
+                            const botao = document.getElementById('btnPermitirLocalizacao');
+                            if (botao) {
+                                botao.addEventListener('click', function () {
+                                    if (window.PetfinderLocalizacao) {
+                                        window.PetfinderLocalizacao.solicitarAgora();
+                                    }
+                                });
+                            }
+                            return;
+                        }
+                        lista.innerHTML = dados.veterinarios.map(function (veterinario) {
+                            const foto = veterinario.foto
+                                ? 'uploads/veterinarios/' + encodeURIComponent(veterinario.foto)
+                                : 'assets/img/veterinarios/vet01.png';
+                            const telefone = String(veterinario.telefone || '').replace(/\D/g, '');
+                            return '<div class="col-lg-3 col-md-6"><div class="card shadow-sm h-100">' +
+                                '<img src="' + foto + '" class="card-img-top" alt="' + escapar(veterinario.nome) + '">' +
+                                '<div class="card-body text-center"><h5>' + escapar(veterinario.nome) + '</h5>' +
+                                '<p class="mb-2">' + escapar(veterinario.biografia || 'Atendimento veterinário') + '</p>' +
+                                '<p class="text-warning mb-2" aria-label="Nota ' + Number(veterinario.avaliacao).toFixed(1) + ' de 5">' + estrelas(veterinario.avaliacao) + ' <small class="text-muted">(' + Number(veterinario.total_avaliacoes) + ')</small></p>' +
+                                '<p class="text-muted mb-3"><i class="bi bi-geo-alt-fill"></i> ' + Number(veterinario.distancia_km).toFixed(1) + ' km</p>' +
+                                (telefone ? '<a href="tel:' + telefone + '" class="btn btn-primary w-100">Entrar em contato</a>' : '') +
+                                '</div></div></div>';
+                        }).join('');
+                    })
+                    .catch(function () {
+                        lista.innerHTML = '<div class="col-12"><div class="alert alert-warning mb-0">Não foi possível carregar os veterinários próximos.</div></div>';
+                    });
+            }
+
+            carregarVeterinarios();
+            window.addEventListener('petfinder:localizacao-atualizada', carregarVeterinarios);
+        })();
+    </script>
+
+    <script>
+        (function () {
+            const lista = document.getElementById('empresasDestaqueLista');
+            const ranking = document.getElementById('rankingEmpresasDestaque');
+            if (!lista || !ranking) return;
+
+            function escapar(texto) {
+                const elemento = document.createElement('span');
+                elemento.textContent = texto || '';
+                return elemento.innerHTML;
+            }
+
+            function estrelas(nota) {
+                const preenchidas = Math.round(Number(nota) || 0);
+                return '★'.repeat(preenchidas) + '☆'.repeat(5 - preenchidas);
+            }
+
+            fetch('app/ajax/listar_empresas_destaque.php', { cache: 'no-store' })
+                .then(function (resposta) { return resposta.ok ? resposta.json() : []; })
+                .then(function (empresas) {
+                    if (!Array.isArray(empresas) || !empresas.length) return;
+                    lista.innerHTML = empresas.slice(0, 6).map(function (empresa) {
+                        const capa = empresa.capa
+                            ? 'uploads/empresas/' + encodeURIComponent(empresa.capa)
+                            : 'assets/img/pets/sem-foto.png';
+                        return '<div class="col-lg-4 col-md-6"><div class="card empresa-card h-100 shadow-sm">' +
+                            '<a href="public/empresa.php?id=' + Number(empresa.id) + '"><img src="' + capa + '" class="card-img-top" alt="' + escapar(empresa.nome_fantasia) + '"></a>' +
+                            '<div class="card-body"><span class="badge bg-primary mb-3">' + escapar(empresa.categoria_nome) + '</span>' +
+                            '<h4>' + escapar(empresa.nome_fantasia) + '</h4><p>' + escapar(empresa.descricao) + '</p>' +
+                            '<div class="mb-3 text-warning" aria-label="Nota ' + Number(empresa.avaliacao).toFixed(1) + ' de 5">' + estrelas(empresa.avaliacao) + ' <small class="text-muted">(' + Number(empresa.total_avaliacoes) + ' avaliações)</small></div>' +
+                            '<div><i class="bi bi-geo-alt-fill"></i> ' + escapar(empresa.cidade || 'Cidade não informada') + '</div></div>' +
+                            '<div class="card-footer bg-white"><a href="public/empresa.php?id=' + Number(empresa.id) + '" class="btn btn-outline-primary w-100">Ver Perfil</a></div></div></div>';
+                    }).join('');
+
+                    ranking.innerHTML = empresas.slice(0, 5).map(function (empresa, indice) {
+                        return '<a class="d-flex align-items-center gap-2 text-decoration-none text-dark mb-3" href="public/empresa.php?id=' + Number(empresa.id) + '">' +
+                            '<strong class="text-primary">' + (indice + 1) + '</strong><span class="flex-grow-1 small">' + escapar(empresa.nome_fantasia) + '<br><span class="text-warning">' + estrelas(empresa.avaliacao) + '</span> <span class="text-muted">' + Number(empresa.avaliacao).toFixed(1) + '</span></span></a>';
+                    }).join('');
+                })
+                .catch(function () {
+                    ranking.innerHTML = '<p class="text-muted small mb-0">Ranking indisponível.</p>';
+                });
+        })();
     </script>
 
     <!-- ========================= -->
@@ -2783,9 +2876,10 @@
             if (form) {
                 form.addEventListener("submit", function (e) {
                     e.preventDefault();
-                    buscarPets();
-                    const adocaoEl = document.getElementById("adocao");
-                    if (adocaoEl) adocaoEl.scrollIntoView({ behavior: "smooth" });
+                    const texto = inputBusca ? inputBusca.value.trim() : "";
+                    if (texto) {
+                        window.location.href = "public/pesquisa.php?q=" + encodeURIComponent(texto);
+                    }
                 });
             }
 

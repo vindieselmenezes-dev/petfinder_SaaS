@@ -48,6 +48,16 @@ class EmpresaController
         return $this->empresa->listarCategorias();
     }
 
+    public function listarDestaques(int $limite = 6): array
+    {
+        return $this->empresa->listarDestaques($limite);
+    }
+
+    public function avaliar(int $empresaId, int $usuarioId, int $nota): bool
+    {
+        return $this->empresa->avaliar($empresaId, $usuarioId, $nota);
+    }
+
     /**
      * Verifica se um arquivo enviado é realmente uma imagem válida
      */
@@ -211,7 +221,7 @@ class EmpresaController
                 INSERT INTO empresa_equipe (empresa_id, usuario_id, papel, status)
                 VALUES (?, ?, 'proprietario', 'ativo')
             ");
-            $stmt->execute([$novoId, (int)$dados['usuario_id']]);
+            $stmt->execute([$novoId, (int) $dados['usuario_id']]);
         }
 
         return $novoId;

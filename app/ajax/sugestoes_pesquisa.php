@@ -16,19 +16,53 @@ if ($q === '') {
 }
 
 $termo = '%' . $q . '%';
+$qNormalizado = mb_strtolower($q);
 
 try {
     $sql = "
-        SELECT DISTINCT termo FROM (
-            SELECT p.nome AS termo FROM pets p WHERE LOWER(p.nome) LIKE LOWER(:termo1)
-            UNION
-            SELECT nome AS termo FROM especies WHERE LOWER(nome) LIKE LOWER(:termo2)
-            UNION
-            SELECT nome AS termo FROM racas WHERE LOWER(nome) LIKE LOWER(:termo3)
-            UNION
-            SELECT e.nome_fantasia AS termo FROM empresas e WHERE e.ativo = 1 AND LOWER(e.nome_fantasia) LIKE LOWER(:termo4)
+        SELECT tipo, id, texto FROM (
+            SELECT 'pet' AS tipo, p.id, p.nome AS texto
+            FROM pets p
+            WHERE LOWER(p.nome) LIKE LOWER(:termo1)
+            UNION ALL
+            SELECT 'especie', id, nome FROM especies
+            WHERE LOWER(nome) LIKE LOWER(:termo2) AND ativo = 1
+            UNION ALL
+            SELECT 'raca', id, nome FROM racas
+            WHERE LOWER(nome) LIKE LOWER(:termo3) AND ativo = 1
+            UNION ALL
+            SELECT 'empresa', e.id, e.nome_fantasia FROM empresas e
+            WHERE e.ativo = 1 AND LOWER(e.nome_fantasia) LIKE LOWER(:termo4)
+            UNION ALL
+            SELECT 'produto', p.id, p.nome FROM produtos p
+            WHERE p.ativo = 1 AND LOWER(p.nome) LIKE LOWER(:termo5)
+            UNION ALL
+                        SELECT CASE
+                                WHEN c.id = 9 THEN 'topico_produto'
+                                WHEN c.id = 8 THEN 'topico_adocao'
+                                ELSE 'topico_servico'
+                        END AS tipo, c.id, c.nome
+                        FROM categorias c
+                        WHERE c.ativo = 1
+                            AND (
+                                    LOWER(c.nome) LIKE LOWER(:termo6)
+                                      OR (c.id = 9 AND :q_produto IN ('produto', 'produtos', 'marketplace'))
+                                      OR (c.id = 8 AND :q_adocao IN ('adocao', 'adoção', 'pets'))
+                            )
+                        UNION ALL
+                        SELECT 'subcategoria_produto', sc.id, sc.nome
+                        FROM subcategorias sc
+                        WHERE sc.ativo = 1 AND LOWER(sc.nome) LIKE LOWER(:termo7)
+                        UNION ALL
+                        SELECT 'marca_produto', m.id, m.nome
+                        FROM marcas m
+                        WHERE m.ativo = 1 AND LOWER(m.nome) LIKE LOWER(:termo8)
+                        UNION ALL
+                        SELECT 'cidade', 0, cidade FROM enderecos
+                        WHERE cidade IS NOT NULL AND cidade <> ''
+                            AND LOWER(cidade) LIKE LOWER(:termo9)
         ) t
-        ORDER BY termo
+        ORDER BY texto
         LIMIT 10
     ";
 
@@ -37,9 +71,16 @@ try {
         ':termo1' => $termo,
         ':termo2' => $termo,
         ':termo3' => $termo,
-        ':termo4' => $termo
+        ':termo4' => $termo,
+        ':termo5' => $termo,
+        ':termo6' => $termo,
+        ':termo7' => $termo,
+        ':termo8' => $termo,
+        ':termo9' => $termo,
+        ':q_produto' => $qNormalizado,
+        ':q_adocao' => $qNormalizado
     ]);
-    $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode($rows);
 } catch (PDOException $e) {
