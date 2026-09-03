@@ -1,1 +1,6 @@
 config/database.php
+vendor/
+node_modules/
+playwright-report/
+test-results/
+logs/

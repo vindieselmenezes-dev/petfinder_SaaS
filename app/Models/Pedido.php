@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/MetricaEmpresa.php';
 
 class Pedido
 {
@@ -193,6 +194,15 @@ class Pedido
             }
 
             $this->pdo->commit();
+
+            foreach ($itensValidados as $item) {
+                $stmtEmpresa = $this->pdo->prepare('SELECT empresa_id FROM produtos WHERE id = :id');
+                $stmtEmpresa->execute([':id' => $item['produto_id']]);
+                $empresaId = (int) $stmtEmpresa->fetchColumn();
+                if ($empresaId > 0) {
+                    (new MetricaEmpresa())->registrar($empresaId, 'conversao', 'checkout', $item['produto_id'], $usuarioId);
+                }
+            }
 
             return [
                 'sucesso' => true,

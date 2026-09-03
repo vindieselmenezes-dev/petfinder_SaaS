@@ -212,7 +212,9 @@ $seoImagem = $imagens ? "uploads/produtos/" . $imagens[0]["imagem"] : "assets/im
 
                     <?php if (!empty($produto["empresa_whatsapp"])): ?>
                         <a href="https://wa.me/55<?= preg_replace('/\D/', '', $produto["empresa_whatsapp"]) ?>?text=<?= urlencode('Olá! Tenho interesse no produto: ' . $produto['nome']) ?>"
-                            target="_blank" rel="noopener" class="btn btn-success btn-lg">
+                            target="_blank" rel="noopener" class="btn btn-success btn-lg"
+                            data-metrica-empresa="<?= (int) $produto['empresa_id'] ?>" data-metrica-tipo="clique"
+                            data-metrica-referencia="<?= (int) $produto['id'] ?>">
                             <i class="bi bi-whatsapp"></i>
                             Falar com o vendedor
                         </a>
@@ -234,7 +236,9 @@ $seoImagem = $imagens ? "uploads/produtos/" . $imagens[0]["imagem"] : "assets/im
                             <input type="hidden" name="quantidade" id="qtdComprarAgora" value="1">
                             <input type="hidden" name="modo" value="agora">
                             <input type="hidden" name="voltar" value="checkout.php">
-                            <button type="submit" class="btn btn-primary btn-lg ms-2">
+                            <button type="submit" class="btn btn-primary btn-lg ms-2"
+                                data-metrica-empresa="<?= (int) $produto['empresa_id'] ?>" data-metrica-tipo="clique"
+                                data-metrica-referencia="<?= (int) $produto['id'] ?>">
                                 <i class="bi bi-lightning-fill"></i>
                                 Comprar agora
                             </button>
@@ -245,7 +249,9 @@ $seoImagem = $imagens ? "uploads/produtos/" . $imagens[0]["imagem"] : "assets/im
                             <input type="hidden" name="produto_id" value="<?= (int) $produto['id'] ?>">
                             <input type="hidden" name="quantidade" id="qtdAdicionarCarrinho" value="1">
                             <input type="hidden" name="voltar" value="produto.php?id=<?= (int) $produto['id'] ?>">
-                            <button type="submit" class="btn btn-outline-primary btn-lg ms-2">
+                            <button type="submit" class="btn btn-outline-primary btn-lg ms-2"
+                                data-metrica-empresa="<?= (int) $produto['empresa_id'] ?>" data-metrica-tipo="clique"
+                                data-metrica-referencia="<?= (int) $produto['id'] ?>">
                                 <i class="bi bi-cart-plus"></i>
                                 Adicionar ao Carrinho
                             </button>
@@ -301,6 +307,7 @@ $seoImagem = $imagens ? "uploads/produtos/" . $imagens[0]["imagem"] : "assets/im
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/metricas.js"></script>
 
 </body>
 

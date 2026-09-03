@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../Helpers/Mailer.php';
+require_once __DIR__ . '/../Helpers/PushNotifier.php';
 
 class Notificacao
 {
@@ -57,6 +58,10 @@ class Notificacao
                     '<p>Olá, ' . $nome . '.</p><h2>' . $tituloSeguro . '</h2><p>' . $mensagemSegura . '</p>' . $linkHtml
                 );
             }
+        }
+
+        if ($criada) {
+            PushNotifier::enviar($usuarioId, $titulo, $mensagem, $link);
         }
 
         return $criada;

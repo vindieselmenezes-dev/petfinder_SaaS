@@ -36,6 +36,31 @@ class Mailer
             return true;
         }
 
+        $autoload = __DIR__ . '/../../vendor/autoload.php';
+        if (is_file($autoload) && class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
+            require_once $autoload;
+            $mailer = new PHPMailer\PHPMailer\PHPMailer(true);
+            try {
+                $mailer->isSMTP();
+                $mailer->Host = getenv('SMTP_HOST') ?: 'localhost';
+                $mailer->Port = (int) (getenv('SMTP_PORT') ?: 587);
+                $mailer->SMTPAuth = getenv('SMTP_AUTH') === '1';
+                $mailer->Username = getenv('SMTP_USERNAME') ?: '';
+                $mailer->Password = getenv('SMTP_PASSWORD') ?: '';
+                $mailer->SMTPSecure = getenv('SMTP_ENCRYPTION') ?: PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                $mailer->CharSet = 'UTF-8';
+                $mailer->setFrom(getenv('EMAIL_REMETENTE') ?: 'no-reply@petfinder.local', 'PetFinder Brasil');
+                $mailer->addAddress($destinatario);
+                $mailer->isHTML(true);
+                $mailer->Subject = $assunto;
+                $mailer->Body = $corpoHtml;
+                return $mailer->send();
+            } catch (Throwable $exception) {
+                error_log('Falha SMTP PetFinder: ' . $exception->getMessage());
+                return false;
+            }
+        }
+
         $remetente = getenv('EMAIL_REMETENTE') ?: 'no-reply@petfinder.local';
         $cabecalhos = [
             'From: PetFinder Brasil <' . $remetente . '>',

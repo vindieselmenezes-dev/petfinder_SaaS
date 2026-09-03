@@ -275,7 +275,9 @@ $seoImagem = $empresa && !empty($empresa["capa"]) ? "uploads/empresas/" . $empre
 
                             <?php if (!empty($empresa["whatsapp"])): ?>
                                 <a href="https://wa.me/55<?= preg_replace('/\D/', '', $empresa["whatsapp"]) ?>" target="_blank"
-                                    rel="noopener" class="btn btn-success w-100">
+                                    rel="noopener" class="btn btn-success w-100"
+                                    data-metrica-empresa="<?= (int) $empresa['id'] ?>" data-metrica-tipo="clique"
+                                    data-metrica-referencia="<?= (int) $empresa['id'] ?>">
                                     <i class="bi bi-whatsapp"></i>
                                     Falar no WhatsApp
                                 </a>
@@ -300,6 +302,8 @@ $seoImagem = $empresa && !empty($empresa["capa"]) ? "uploads/empresas/" . $empre
     <footer class="border-top py-4 text-center text-muted">
         © <?= date("Y") ?> PetFinder Brasil
     </footer>
+
+    <script src="../assets/js/metricas.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
