@@ -8,7 +8,7 @@ for (const name of required) {
 }
 
 async function entrar(page) {
-    await page.goto('/login.php');
+    await page.goto('login.php');
     await page.getByLabel('E-mail').fill(process.env.E2E_EMAIL);
     await page.getByLabel('Senha').fill(process.env.E2E_PASSWORD);
     await page.getByRole('button', { name: /Entrar/i }).click();
@@ -18,7 +18,7 @@ async function entrar(page) {
 test.describe('fluxos críticos reais', () => {
     test('login e solicitação de adoção', async ({ page }) => {
         await entrar(page);
-        await page.goto(`/solicitar_adocao.php?pet_id=${process.env.E2E_PET_ID}`);
+        await page.goto(`solicitar_adocao.php?pet_id=${process.env.E2E_PET_ID}`);
         await expect(page.getByRole('heading', { name: /Adotar/i })).toBeVisible();
         await page.getByLabel(/Conte um pouco/i).fill('Teste E2E: ambiente de homologação.');
         await page.getByRole('button', { name: /Enviar Solicitação/i }).click();
@@ -27,10 +27,10 @@ test.describe('fluxos críticos reais', () => {
 
     test('compra completa até confirmação', async ({ page }) => {
         await entrar(page);
-        await page.goto(`/produto.php?id=${process.env.E2E_PRODUTO_ID}`);
+        await page.goto(`produto.php?id=${process.env.E2E_PRODUTO_ID}`);
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
         await page.getByRole('button', { name: /Adicionar ao Carrinho/i }).click();
-        await page.goto('/checkout.php');
+        await page.goto('checkout.php');
         await expect(page.getByRole('heading', { name: /Finalizar Compra/i })).toBeVisible();
         await page.getByRole('button', { name: /Confirmar Pedido|Finalizar Compra|Comprar/i }).click();
         await expect(page).toHaveURL(/pedido_confirmado\.php/);
