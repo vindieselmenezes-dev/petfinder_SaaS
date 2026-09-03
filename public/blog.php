@@ -72,6 +72,9 @@ function exibirComentarios(array $comentarios): string
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+<script src="../assets/js/click-sounds.js"></script>
+
+
 
 <head>
 

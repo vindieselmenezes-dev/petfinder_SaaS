@@ -12,6 +12,9 @@ $ofertas = $controller->listarOfertas();
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+<script src="../assets/js/click-sounds.js"></script>
+
+
 
 <head>
 
@@ -69,9 +72,9 @@ $ofertas = $controller->listarOfertas();
                 <?php foreach ($ofertas as $produto): ?>
 
                     <?php
-                        $imagem = !empty($produto["imagem_principal"])
-                            ? "../uploads/produtos/" . $produto["imagem_principal"]
-                            : "../assets/img/pets/sem-foto.png";
+                    $imagem = !empty($produto["imagem_principal"])
+                        ? "../uploads/produtos/" . $produto["imagem_principal"]
+                        : "../assets/img/pets/sem-foto.png";
                     ?>
 
                     <div class="col-lg-3 col-md-4 col-6">
@@ -83,7 +86,8 @@ $ofertas = $controller->listarOfertas();
                             </span>
 
                             <a href="produto.php?id=<?= (int) $produto['id'] ?>">
-                                <img src="<?= htmlspecialchars($imagem) ?>" class="card-img-top" style="height:180px; object-fit:cover;" alt="<?= htmlspecialchars($produto['nome']) ?>">
+                                <img src="<?= htmlspecialchars($imagem) ?>" class="card-img-top"
+                                    style="height:180px; object-fit:cover;" alt="<?= htmlspecialchars($produto['nome']) ?>">
                             </a>
 
                             <div class="card-body">

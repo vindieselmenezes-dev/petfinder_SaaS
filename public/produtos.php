@@ -11,15 +11,15 @@ $controller = new ProdutoController();
 $favoritoModel = new FavoritoProduto();
 
 $subcategorias = $controller->listarSubcategorias();
-$marcas        = $controller->listarMarcas();
+$marcas = $controller->listarMarcas();
 
-$busca          = trim($_GET["busca"] ?? "");
+$busca = trim($_GET["busca"] ?? "");
 $subcategoriaId = (int) ($_GET["subcategoria_id"] ?? 0);
-$marcaId        = (int) ($_GET["marca_id"] ?? 0);
-$precoMin       = (float) ($_GET["preco_min"] ?? 0);
-$precoMax       = (float) ($_GET["preco_max"] ?? 0);
-$ordem          = trim($_GET["ordem"] ?? "recente");
-$cidade         = trim($_GET["cidade"] ?? "");
+$marcaId = (int) ($_GET["marca_id"] ?? 0);
+$precoMin = (float) ($_GET["preco_min"] ?? 0);
+$precoMax = (float) ($_GET["preco_max"] ?? 0);
+$ordem = trim($_GET["ordem"] ?? "recente");
+$cidade = trim($_GET["cidade"] ?? "");
 
 $produtos = $controller->listarAtivos($busca, $subcategoriaId, $marcaId, $precoMin, $precoMax, $ordem, $cidade);
 
@@ -27,6 +27,9 @@ $produtos = $controller->listarAtivos($busca, $subcategoriaId, $marcaId, $precoM
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+<script src="../assets/js/click-sounds.js"></script>
+
+
 
 <head>
 
@@ -75,7 +78,8 @@ $produtos = $controller->listarAtivos($busca, $subcategoriaId, $marcaId, $precoM
 
             <div class="col-md-3">
                 <label class="form-label small">Buscar</label>
-                <input type="text" name="busca" class="form-control" placeholder="Nome do produto" value="<?= htmlspecialchars($busca) ?>">
+                <input type="text" name="busca" class="form-control" placeholder="Nome do produto"
+                    value="<?= htmlspecialchars($busca) ?>">
             </div>
 
             <div class="col-md-3">
@@ -104,17 +108,20 @@ $produtos = $controller->listarAtivos($busca, $subcategoriaId, $marcaId, $precoM
 
             <div class="col-md-1">
                 <label class="form-label small">Min. R$</label>
-                <input type="number" step="0.01" name="preco_min" class="form-control" value="<?= $precoMin > 0 ? htmlspecialchars((string) $precoMin) : '' ?>">
+                <input type="number" step="0.01" name="preco_min" class="form-control"
+                    value="<?= $precoMin > 0 ? htmlspecialchars((string) $precoMin) : '' ?>">
             </div>
 
             <div class="col-md-1">
                 <label class="form-label small">Máx. R$</label>
-                <input type="number" step="0.01" name="preco_max" class="form-control" value="<?= $precoMax > 0 ? htmlspecialchars((string) $precoMax) : '' ?>">
+                <input type="number" step="0.01" name="preco_max" class="form-control"
+                    value="<?= $precoMax > 0 ? htmlspecialchars((string) $precoMax) : '' ?>">
             </div>
 
             <div class="col-md-2">
                 <label class="form-label small">Cidade (mais próximos)</label>
-                <input type="text" name="cidade" class="form-control" placeholder="Ex: Ouro Branco" value="<?= htmlspecialchars($cidade) ?>">
+                <input type="text" name="cidade" class="form-control" placeholder="Ex: Ouro Branco"
+                    value="<?= htmlspecialchars($cidade) ?>">
             </div>
 
             <div class="col-md-2">
@@ -152,12 +159,12 @@ $produtos = $controller->listarAtivos($busca, $subcategoriaId, $marcaId, $precoM
                 <?php foreach ($produtos as $produto): ?>
 
                     <?php
-                        $imagem = !empty($produto["imagem_principal"])
-                            ? "../uploads/produtos/" . $produto["imagem_principal"]
-                            : "../assets/img/pets/sem-foto.png";
+                    $imagem = !empty($produto["imagem_principal"])
+                        ? "../uploads/produtos/" . $produto["imagem_principal"]
+                        : "../assets/img/pets/sem-foto.png";
 
-                        $temPromocao = !empty($produto["preco_promocional"]);
-                        $precoFinal = $temPromocao ? $produto["preco_promocional"] : $produto["preco_venda"];
+                    $temPromocao = !empty($produto["preco_promocional"]);
+                    $precoFinal = $temPromocao ? $produto["preco_promocional"] : $produto["preco_venda"];
                     ?>
 
                     <div class="col-lg-3 col-md-4 col-6">
@@ -165,7 +172,8 @@ $produtos = $controller->listarAtivos($busca, $subcategoriaId, $marcaId, $precoM
                         <div class="card empresa-card h-100 shadow-sm">
 
                             <a href="produto.php?id=<?= (int) $produto['id'] ?>">
-                                <img src="<?= htmlspecialchars($imagem) ?>" class="card-img-top" style="height:180px; object-fit:cover;" alt="<?= htmlspecialchars($produto['nome']) ?>">
+                                <img src="<?= htmlspecialchars($imagem) ?>" class="card-img-top"
+                                    style="height:180px; object-fit:cover;" alt="<?= htmlspecialchars($produto['nome']) ?>">
                             </a>
 
                             <div class="card-body">
@@ -211,7 +219,8 @@ $produtos = $controller->listarAtivos($busca, $subcategoriaId, $marcaId, $precoM
                             </div>
 
                             <div class="card-footer bg-white d-flex gap-2">
-                                <a href="produto.php?id=<?= (int) $produto['id'] ?>" class="btn btn-outline-primary flex-grow-1">
+                                <a href="produto.php?id=<?= (int) $produto['id'] ?>"
+                                    class="btn btn-outline-primary flex-grow-1">
                                     <i class="bi bi-eye"></i>
                                     Ver Produto
                                 </a>

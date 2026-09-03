@@ -28,6 +28,9 @@ $temResultados = $topicos || $empresas || $produtos || $pets;
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+<script src="../assets/js/click-sounds.js"></script>
+
+
 
 <head>
     <meta charset="UTF-8">

@@ -8,6 +8,9 @@ $recurso = trim($_GET["recurso"] ?? "Esta funcionalidade");
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+<script src="../assets/js/click-sounds.js"></script>
+
+
 
 <head>
 

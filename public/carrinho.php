@@ -15,8 +15,9 @@ $subtotal = 0.0;
 
 foreach ($carrinho as $produtoId => $qtd) {
     $produto = $controller->buscarPorId((int) $produtoId);
-    if (!$produto) continue;
-    $preco = !empty($produto['preco_promocional']) ? (float)$produto['preco_promocional'] : (float)$produto['preco_venda'];
+    if (!$produto)
+        continue;
+    $preco = !empty($produto['preco_promocional']) ? (float) $produto['preco_promocional'] : (float) $produto['preco_venda'];
     $total = $preco * $qtd;
     $itens[] = ['produto' => $produto, 'quantidade' => $qtd, 'total' => $total, 'preco' => $preco];
     $subtotal += $total;
@@ -25,7 +26,11 @@ foreach ($carrinho as $produtoId => $qtd) {
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+    <script src="../assets/js/click-sounds.js"></script>
+
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Carrinho - PetFinder Brasil</title>
@@ -33,6 +38,7 @@ foreach ($carrinho as $produtoId => $qtd) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
+
 <body>
 
     <header class="border-bottom py-3 mb-4">
@@ -76,18 +82,20 @@ foreach ($carrinho as $produtoId => $qtd) {
                         <?php foreach ($itens as $item): ?>
                             <tr>
                                 <td>
-                                    <a href="produto.php?id=<?= (int)$item['produto']['id'] ?>" class="text-decoration-none text-dark">
+                                    <a href="produto.php?id=<?= (int) $item['produto']['id'] ?>"
+                                        class="text-decoration-none text-dark">
                                         <?= htmlspecialchars($item['produto']['nome']) ?>
                                     </a>
                                 </td>
-                                <td class="text-muted small"><?= htmlspecialchars($item['produto']['empresa_nome'] ?? '') ?></td>
+                                <td class="text-muted small"><?= htmlspecialchars($item['produto']['empresa_nome'] ?? '') ?>
+                                </td>
                                 <td>R$ <?= number_format($item['preco'], 2, ',', '.') ?></td>
-                                <td><?= (int)$item['quantidade'] ?></td>
-                                <td>R$ <?= number_format((float)$item['total'], 2, ',', '.') ?></td>
+                                <td><?= (int) $item['quantidade'] ?></td>
+                                <td>R$ <?= number_format((float) $item['total'], 2, ',', '.') ?></td>
                                 <td>
                                     <form action="remover_carrinho.php" method="POST" class="d-inline">
                                         <?= Csrf::campoHtml() ?>
-                                        <input type="hidden" name="produto_id" value="<?= (int)$item['produto']['id'] ?>">
+                                        <input type="hidden" name="produto_id" value="<?= (int) $item['produto']['id'] ?>">
                                         <input type="hidden" name="apagar" value="1">
                                         <input type="hidden" name="voltar" value="carrinho.php">
                                         <button type="submit" class="btn btn-sm btn-danger">Remover</button>
@@ -115,4 +123,5 @@ foreach ($carrinho as $produtoId => $qtd) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>

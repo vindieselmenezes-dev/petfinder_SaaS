@@ -31,6 +31,9 @@ unset($_SESSION['carrinho_flash']);
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+<script src="../assets/js/click-sounds.js"></script>
+
+
 
 <head>
 
@@ -194,7 +197,8 @@ unset($_SESSION['carrinho_flash']);
                         <strong><?= htmlspecialchars($produto["empresa_nome"]) ?></strong>
                         <?php if (!empty($produto['empresa_cidade'])): ?>
                             <br><i class="bi bi-geo-alt-fill"></i>
-                            <?= htmlspecialchars($produto['empresa_cidade']) ?>        <?= !empty($produto['empresa_estado']) ? ' / ' . htmlspecialchars($produto['empresa_estado']) : '' ?>
+                            <?= htmlspecialchars($produto['empresa_cidade']) ?>
+                            <?= !empty($produto['empresa_estado']) ? ' / ' . htmlspecialchars($produto['empresa_estado']) : '' ?>
                         <?php endif; ?>
                     </p>
 

@@ -17,6 +17,9 @@ $empresas = $controller->listarAtivas($categoriaId, $cidade, $busca);
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+<script src="../assets/js/click-sounds.js"></script>
+
+
 
 <head>
 

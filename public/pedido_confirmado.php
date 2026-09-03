@@ -19,6 +19,9 @@ $pedido = $pedidoModel->buscarPorId($pedidoId, (int) $_SESSION['usuario_id']);
 <!DOCTYPE html>
 <html lang="pt-BR">
 
+<script src="../assets/js/click-sounds.js"></script>
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -81,13 +84,16 @@ $pedido = $pedidoModel->buscarPorId($pedidoId, (int) $_SESSION['usuario_id']);
                         <div class="card-body">
                             <?php if (!empty($pedido['logradouro'])): ?>
                                 <p class="mb-1">
-                                    <?= htmlspecialchars($pedido['logradouro']) ?>, <?= htmlspecialchars($pedido['numero'] ?? '') ?>
-                                    <?php if (!empty($pedido['complemento'])): ?> - <?= htmlspecialchars($pedido['complemento']) ?><?php endif; ?>
+                                    <?= htmlspecialchars($pedido['logradouro']) ?>,
+                                    <?= htmlspecialchars($pedido['numero'] ?? '') ?>
+                                    <?php if (!empty($pedido['complemento'])): ?> -
+                                        <?= htmlspecialchars($pedido['complemento']) ?>        <?php endif; ?>
                                 </p>
                                 <p class="mb-1 text-muted">
                                     <?= htmlspecialchars($pedido['bairro'] ?? '') ?> -
                                     <?= htmlspecialchars($pedido['cidade'] ?? '') ?>/<?= htmlspecialchars($pedido['estado'] ?? '') ?>
-                                    <?php if (!empty($pedido['cep'])): ?> - CEP <?= htmlspecialchars($pedido['cep']) ?><?php endif; ?>
+                                    <?php if (!empty($pedido['cep'])): ?> - CEP
+                                        <?= htmlspecialchars($pedido['cep']) ?>        <?php endif; ?>
                                 </p>
                                 <?php if (!empty($pedido['referencia'])): ?>
                                     <p class="mb-1 text-muted small">
@@ -99,7 +105,8 @@ $pedido = $pedidoModel->buscarPorId($pedidoId, (int) $_SESSION['usuario_id']);
                             <?php if (!empty($pedido['previsao_entrega'])): ?>
                                 <p class="mb-0 mt-2">
                                     <i class="bi bi-truck text-success"></i>
-                                    Previsão de entrega: <strong><?= date('d/m/Y', strtotime($pedido['previsao_entrega'])) ?></strong>
+                                    Previsão de entrega:
+                                    <strong><?= date('d/m/Y', strtotime($pedido['previsao_entrega'])) ?></strong>
                                 </p>
                             <?php endif; ?>
                         </div>
@@ -114,7 +121,8 @@ $pedido = $pedidoModel->buscarPorId($pedidoId, (int) $_SESSION['usuario_id']);
                                         <strong><?= htmlspecialchars($item['produto_nome']) ?></strong>
                                         <div class="text-muted small">
                                             Vendido por <?= htmlspecialchars($item['empresa_nome'] ?? '') ?>
-                                            &middot; <?= (int) $item['quantidade'] ?>x R$ <?= number_format((float) $item['preco_unitario'], 2, ',', '.') ?>
+                                            &middot; <?= (int) $item['quantidade'] ?>x R$
+                                            <?= number_format((float) $item['preco_unitario'], 2, ',', '.') ?>
                                         </div>
                                     </div>
                                     <span>R$ <?= number_format((float) $item['subtotal'], 2, ',', '.') ?></span>

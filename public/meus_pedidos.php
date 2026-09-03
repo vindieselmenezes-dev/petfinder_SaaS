@@ -25,6 +25,9 @@ $corStatus = [
 
 ?>
 <!DOCTYPE html>
+<script src="../assets/js/click-sounds.js"></script>
+
+
 <html lang="pt-BR">
 
 <head>
@@ -96,7 +99,8 @@ $corStatus = [
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="pedido_confirmado.php?id=<?= (int) $pedido['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                    <a href="pedido_confirmado.php?id=<?= (int) $pedido['id'] ?>"
+                                        class="btn btn-sm btn-outline-primary">
                                         Ver detalhes
                                     </a>
                                 </td>

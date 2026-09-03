@@ -29,6 +29,9 @@ $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Dom
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+<script src="../assets/js/click-sounds.js"></script>
+
+
 
 <head>
 
@@ -165,7 +168,7 @@ $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Dom
                                         <option value="">Escolha uma nota</option>
                                         <?php for ($nota = 5; $nota >= 1; $nota--): ?>
                                             <option value="<?= $nota ?>">
-                                                <?= str_repeat('★', $nota) ?>            <?= str_repeat('☆', 5 - $nota) ?> (<?= $nota ?>/5)
+                                                <?= str_repeat('★', $nota) ?>             <?= str_repeat('☆', 5 - $nota) ?> (<?= $nota ?>/5)
                                             </option>
                                         <?php endfor; ?>
                                     </select>
@@ -231,10 +234,11 @@ $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Dom
                             <?php if (!empty($empresa["endereco"])): ?>
                                 <p class="mb-2">
                                     <i class="bi bi-geo-alt-fill"></i>
-                                    <?= htmlspecialchars($empresa["endereco"]) ?>        <?= !empty($empresa["numero"]) ? ", " . htmlspecialchars($empresa["numero"]) : "" ?>
+                                    <?= htmlspecialchars($empresa["endereco"]) ?>
+                                    <?= !empty($empresa["numero"]) ? ", " . htmlspecialchars($empresa["numero"]) : "" ?>
                                     <?php if (!empty($empresa["bairro"])): ?><br><?= htmlspecialchars($empresa["bairro"]) ?><?php endif; ?>
                                     <?php if (!empty($empresa["cidade"])): ?><br><?= htmlspecialchars($empresa["cidade"]) ?> /
-                                        <?= htmlspecialchars($empresa["estado"]) ?>        <?php endif; ?>
+                                        <?= htmlspecialchars($empresa["estado"]) ?>         <?php endif; ?>
                                 </p>
                             <?php endif; ?>
 

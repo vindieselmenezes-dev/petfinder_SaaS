@@ -47,6 +47,9 @@ unset($_SESSION['checkout_erro']);
 <!DOCTYPE html>
 <html lang="pt-BR">
 
+    <script src="../assets/js/click-sounds.js"></script>
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
