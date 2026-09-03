@@ -58,6 +58,20 @@ self.addEventListener("activate", (event) => {
     self.clients.claim();
 });
 
+self.addEventListener("push", (event) => {
+    const dados = event.data ? event.data.json() : {};
+    event.waitUntil(self.registration.showNotification(dados.title || "PetFinder Brasil", {
+        body: dados.body || "Você tem uma nova atualização.",
+        icon: "/petfinder-SaaS/assets/img/icons/icon-192.png",
+        data: { url: dados.url || "/petfinder-SaaS/public/notificacoes.php" }
+    }));
+});
+
+self.addEventListener("notificationclick", (event) => {
+    event.notification.close();
+    event.waitUntil(clients.openWindow(event.notification.data.url));
+});
+
 function isStaticAsset(url) {
     return (
         url.pathname.startsWith("/petfinder-SaaS/assets/") ||

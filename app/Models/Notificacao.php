@@ -10,6 +10,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../Helpers/Mailer.php';
 
 class Notificacao
 {
@@ -32,13 +33,33 @@ class Notificacao
 
         $stmt = $this->pdo->prepare($sql);
 
-        return $stmt->execute([
+        $criada = $stmt->execute([
             ':usuario_id' => $usuarioId,
-            ':titulo'     => $titulo,
-            ':mensagem'   => $mensagem,
-            ':link'       => $link,
-            ':tipo'       => $tipo
+            ':titulo' => $titulo,
+            ':mensagem' => $mensagem,
+            ':link' => $link,
+            ':tipo' => $tipo
         ]);
+
+        if ($criada && getenv('EMAIL_NOTIFICACOES') === '1') {
+            $stmtUsuario = $this->pdo->prepare('SELECT email, nome FROM usuarios WHERE id = :id');
+            $stmtUsuario->execute([':id' => $usuarioId]);
+            $usuario = $stmtUsuario->fetch();
+
+            if (!empty($usuario['email'])) {
+                $nome = htmlspecialchars((string) ($usuario['nome'] ?? 'usuário'), ENT_QUOTES, 'UTF-8');
+                $tituloSeguro = htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8');
+                $mensagemSegura = nl2br(htmlspecialchars($mensagem, ENT_QUOTES, 'UTF-8'));
+                $linkHtml = $link ? '<p><a href="' . htmlspecialchars($link, ENT_QUOTES, 'UTF-8') . '">Abrir no PetFinder Brasil</a></p>' : '';
+                Mailer::enviar(
+                    (string) $usuario['email'],
+                    'PetFinder Brasil: ' . $titulo,
+                    '<p>Olá, ' . $nome . '.</p><h2>' . $tituloSeguro . '</h2><p>' . $mensagemSegura . '</p>' . $linkHtml
+                );
+            }
+        }
+
+        return $criada;
     }
 
     /**
@@ -95,7 +116,7 @@ class Notificacao
         $stmt = $this->pdo->prepare($sql);
 
         return $stmt->execute([
-            ':id'         => $id,
+            ':id' => $id,
             ':usuario_id' => $usuarioId
         ]);
     }
@@ -131,7 +152,7 @@ class Notificacao
         $stmt = $this->pdo->prepare($sql);
 
         return $stmt->execute([
-            ':id'         => $id,
+            ':id' => $id,
             ':usuario_id' => $usuarioId
         ]);
     }

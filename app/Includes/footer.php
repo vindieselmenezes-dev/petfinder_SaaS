@@ -36,6 +36,17 @@
 
 <script src="../assets/js/geolocalizacao.js"></script>
 <script src="../assets/js/click-sounds.js"></script>
+<?php
+require_once __DIR__ . '/../Helpers/Csrf.php';
+$pushVapidKey = getenv('PUSH_VAPID_PUBLIC_KEY') ?: '';
+if ($pushVapidKey && isset($_SESSION['usuario_id'])):
+    ?>
+    <script>
+        window.PetfinderCsrfToken = <?= json_encode(Csrf::gerarToken()) ?>;
+        document.body.dataset.pushVapidKey = <?= json_encode($pushVapidKey) ?>;
+    </script>
+    <script src="../assets/js/push-notifications.js"></script>
+<?php endif; ?>
 <script>
     if (window.PetfinderLocalizacao) {
         window.PetfinderLocalizacao.solicitarSeNecessario('../app/ajax/salvar_localizacao.php');

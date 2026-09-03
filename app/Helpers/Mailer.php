@@ -7,12 +7,8 @@ declare(strict_types=1);
  * PETFINDER BRASIL
  * Helper: Mailer
  *
- * TODO: hoje isso só registra o e-mail em log (app/logs/emails.log),
- * não envia de verdade — o XAMPP local não tem servidor de e-mail
- * configurado. Quando for hora de enviar de verdade, trocar o
- * corpo do método enviar() por PHPMailer + SMTP (Gmail, SendGrid,
- * etc.), mantendo a mesma assinatura — nada mais no sistema
- * precisa mudar, todo mundo já chama Mailer::enviar().
+ * Envia via mail() quando EMAIL_NOTIFICACOES estiver habilitado e mantém
+ * o log local para desenvolvimento e auditoria operacional.
  * ==========================================================
  */
 class Mailer
@@ -36,8 +32,17 @@ class Mailer
 
         file_put_contents($diretorioLogs . '/emails.log', $linha, FILE_APPEND);
 
-        // Sempre retorna true (modo simulado) — quando plugar SMTP de
-        // verdade, retornar o resultado real do envio aqui.
-        return true;
+        if (getenv('EMAIL_NOTIFICACOES') !== '1') {
+            return true;
+        }
+
+        $remetente = getenv('EMAIL_REMETENTE') ?: 'no-reply@petfinder.local';
+        $cabecalhos = [
+            'From: PetFinder Brasil <' . $remetente . '>',
+            'MIME-Version: 1.0',
+            'Content-Type: text/html; charset=UTF-8',
+        ];
+
+        return mail($destinatario, $assunto, $corpoHtml, implode("\r\n", $cabecalhos));
     }
 }

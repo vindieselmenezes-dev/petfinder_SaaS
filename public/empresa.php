@@ -6,6 +6,8 @@ session_start();
 
 require_once "../app/Controllers/EmpresaController.php";
 require_once "../app/Helpers/Csrf.php";
+require_once "../app/Helpers/Seo.php";
+require_once "../app/Models/MetricaEmpresa.php";
 
 $controller = new EmpresaController();
 
@@ -17,6 +19,9 @@ unset($_SESSION['avaliacao_mensagem']);
 
 $horarios = $empresa ? $controller->buscarHorarios($id) : [];
 $galeria = $empresa ? $controller->buscarGaleria($id) : [];
+if ($empresa) {
+    (new MetricaEmpresa())->registrar($id, 'visualizacao', 'empresa', $id, $_SESSION['usuario_id'] ?? null);
+}
 
 $horariosPorDia = [];
 foreach ($horarios as $horario) {
@@ -24,6 +29,11 @@ foreach ($horarios as $horario) {
 }
 
 $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+$seoTitulo = $empresa ? $empresa["nome_fantasia"] . " - PetFinder Brasil" : "Empresa não encontrada - PetFinder Brasil";
+$seoDescricao = $empresa
+    ? (trim((string) ($empresa["descricao"] ?? $empresa["categoria"] ?? "Empresa no PetFinder Brasil.")) ?: "Empresa no PetFinder Brasil.")
+    : "Empresa não encontrada no PetFinder Brasil.";
+$seoImagem = $empresa && !empty($empresa["capa"]) ? "uploads/empresas/" . $empresa["capa"] : "assets/img/pets/sem-foto.png";
 
 ?>
 
@@ -36,6 +46,7 @@ $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Dom
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title><?= $empresa ? htmlspecialchars($empresa["nome_fantasia"]) . " - " : "" ?>PetFinder Brasil</title>
+    <?= Seo::tags($seoTitulo, $seoDescricao, "public/empresa.php?id=" . $id, $seoImagem, "business.business") ?>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -165,7 +176,7 @@ $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Dom
                                         <option value="">Escolha uma nota</option>
                                         <?php for ($nota = 5; $nota >= 1; $nota--): ?>
                                             <option value="<?= $nota ?>">
-                                                <?= str_repeat('★', $nota) ?>            <?= str_repeat('☆', 5 - $nota) ?> (<?= $nota ?>/5)
+                                                <?= str_repeat('★', $nota) ?>             <?= str_repeat('☆', 5 - $nota) ?> (<?= $nota ?>/5)
                                             </option>
                                         <?php endfor; ?>
                                     </select>
@@ -231,10 +242,11 @@ $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Dom
                             <?php if (!empty($empresa["endereco"])): ?>
                                 <p class="mb-2">
                                     <i class="bi bi-geo-alt-fill"></i>
-                                    <?= htmlspecialchars($empresa["endereco"]) ?>        <?= !empty($empresa["numero"]) ? ", " . htmlspecialchars($empresa["numero"]) : "" ?>
+                                    <?= htmlspecialchars($empresa["endereco"]) ?>
+                                    <?= !empty($empresa["numero"]) ? ", " . htmlspecialchars($empresa["numero"]) : "" ?>
                                     <?php if (!empty($empresa["bairro"])): ?><br><?= htmlspecialchars($empresa["bairro"]) ?><?php endif; ?>
                                     <?php if (!empty($empresa["cidade"])): ?><br><?= htmlspecialchars($empresa["cidade"]) ?> /
-                                        <?= htmlspecialchars($empresa["estado"]) ?>        <?php endif; ?>
+                                        <?= htmlspecialchars($empresa["estado"]) ?>         <?php endif; ?>
                                 </p>
                             <?php endif; ?>
 

@@ -14,6 +14,7 @@ require_once "../app/Models/Pedido.php";
 $pedidoModel = new Pedido();
 $pedidoId = (int) ($_GET['id'] ?? 0);
 $pedido = $pedidoModel->buscarPorId($pedidoId, (int) $_SESSION['usuario_id']);
+$statusHistorico = $pedido ? $pedidoModel->listarStatusHistorico($pedidoId, (int) $_SESSION['usuario_id']) : [];
 
 ?>
 <!DOCTYPE html>
@@ -75,19 +76,48 @@ $pedido = $pedidoModel->buscarPorId($pedidoId, (int) $_SESSION['usuario_id']);
 
                     <div class="card mb-4">
                         <div class="card-header fw-bold">
+                            <i class="bi bi-truck"></i> Acompanhamento da entrega
+                        </div>
+                        <div class="card-body">
+                            <?php if (!empty($statusHistorico)): ?>
+                                <div class="list-group list-group-flush">
+                                    <?php foreach ($statusHistorico as $evento): ?>
+                                        <div class="list-group-item px-0 d-flex justify-content-between">
+                                            <span><strong><?= htmlspecialchars($evento['status']) ?></strong><br><small
+                                                    class="text-muted"><?= htmlspecialchars($evento['observacao'] ?? '') ?></small></span>
+                                            <small
+                                                class="text-muted"><?= date('d/m/Y H:i', strtotime($evento['criado_em'])) ?></small>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!empty($pedido['transportadora']) || !empty($pedido['codigo_rastreio'])): ?>
+                                <p class="mb-0 mt-2">Transportadora: <?= htmlspecialchars($pedido['transportadora'] ?? '-') ?> ·
+                                    Rastreio: <strong><?= htmlspecialchars($pedido['codigo_rastreio'] ?? '-') ?></strong></p>
+                            <?php else: ?>
+                                <p class="text-muted mb-0">O código de rastreio será informado quando o pedido for enviado.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header fw-bold">
                             <i class="bi bi-geo-alt"></i>
                             Entrega
                         </div>
                         <div class="card-body">
                             <?php if (!empty($pedido['logradouro'])): ?>
                                 <p class="mb-1">
-                                    <?= htmlspecialchars($pedido['logradouro']) ?>, <?= htmlspecialchars($pedido['numero'] ?? '') ?>
-                                    <?php if (!empty($pedido['complemento'])): ?> - <?= htmlspecialchars($pedido['complemento']) ?><?php endif; ?>
+                                    <?= htmlspecialchars($pedido['logradouro']) ?>,
+                                    <?= htmlspecialchars($pedido['numero'] ?? '') ?>
+                                    <?php if (!empty($pedido['complemento'])): ?> -
+                                        <?= htmlspecialchars($pedido['complemento']) ?>        <?php endif; ?>
                                 </p>
                                 <p class="mb-1 text-muted">
                                     <?= htmlspecialchars($pedido['bairro'] ?? '') ?> -
                                     <?= htmlspecialchars($pedido['cidade'] ?? '') ?>/<?= htmlspecialchars($pedido['estado'] ?? '') ?>
-                                    <?php if (!empty($pedido['cep'])): ?> - CEP <?= htmlspecialchars($pedido['cep']) ?><?php endif; ?>
+                                    <?php if (!empty($pedido['cep'])): ?> - CEP
+                                        <?= htmlspecialchars($pedido['cep']) ?>        <?php endif; ?>
                                 </p>
                                 <?php if (!empty($pedido['referencia'])): ?>
                                     <p class="mb-1 text-muted small">
@@ -99,7 +129,8 @@ $pedido = $pedidoModel->buscarPorId($pedidoId, (int) $_SESSION['usuario_id']);
                             <?php if (!empty($pedido['previsao_entrega'])): ?>
                                 <p class="mb-0 mt-2">
                                     <i class="bi bi-truck text-success"></i>
-                                    Previsão de entrega: <strong><?= date('d/m/Y', strtotime($pedido['previsao_entrega'])) ?></strong>
+                                    Previsão de entrega:
+                                    <strong><?= date('d/m/Y', strtotime($pedido['previsao_entrega'])) ?></strong>
                                 </p>
                             <?php endif; ?>
                         </div>
@@ -114,7 +145,8 @@ $pedido = $pedidoModel->buscarPorId($pedidoId, (int) $_SESSION['usuario_id']);
                                         <strong><?= htmlspecialchars($item['produto_nome']) ?></strong>
                                         <div class="text-muted small">
                                             Vendido por <?= htmlspecialchars($item['empresa_nome'] ?? '') ?>
-                                            &middot; <?= (int) $item['quantidade'] ?>x R$ <?= number_format((float) $item['preco_unitario'], 2, ',', '.') ?>
+                                            &middot; <?= (int) $item['quantidade'] ?>x R$
+                                            <?= number_format((float) $item['preco_unitario'], 2, ',', '.') ?>
                                         </div>
                                     </div>
                                     <span>R$ <?= number_format((float) $item['subtotal'], 2, ',', '.') ?></span>

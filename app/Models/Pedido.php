@@ -133,6 +133,19 @@ class Pedido
             ]);
             $pedidoId = (int) $this->pdo->lastInsertId();
 
+            try {
+                $stmtStatus = $this->pdo->prepare(
+                    'INSERT INTO pedido_status_historico (pedido_id, status, observacao) VALUES (:pedido_id, :status, :observacao)'
+                );
+                $stmtStatus->execute([
+                    ':pedido_id' => $pedidoId,
+                    ':status' => 'Pago',
+                    ':observacao' => 'Pagamento aprovado.',
+                ]);
+            } catch (Throwable $exception) {
+                // Permite concluir compras durante a janela de aplicação da migration.
+            }
+
             $stmtItem = $this->pdo->prepare("
                 INSERT INTO pedido_itens (pedido_id, produto_id, quantidade, preco_unitario, subtotal)
                 VALUES (:pedido_id, :produto_id, :quantidade, :preco_unitario, :subtotal)
@@ -299,5 +312,22 @@ class Pedido
         ");
         $stmt->execute([':usuario_id' => $usuarioId]);
         return $stmt->fetchAll();
+    }
+
+    public function listarStatusHistorico(int $pedidoId, int $usuarioId): array
+    {
+        try {
+            $stmt = $this->pdo->prepare(
+                'SELECT h.status, h.observacao, h.criado_em
+                 FROM pedido_status_historico h
+                 JOIN pedidos p ON p.id = h.pedido_id
+                 WHERE h.pedido_id = :pedido_id AND p.usuario_id = :usuario_id
+                 ORDER BY h.criado_em ASC, h.id ASC'
+            );
+            $stmt->execute([':pedido_id' => $pedidoId, ':usuario_id' => $usuarioId]);
+            return $stmt->fetchAll();
+        } catch (Throwable $exception) {
+            return [];
+        }
     }
 }

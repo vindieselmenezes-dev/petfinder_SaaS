@@ -6,6 +6,7 @@ session_start();
 
 require_once "../app/Controllers/PetController.php";
 require_once "../app/Models/Favorito.php";
+require_once "../app/Helpers/Seo.php";
 
 $controller = new PetController();
 $favoritoModel = new Favorito();
@@ -17,13 +18,20 @@ $imagensAdicionais = $pet ? $controller->buscarImagens($id) : [];
 
 $statusCores = [
     "Para Adoção" => "success",
-    "Perdido"     => "danger",
-    "Encontrado"  => "info",
-    "Adotado"     => "secondary",
-    "Com Tutor"   => "primary"
+    "Perdido" => "danger",
+    "Encontrado" => "info",
+    "Adotado" => "secondary",
+    "Com Tutor" => "primary"
 ];
 
 $corStatus = $pet ? ($statusCores[$pet["status"]] ?? "secondary") : "secondary";
+$seoTitulo = $pet ? $pet["nome"] . " - PetFinder Brasil" : "Pet não encontrado - PetFinder Brasil";
+$seoDescricao = $pet
+    ? "Conheça " . $pet["nome"] . ", pet com status " . $pet["status"] . ". Encontre informações e formas de ajudar no PetFinder Brasil."
+    : "Pet não encontrado no PetFinder Brasil.";
+$seoImagem = ($pet && !empty($pet["foto"]) && $pet["foto"] !== "sem-foto.png")
+    ? "uploads/pets/" . $pet["foto"]
+    : "assets/img/pets/sem-foto.png";
 
 ?>
 
@@ -36,6 +44,7 @@ $corStatus = $pet ? ($statusCores[$pet["status"]] ?? "secondary") : "secondary";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title><?= $pet ? htmlspecialchars($pet["nome"]) . " - " : "" ?>PetFinder Brasil</title>
+    <?= Seo::tags($seoTitulo, $seoDescricao, "public/pet.php?id=" . $id, $seoImagem, "article") ?>
 
     <!-- BOOTSTRAP -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -79,176 +88,172 @@ $corStatus = $pet ? ($statusCores[$pet["status"]] ?? "secondary") : "secondary";
 
     <main class="container mb-5">
 
-    <?php if (!$pet): ?>
+        <?php if (!$pet): ?>
 
-        <div class="alert alert-warning text-center py-5">
-            <h2>Pet não encontrado.</h2>
-            <p class="mb-0">O link pode estar incorreto ou o pet já não está mais disponível.</p>
-        </div>
+            <div class="alert alert-warning text-center py-5">
+                <h2>Pet não encontrado.</h2>
+                <p class="mb-0">O link pode estar incorreto ou o pet já não está mais disponível.</p>
+            </div>
 
-    <?php else: ?>
+        <?php else: ?>
 
-        <div class="row g-4">
+            <div class="row g-4">
 
-            <!-- FOTO -->
+                <!-- FOTO -->
 
-            <div class="col-lg-5">
+                <div class="col-lg-5">
 
-                <?php
+                    <?php
                     $foto = (!empty($pet["foto"]) && $pet["foto"] !== "sem-foto.png")
                         ? "../uploads/pets/" . $pet["foto"]
                         : "../assets/img/pets/sem-foto.png";
-                ?>
+                    ?>
 
-                <img src="<?= htmlspecialchars($foto) ?>"
-                     class="img-fluid rounded-4 shadow-sm w-100"
-                     style="object-fit: cover; max-height: 480px;"
-                     alt="<?= htmlspecialchars($pet["nome"]) ?>">
+                    <img src="<?= htmlspecialchars($foto) ?>" class="img-fluid rounded-4 shadow-sm w-100"
+                        style="object-fit: cover; max-height: 480px;" alt="<?= htmlspecialchars($pet["nome"]) ?>">
 
-                <?php if (!empty($imagensAdicionais)): ?>
-                    <div class="mt-3 d-flex flex-wrap gap-2">
-                        <?php foreach ($imagensAdicionais as $imagem): ?>
-                            <img src="../uploads/pets/<?= htmlspecialchars($imagem['arquivo']) ?>"
-                                 class="img-thumbnail"
-                                 style="width: 120px; height: 90px; object-fit: cover;"
-                                 alt="Imagem adicional">
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-
-            </div>
-
-            <!-- INFORMAÇÕES -->
-
-            <div class="col-lg-7">
-
-                <span class="badge bg-<?= $corStatus ?> mb-2">
-                    <?= htmlspecialchars($pet["status"]) ?>
-                </span>
-
-                <h1 class="fw-bold"><?= htmlspecialchars($pet["nome"]) ?></h1>
-
-                <p class="text-muted fs-5">
-                    <?= htmlspecialchars($pet["especie"]) ?> • <?= htmlspecialchars($pet["raca"]) ?>
-                </p>
-
-                <div class="row g-3 my-3">
-
-                    <div class="col-6 col-md-4">
-                        <div class="border rounded-3 p-3 text-center h-100">
-                            <div class="text-muted small">Sexo</div>
-                            <div class="fw-semibold"><?= htmlspecialchars($pet["sexo"] ?: "Não informado") ?></div>
+                    <?php if (!empty($imagensAdicionais)): ?>
+                        <div class="mt-3 d-flex flex-wrap gap-2">
+                            <?php foreach ($imagensAdicionais as $imagem): ?>
+                                <img src="../uploads/pets/<?= htmlspecialchars($imagem['arquivo']) ?>" class="img-thumbnail"
+                                    style="width: 120px; height: 90px; object-fit: cover;" alt="Imagem adicional">
+                            <?php endforeach; ?>
                         </div>
-                    </div>
-
-                    <div class="col-6 col-md-4">
-                        <div class="border rounded-3 p-3 text-center h-100">
-                            <div class="text-muted small">Cor</div>
-                            <div class="fw-semibold"><?= htmlspecialchars($pet["cor"] ?: "Não informada") ?></div>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-4">
-                        <div class="border rounded-3 p-3 text-center h-100">
-                            <div class="text-muted small">Peso</div>
-                            <div class="fw-semibold">
-                                <?= $pet["peso"] !== null ? htmlspecialchars((string) $pet["peso"]) . " kg" : "Não informado" ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-4">
-                        <div class="border rounded-3 p-3 text-center h-100">
-                            <div class="text-muted small">Altura</div>
-                            <div class="fw-semibold">
-                                <?= $pet["altura"] !== null ? htmlspecialchars((string) $pet["altura"]) . " cm" : "Não informado" ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-4">
-                        <div class="border rounded-3 p-3 text-center h-100">
-                            <div class="text-muted small">Castrado</div>
-                            <div class="fw-semibold"><?= !empty($pet["castrado"]) ? "Sim" : "Não" ?></div>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-4">
-                        <div class="border rounded-3 p-3 text-center h-100">
-                            <div class="text-muted small">Cidade</div>
-                            <div class="fw-semibold">
-                                <?= htmlspecialchars($pet["cidade"] ?? '') ?: "Não informada" ?>
-                            </div>
-                        </div>
-                    </div>
+                    <?php endif; ?>
 
                 </div>
 
-                <?php if (!empty($pet["observacoes"])): ?>
+                <!-- INFORMAÇÕES -->
 
-                    <h5 class="mt-4">Sobre <?= htmlspecialchars($pet["nome"]) ?></h5>
-                    <p><?= nl2br(htmlspecialchars($pet["observacoes"])) ?></p>
+                <div class="col-lg-7">
 
-                <?php endif; ?>
+                    <span class="badge bg-<?= $corStatus ?> mb-2">
+                        <?= htmlspecialchars($pet["status"]) ?>
+                    </span>
 
-                <hr class="my-4">
+                    <h1 class="fw-bold"><?= htmlspecialchars($pet["nome"]) ?></h1>
 
-                <?php if (isset($_SESSION["usuario_id"]) && $pet): ?>
-                    <div class="d-flex gap-2 flex-wrap mb-4">
-                        <?php if ($favoritoModel->existe((int) $_SESSION["usuario_id"], (int) $pet["id"])): ?>
-                            <a href="favoritar.php?pet_id=<?= (int) $pet["id"]; ?>&acao=remover" class="btn btn-danger">
-                                <i class="bi bi-star-fill"></i> Remover dos favoritos
-                            </a>
-                        <?php else: ?>
-                            <a href="favoritar.php?pet_id=<?= (int) $pet["id"]; ?>&acao=adicionar" class="btn btn-warning text-dark">
-                                <i class="bi bi-star"></i> Favoritar pet
-                            </a>
-                        <?php endif; ?>
-
-                        <?php if (($pet["status"] ?? '') === 'Para Adoção' && (int) $pet["usuario_id"] !== (int) $_SESSION["usuario_id"]): ?>
-                            <a href="solicitar_adocao.php?pet_id=<?= (int) $pet["id"]; ?>" class="btn btn-success">
-                                <i class="bi bi-house-heart"></i> Quero Adotar
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($pet): ?>
-                    <p class="mb-4">
-                        <a href="historico_pet.php?id=<?= (int) $pet["id"]; ?>" class="text-decoration-none text-secondary">
-                            <i class="bi bi-clock-history"></i> Ver histórico completo deste pet
-                        </a>
+                    <p class="text-muted fs-5">
+                        <?= htmlspecialchars($pet["especie"]) ?> • <?= htmlspecialchars($pet["raca"]) ?>
                     </p>
-                <?php endif; ?>
 
-                <h5>Tutor responsável</h5>
+                    <div class="row g-3 my-3">
 
-                <p class="mb-3">
-                    <?= htmlspecialchars($pet["tutor_nome"] ?? 'Não informado') ?>
-                </p>
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded-3 p-3 text-center h-100">
+                                <div class="text-muted small">Sexo</div>
+                                <div class="fw-semibold"><?= htmlspecialchars($pet["sexo"] ?: "Não informado") ?></div>
+                            </div>
+                        </div>
 
-                <?php if (!empty($pet["tutor_telefone"])): ?>
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded-3 p-3 text-center h-100">
+                                <div class="text-muted small">Cor</div>
+                                <div class="fw-semibold"><?= htmlspecialchars($pet["cor"] ?: "Não informada") ?></div>
+                            </div>
+                        </div>
 
-                    <a href="https://wa.me/55<?= preg_replace('/\D/', '', $pet["tutor_telefone"]) ?>"
-                       target="_blank" rel="noopener"
-                       class="btn btn-success btn-lg">
-                        <i class="bi bi-whatsapp"></i>
-                        Falar com o tutor no WhatsApp
-                    </a>
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded-3 p-3 text-center h-100">
+                                <div class="text-muted small">Peso</div>
+                                <div class="fw-semibold">
+                                    <?= $pet["peso"] !== null ? htmlspecialchars((string) $pet["peso"]) . " kg" : "Não informado" ?>
+                                </div>
+                            </div>
+                        </div>
 
-                <?php else: ?>
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded-3 p-3 text-center h-100">
+                                <div class="text-muted small">Altura</div>
+                                <div class="fw-semibold">
+                                    <?= $pet["altura"] !== null ? htmlspecialchars((string) $pet["altura"]) . " cm" : "Não informado" ?>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="alert alert-secondary mb-0">
-                        Este tutor ainda não cadastrou um telefone de contato.
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded-3 p-3 text-center h-100">
+                                <div class="text-muted small">Castrado</div>
+                                <div class="fw-semibold"><?= !empty($pet["castrado"]) ? "Sim" : "Não" ?></div>
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded-3 p-3 text-center h-100">
+                                <div class="text-muted small">Cidade</div>
+                                <div class="fw-semibold">
+                                    <?= htmlspecialchars($pet["cidade"] ?? '') ?: "Não informada" ?>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
-                <?php endif; ?>
+                    <?php if (!empty($pet["observacoes"])): ?>
+
+                        <h5 class="mt-4">Sobre <?= htmlspecialchars($pet["nome"]) ?></h5>
+                        <p><?= nl2br(htmlspecialchars($pet["observacoes"])) ?></p>
+
+                    <?php endif; ?>
+
+                    <hr class="my-4">
+
+                    <?php if (isset($_SESSION["usuario_id"]) && $pet): ?>
+                        <div class="d-flex gap-2 flex-wrap mb-4">
+                            <?php if ($favoritoModel->existe((int) $_SESSION["usuario_id"], (int) $pet["id"])): ?>
+                                <a href="favoritar.php?pet_id=<?= (int) $pet["id"]; ?>&acao=remover" class="btn btn-danger">
+                                    <i class="bi bi-star-fill"></i> Remover dos favoritos
+                                </a>
+                            <?php else: ?>
+                                <a href="favoritar.php?pet_id=<?= (int) $pet["id"]; ?>&acao=adicionar"
+                                    class="btn btn-warning text-dark">
+                                    <i class="bi bi-star"></i> Favoritar pet
+                                </a>
+                            <?php endif; ?>
+
+                            <?php if (($pet["status"] ?? '') === 'Para Adoção' && (int) $pet["usuario_id"] !== (int) $_SESSION["usuario_id"]): ?>
+                                <a href="solicitar_adocao.php?pet_id=<?= (int) $pet["id"]; ?>" class="btn btn-success">
+                                    <i class="bi bi-house-heart"></i> Quero Adotar
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($pet): ?>
+                        <p class="mb-4">
+                            <a href="historico_pet.php?id=<?= (int) $pet["id"]; ?>" class="text-decoration-none text-secondary">
+                                <i class="bi bi-clock-history"></i> Ver histórico completo deste pet
+                            </a>
+                        </p>
+                    <?php endif; ?>
+
+                    <h5>Tutor responsável</h5>
+
+                    <p class="mb-3">
+                        <?= htmlspecialchars($pet["tutor_nome"] ?? 'Não informado') ?>
+                    </p>
+
+                    <?php if (!empty($pet["tutor_telefone"])): ?>
+
+                        <a href="https://wa.me/55<?= preg_replace('/\D/', '', $pet["tutor_telefone"]) ?>" target="_blank"
+                            rel="noopener" class="btn btn-success btn-lg">
+                            <i class="bi bi-whatsapp"></i>
+                            Falar com o tutor no WhatsApp
+                        </a>
+
+                    <?php else: ?>
+
+                        <div class="alert alert-secondary mb-0">
+                            Este tutor ainda não cadastrou um telefone de contato.
+                        </div>
+
+                    <?php endif; ?>
+
+                </div>
 
             </div>
 
-        </div>
-
-    <?php endif; ?>
+        <?php endif; ?>
 
     </main>
 

@@ -7,6 +7,8 @@ session_start();
 require_once "../app/Controllers/ProdutoController.php";
 require_once "../app/Models/FavoritoProduto.php";
 require_once "../app/Helpers/Csrf.php";
+require_once "../app/Helpers/Seo.php";
+require_once "../app/Models/MetricaEmpresa.php";
 
 $controller = new ProdutoController();
 $favoritoModel = new FavoritoProduto();
@@ -26,6 +28,14 @@ $precoFinal = $produto ? ($temPromocao ? $produto["preco_promocional"] : $produt
 
 $mensagemCarrinho = $_SESSION['carrinho_flash'] ?? null;
 unset($_SESSION['carrinho_flash']);
+if ($produto && !empty($produto['empresa_id'])) {
+    (new MetricaEmpresa())->registrar((int) $produto['empresa_id'], 'visualizacao', 'produto', $id, $_SESSION['usuario_id'] ?? null);
+}
+$seoTitulo = $produto ? $produto["nome"] . " - PetFinder Brasil" : "Produto não encontrado - PetFinder Brasil";
+$seoDescricao = $produto
+    ? (trim((string) ($produto["descricao"] ?? "")) ?: "Confira este produto no PetFinder Brasil.")
+    : "Produto não encontrado no PetFinder Brasil.";
+$seoImagem = $imagens ? "uploads/produtos/" . $imagens[0]["imagem"] : "assets/img/pets/sem-foto.png";
 
 ?>
 
@@ -38,6 +48,7 @@ unset($_SESSION['carrinho_flash']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title><?= $produto ? htmlspecialchars($produto["nome"]) . " - " : "" ?>PetFinder Brasil</title>
+    <?= Seo::tags($seoTitulo, $seoDescricao, "public/produto.php?id=" . $id, $seoImagem, "product") ?>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -194,7 +205,8 @@ unset($_SESSION['carrinho_flash']);
                         <strong><?= htmlspecialchars($produto["empresa_nome"]) ?></strong>
                         <?php if (!empty($produto['empresa_cidade'])): ?>
                             <br><i class="bi bi-geo-alt-fill"></i>
-                            <?= htmlspecialchars($produto['empresa_cidade']) ?>        <?= !empty($produto['empresa_estado']) ? ' / ' . htmlspecialchars($produto['empresa_estado']) : '' ?>
+                            <?= htmlspecialchars($produto['empresa_cidade']) ?>
+                            <?= !empty($produto['empresa_estado']) ? ' / ' . htmlspecialchars($produto['empresa_estado']) : '' ?>
                         <?php endif; ?>
                     </p>
 
