@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/MetricaEmpresa.php';
+require_once __DIR__ . '/Notificacao.php';
 
 class Pedido
 {
@@ -338,6 +339,39 @@ class Pedido
             return $stmt->fetchAll();
         } catch (Throwable $exception) {
             return [];
+        }
+    }
+
+    public function atualizarStatus(int $pedidoId, string $status, string $observacao = ''): bool
+    {
+        $validos = ['Aguardando Pagamento', 'Pago', 'Separação', 'Enviado', 'Entregue', 'Cancelado'];
+        if (!in_array($status, $validos, true))
+            return false;
+        $stmt = $this->pdo->prepare('SELECT usuario_id, status FROM pedidos WHERE id = :id');
+        $stmt->execute([':id' => $pedidoId]);
+        $pedido = $stmt->fetch();
+        if (!$pedido || $pedido['status'] === $status)
+            return false;
+
+        $this->pdo->beginTransaction();
+        try {
+            $this->pdo->prepare('UPDATE pedidos SET status = :status, enviado_em = IF(:status_envio = "Enviado", NOW(), enviado_em), entregue_em = IF(:status_entregue = "Entregue", NOW(), entregue_em) WHERE id = :id')->execute([
+                ':status' => $status,
+                ':status_envio' => $status,
+                ':status_entregue' => $status,
+                ':id' => $pedidoId,
+            ]);
+            $this->pdo->prepare('INSERT INTO pedido_status_historico (pedido_id, status, observacao) VALUES (:pedido_id, :status, :observacao)')->execute([
+                ':pedido_id' => $pedidoId,
+                ':status' => $status,
+                ':observacao' => $observacao ?: 'Status atualizado.',
+            ]);
+            $this->pdo->commit();
+            (new Notificacao())->criar((int) $pedido['usuario_id'], 'Pedido atualizado', 'O pedido #' . $pedidoId . ' agora está: ' . $status . '.', 'Pedido', 'pedido_confirmado.php?id=' . $pedidoId);
+            return true;
+        } catch (Throwable $exception) {
+            $this->pdo->rollBack();
+            return false;
         }
     }
 }

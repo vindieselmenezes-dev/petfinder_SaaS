@@ -105,23 +105,23 @@ class Produto
         $stmt = $this->pdo->prepare($sql);
 
         $sucesso = $stmt->execute([
-            ':empresa_id'         => $dados['empresa_id'],
-            ':categoria_id'       => $dados['categoria_id'],
-            ':subcategoria_id'    => $dados['subcategoria_id'],
-            ':marca_id'           => $dados['marca_id'],
-            ':nome'               => $dados['nome'],
-            ':descricao'          => $dados['descricao'],
-            ':sku'                => $dados['sku'],
-            ':codigo_barras'      => $dados['codigo_barras'],
-            ':peso'               => $dados['peso'],
-            ':altura'             => $dados['altura'],
-            ':largura'            => $dados['largura'],
-            ':comprimento'        => $dados['comprimento'],
-            ':preco_custo'        => $dados['preco_custo'],
-            ':preco_venda'        => $dados['preco_venda'],
-            ':preco_promocional'  => $dados['preco_promocional'],
-            ':destaque'           => $dados['destaque'],
-            ':ativo'              => $dados['ativo']
+            ':empresa_id' => $dados['empresa_id'],
+            ':categoria_id' => $dados['categoria_id'],
+            ':subcategoria_id' => $dados['subcategoria_id'],
+            ':marca_id' => $dados['marca_id'],
+            ':nome' => $dados['nome'],
+            ':descricao' => $dados['descricao'],
+            ':sku' => $dados['sku'],
+            ':codigo_barras' => $dados['codigo_barras'],
+            ':peso' => $dados['peso'],
+            ':altura' => $dados['altura'],
+            ':largura' => $dados['largura'],
+            ':comprimento' => $dados['comprimento'],
+            ':preco_custo' => $dados['preco_custo'],
+            ':preco_venda' => $dados['preco_venda'],
+            ':preco_promocional' => $dados['preco_promocional'],
+            ':destaque' => $dados['destaque'],
+            ':ativo' => $dados['ativo']
         ]);
 
         if (!$sucesso) {
@@ -227,23 +227,23 @@ class Produto
         $stmt = $this->pdo->prepare($sql);
 
         return $stmt->execute([
-            ':subcategoria_id'   => $dados['subcategoria_id'],
-            ':marca_id'          => $dados['marca_id'],
-            ':nome'              => $dados['nome'],
-            ':descricao'         => $dados['descricao'],
-            ':sku'               => $dados['sku'],
-            ':codigo_barras'     => $dados['codigo_barras'],
-            ':peso'              => $dados['peso'],
-            ':altura'            => $dados['altura'],
-            ':largura'           => $dados['largura'],
-            ':comprimento'       => $dados['comprimento'],
-            ':preco_custo'       => $dados['preco_custo'],
-            ':preco_venda'       => $dados['preco_venda'],
+            ':subcategoria_id' => $dados['subcategoria_id'],
+            ':marca_id' => $dados['marca_id'],
+            ':nome' => $dados['nome'],
+            ':descricao' => $dados['descricao'],
+            ':sku' => $dados['sku'],
+            ':codigo_barras' => $dados['codigo_barras'],
+            ':peso' => $dados['peso'],
+            ':altura' => $dados['altura'],
+            ':largura' => $dados['largura'],
+            ':comprimento' => $dados['comprimento'],
+            ':preco_custo' => $dados['preco_custo'],
+            ':preco_venda' => $dados['preco_venda'],
             ':preco_promocional' => $dados['preco_promocional'],
-            ':destaque'          => $dados['destaque'],
-            ':ativo'             => $dados['ativo'],
-            ':id'                => $id,
-            ':empresa_id'        => $dados['empresa_id']
+            ':destaque' => $dados['destaque'],
+            ':ativo' => $dados['ativo'],
+            ':id' => $id,
+            ':empresa_id' => $dados['empresa_id']
         ]);
     }
 
@@ -261,7 +261,7 @@ class Produto
         $stmt = $this->pdo->prepare($sql);
 
         return $stmt->execute([
-            ':id'         => $id,
+            ':id' => $id,
             ':empresa_id' => $empresaId
         ]);
     }
@@ -276,7 +276,8 @@ class Produto
         float $precoMin = 0.0,
         float $precoMax = 0.0,
         string $ordem = 'recente',
-        string $cidade = ''
+        string $cidade = '',
+        int $categoriaId = 0
     ): array {
 
         $sql = "
@@ -339,6 +340,11 @@ class Produto
             $params[':cidade'] = $cidade;
         }
 
+        if ($categoriaId > 0) {
+            $sql .= " AND p.categoria_id = :categoria_id ";
+            $params[':categoria_id'] = $categoriaId;
+        }
+
         switch ($ordem) {
             case 'menor_preco':
                 $sql .= " ORDER BY COALESCE(p.preco_promocional, p.preco_venda) ASC ";
@@ -357,6 +363,36 @@ class Produto
         $stmt->execute($params);
 
         return $stmt->fetchAll();
+    }
+
+    public function listarDestaques(int $limite = 4): array
+    {
+        $limite = max(1, min($limite, 12));
+        $sql = "
+            SELECT p.id, p.nome, p.preco_venda, p.preco_promocional, p.destaque,
+                   e.id AS empresa_id, e.nome_fantasia AS empresa_nome,
+                   s.nome AS subcategoria_nome,
+                   (SELECT imagem FROM produto_imagens WHERE produto_id = p.id
+                    ORDER BY principal DESC, ordem ASC LIMIT 1) AS imagem_principal
+            FROM produtos p
+            INNER JOIN empresas e ON e.id = p.empresa_id
+            LEFT JOIN subcategorias s ON s.id = p.subcategoria_id
+            WHERE p.ativo = 1 AND p.destaque = 1 AND e.ativo = 1
+            ORDER BY p.atualizado_em DESC, p.id DESC
+            LIMIT {$limite}
+        ";
+        return $this->pdo->query($sql)->fetchAll();
+    }
+
+    public function listarCategorias(): array
+    {
+        return $this->pdo->query("SELECT id, nome FROM categorias WHERE ativo = 1 ORDER BY nome")->fetchAll();
+    }
+
+    public function definirDestaque(int $produtoId, int $empresaId, bool $destaque): bool
+    {
+        $stmt = $this->pdo->prepare('UPDATE produtos SET destaque = :destaque WHERE id = :id AND empresa_id = :empresa_id');
+        return $stmt->execute([':destaque' => $destaque ? 1 : 0, ':id' => $produtoId, ':empresa_id' => $empresaId]);
     }
 
     /**
@@ -457,8 +493,8 @@ class Produto
         return $stmt->execute([
             ':produto_id' => $produtoId,
             ':quantidade' => $quantidade,
-            ':minimo'     => $min,
-            ':maximo'     => $max
+            ':minimo' => $min,
+            ':maximo' => $max
         ]);
     }
 
@@ -493,9 +529,9 @@ class Produto
 
             $stmt->execute([
                 ':produto_id' => $produtoId,
-                ':imagem'     => $imagem,
-                ':principal'  => $ehPrincipal,
-                ':ordem'      => $ordem + 1
+                ':imagem' => $imagem,
+                ':principal' => $ehPrincipal,
+                ':ordem' => $ordem + 1
             ]);
 
         }
@@ -529,7 +565,7 @@ class Produto
         $stmt = $this->pdo->prepare($sql);
 
         return $stmt->execute([
-            ':id'         => $imagemId,
+            ':id' => $imagemId,
             ':produto_id' => $produtoId
         ]);
     }

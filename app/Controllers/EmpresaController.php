@@ -58,6 +58,11 @@ class EmpresaController
         return $this->empresa->avaliar($empresaId, $usuarioId, $nota);
     }
 
+    public function listarAvaliacoes(int $empresaId): array
+    {
+        return $this->empresa->listarAvaliacoes($empresaId);
+    }
+
     /**
      * Verifica se um arquivo enviado é realmente uma imagem válida
      */

@@ -109,6 +109,9 @@ include __DIR__ . '/../app/Includes/menu.php';
             <span>Cliques: <strong><?= $metricas['clique'] ?></strong></span>
             <span>Conversões: <strong><?= $metricas['conversao'] ?></strong></span>
             <span>Conversão: <strong><?= number_format($metricas['taxa_conversao'], 2, ',', '.') ?>%</strong></span>
+            <span>Usuários únicos: <strong><?= $metricas['usuarios_unicos'] ?? 0 ?></strong></span>
+            <span>Pedidos: <strong><?= $metricas['pedidos'] ?? 0 ?></strong></span>
+            <span>Receita: <strong>R$ <?= number_format($metricas['receita'] ?? 0, 2, ',', '.') ?></strong></span>
         </div>
     </section>
 
@@ -191,7 +194,7 @@ include __DIR__ . '/../app/Includes/menu.php';
                     <?php endif; ?>
                 </div>
             </div>
-        <?php
+            <?php
         endforeach;
     else:
         ?>

@@ -56,6 +56,20 @@ final class MetricaEmpresa
         $resumo['taxa_conversao'] = $resumo['clique'] > 0
             ? round(($resumo['conversao'] / $resumo['clique']) * 100, 2)
             : 0.0;
+        try {
+            $stmt = $this->pdo->prepare('SELECT COUNT(DISTINCT usuario_id) FROM metricas_empresa_eventos WHERE empresa_id = :empresa_id AND criado_em >= DATE_SUB(NOW(), INTERVAL ' . max(1, $dias) . ' DAY)');
+            $stmt->execute([':empresa_id' => $empresaId]);
+            $resumo['usuarios_unicos'] = (int) $stmt->fetchColumn();
+            $stmt = $this->pdo->prepare('SELECT COUNT(DISTINCT p.id) AS pedidos, COALESCE(SUM(pi.subtotal), 0) AS receita FROM pedidos p JOIN pedido_itens pi ON pi.pedido_id = p.id JOIN produtos pr ON pr.id = pi.produto_id WHERE pr.empresa_id = :empresa_id AND p.status <> "Cancelado" AND p.criado_em >= DATE_SUB(NOW(), INTERVAL ' . max(1, $dias) . ' DAY)');
+            $stmt->execute([':empresa_id' => $empresaId]);
+            $vendas = $stmt->fetch();
+            $resumo['pedidos'] = (int) ($vendas['pedidos'] ?? 0);
+            $resumo['receita'] = (float) ($vendas['receita'] ?? 0);
+        } catch (Throwable $exception) {
+            $resumo['usuarios_unicos'] = 0;
+            $resumo['pedidos'] = 0;
+            $resumo['receita'] = 0.0;
+        }
         return $resumo;
     }
 }

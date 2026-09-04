@@ -122,20 +122,20 @@ class ProdutoController
             return false;
         }
 
-        $dados['categoria_id']       = 9; // Marketplace (fixa)
-        $dados['subcategoria_id']    = !empty($dados['subcategoria_id']) ? (int) $dados['subcategoria_id'] : null;
-        $dados['marca_id']           = !empty($dados['marca_id']) ? (int) $dados['marca_id'] : null;
-        $dados['descricao']          = $dados['descricao'] ?? '';
-        $dados['sku']                = !empty($dados['sku']) ? $dados['sku'] : null;
-        $dados['codigo_barras']      = !empty($dados['codigo_barras']) ? $dados['codigo_barras'] : null;
-        $dados['peso']               = $dados['peso'] !== '' ? $dados['peso'] : null;
-        $dados['altura']             = $dados['altura'] !== '' ? $dados['altura'] : null;
-        $dados['largura']            = $dados['largura'] !== '' ? $dados['largura'] : null;
-        $dados['comprimento']        = $dados['comprimento'] !== '' ? $dados['comprimento'] : null;
-        $dados['preco_custo']        = $dados['preco_custo'] !== '' ? $dados['preco_custo'] : null;
-        $dados['preco_promocional']  = !empty($dados['preco_promocional']) ? $dados['preco_promocional'] : null;
-        $dados['destaque']           = !empty($dados['destaque']) ? 1 : 0;
-        $dados['ativo']              = 1;
+        $dados['categoria_id'] = 9; // Marketplace (fixa)
+        $dados['subcategoria_id'] = !empty($dados['subcategoria_id']) ? (int) $dados['subcategoria_id'] : null;
+        $dados['marca_id'] = !empty($dados['marca_id']) ? (int) $dados['marca_id'] : null;
+        $dados['descricao'] = $dados['descricao'] ?? '';
+        $dados['sku'] = !empty($dados['sku']) ? $dados['sku'] : null;
+        $dados['codigo_barras'] = !empty($dados['codigo_barras']) ? $dados['codigo_barras'] : null;
+        $dados['peso'] = $dados['peso'] !== '' ? $dados['peso'] : null;
+        $dados['altura'] = $dados['altura'] !== '' ? $dados['altura'] : null;
+        $dados['largura'] = $dados['largura'] !== '' ? $dados['largura'] : null;
+        $dados['comprimento'] = $dados['comprimento'] !== '' ? $dados['comprimento'] : null;
+        $dados['preco_custo'] = $dados['preco_custo'] !== '' ? $dados['preco_custo'] : null;
+        $dados['preco_promocional'] = !empty($dados['preco_promocional']) ? $dados['preco_promocional'] : null;
+        $dados['destaque'] = !empty($dados['destaque']) ? 1 : 0;
+        $dados['ativo'] = 1;
 
         return $this->produto->cadastrar($dados);
     }
@@ -167,19 +167,19 @@ class ProdutoController
             return false;
         }
 
-        $dados['subcategoria_id']    = !empty($dados['subcategoria_id']) ? (int) $dados['subcategoria_id'] : null;
-        $dados['marca_id']           = !empty($dados['marca_id']) ? (int) $dados['marca_id'] : null;
-        $dados['descricao']          = $dados['descricao'] ?? '';
-        $dados['sku']                = !empty($dados['sku']) ? $dados['sku'] : null;
-        $dados['codigo_barras']      = !empty($dados['codigo_barras']) ? $dados['codigo_barras'] : null;
-        $dados['peso']               = $dados['peso'] !== '' ? $dados['peso'] : null;
-        $dados['altura']             = $dados['altura'] !== '' ? $dados['altura'] : null;
-        $dados['largura']            = $dados['largura'] !== '' ? $dados['largura'] : null;
-        $dados['comprimento']        = $dados['comprimento'] !== '' ? $dados['comprimento'] : null;
-        $dados['preco_custo']        = $dados['preco_custo'] !== '' ? $dados['preco_custo'] : null;
-        $dados['preco_promocional']  = !empty($dados['preco_promocional']) ? $dados['preco_promocional'] : null;
-        $dados['destaque']           = !empty($dados['destaque']) ? 1 : 0;
-        $dados['ativo']              = !empty($dados['ativo']) ? 1 : 0;
+        $dados['subcategoria_id'] = !empty($dados['subcategoria_id']) ? (int) $dados['subcategoria_id'] : null;
+        $dados['marca_id'] = !empty($dados['marca_id']) ? (int) $dados['marca_id'] : null;
+        $dados['descricao'] = $dados['descricao'] ?? '';
+        $dados['sku'] = !empty($dados['sku']) ? $dados['sku'] : null;
+        $dados['codigo_barras'] = !empty($dados['codigo_barras']) ? $dados['codigo_barras'] : null;
+        $dados['peso'] = $dados['peso'] !== '' ? $dados['peso'] : null;
+        $dados['altura'] = $dados['altura'] !== '' ? $dados['altura'] : null;
+        $dados['largura'] = $dados['largura'] !== '' ? $dados['largura'] : null;
+        $dados['comprimento'] = $dados['comprimento'] !== '' ? $dados['comprimento'] : null;
+        $dados['preco_custo'] = $dados['preco_custo'] !== '' ? $dados['preco_custo'] : null;
+        $dados['preco_promocional'] = !empty($dados['preco_promocional']) ? $dados['preco_promocional'] : null;
+        $dados['destaque'] = !empty($dados['destaque']) ? 1 : 0;
+        $dados['ativo'] = !empty($dados['ativo']) ? 1 : 0;
 
         return $this->produto->atualizar($id, $dados);
     }
@@ -196,9 +196,25 @@ class ProdutoController
         float $precoMin = 0.0,
         float $precoMax = 0.0,
         string $ordem = 'recente',
-        string $cidade = ''
+        string $cidade = '',
+        int $categoriaId = 0
     ): array {
-        return $this->produto->listarAtivos(trim($busca), $subcategoriaId, $marcaId, $precoMin, $precoMax, $ordem, trim($cidade));
+        return $this->produto->listarAtivos(trim($busca), $subcategoriaId, $marcaId, $precoMin, $precoMax, $ordem, trim($cidade), $categoriaId);
+    }
+
+    public function listarDestaques(int $limite = 4): array
+    {
+        return $this->produto->listarDestaques($limite);
+    }
+
+    public function listarCategorias(): array
+    {
+        return $this->produto->listarCategorias();
+    }
+
+    public function definirDestaque(int $produtoId, int $empresaId, bool $destaque): bool
+    {
+        return $this->produto->definirDestaque($produtoId, $empresaId, $destaque);
     }
 
     public function listarOfertas(int $limite = 24): array

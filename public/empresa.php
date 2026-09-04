@@ -19,6 +19,7 @@ unset($_SESSION['avaliacao_mensagem']);
 
 $horarios = $empresa ? $controller->buscarHorarios($id) : [];
 $galeria = $empresa ? $controller->buscarGaleria($id) : [];
+$avaliacoes = $empresa ? $controller->listarAvaliacoes($id) : [];
 if ($empresa) {
     (new MetricaEmpresa())->registrar($id, 'visualizacao', 'empresa', $id, $_SESSION['usuario_id'] ?? null);
 }
@@ -160,6 +161,19 @@ $seoImagem = $empresa && !empty($empresa["capa"]) ? "uploads/empresas/" . $empre
                                 ⭐ <strong><?= number_format((float) $empresa["avaliacao"], 1) ?></strong>
                                 <span class="text-muted">(<?= (int) $empresa["total_avaliacoes"] ?> avaliações)</span>
                             </p>
+                        <?php endif; ?>
+
+                        <?php if ($avaliacoes): ?>
+                            <h5 class="mt-4">Avaliações recentes</h5>
+                            <?php foreach ($avaliacoes as $avaliacao): ?>
+                                <div class="border-bottom py-2">
+                                    <strong><?= htmlspecialchars($avaliacao['usuario_nome']) ?></strong>
+                                    <span class="text-warning"><?= str_repeat('★', (int) $avaliacao['nota']) ?></span>
+                                    <?php if (!empty($avaliacao['comentario'])): ?>
+                                        <p class="mb-0 text-muted"><?= nl2br(htmlspecialchars($avaliacao['comentario'])) ?></p>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
                         <?php endif; ?>
 
                         <?php if ($avaliacaoMensagem): ?>

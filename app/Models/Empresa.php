@@ -393,6 +393,19 @@ class Empresa
         }
     }
 
+    public function listarAvaliacoes(int $empresaId, int $limite = 10): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT a.nota, a.comentario, a.criado_em, u.nome AS usuario_nome
+             FROM avaliacoes a JOIN usuarios u ON u.id = a.usuario_id
+             WHERE a.empresa_id = :empresa_id ORDER BY a.criado_em DESC LIMIT :limite'
+        );
+        $stmt->bindValue(':empresa_id', $empresaId, PDO::PARAM_INT);
+        $stmt->bindValue(':limite', max(1, min($limite, 50)), PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
     /**
      * Conta o total de empresas ativas
      */

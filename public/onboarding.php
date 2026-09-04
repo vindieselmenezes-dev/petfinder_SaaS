@@ -15,32 +15,37 @@ $usuarioId = (int) $_SESSION['usuario_id'];
 $perfil = (string) ($_SESSION['perfil_tipo'] ?? 'cliente');
 $empresaId = (int) ($_GET['empresa_id'] ?? $_POST['empresa_id'] ?? 0);
 $erro = null;
+$etapaAtual = (int) ($_GET['etapa'] ?? 0);
+
+$empresa = null;
+if ($empresaId > 0) {
+    $stmt = $pdo->prepare('SELECT id, nome_fantasia, onboarding_concluido, onboarding_etapa FROM empresas WHERE id = :id');
+    $stmt->execute([':id' => $empresaId]);
+    $empresa = $stmt->fetch();
+    $etapaAtual = (int) ($empresa['onboarding_etapa'] ?? $etapaAtual);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if ($empresaId > 0 && in_array($perfil, ['empresa', 'administrador'], true)) {
-            $stmt = $pdo->prepare(
-                'UPDATE empresas e JOIN empresa_equipe ee ON ee.empresa_id = e.id
-                 SET e.onboarding_etapa = 3, e.onboarding_concluido = 1
-                 WHERE e.id = :empresa_id AND ee.usuario_id = :usuario_id AND ee.status = "ativo"'
-            );
-            $stmt->execute([':empresa_id' => $empresaId, ':usuario_id' => $usuarioId]);
+            $proximaEtapa = min(3, $etapaAtual + 1);
+            $stmt = $pdo->prepare('UPDATE empresas e JOIN empresa_equipe ee ON ee.empresa_id = e.id SET e.onboarding_etapa = :etapa, e.onboarding_concluido = :concluido WHERE e.id = :empresa_id AND ee.usuario_id = :usuario_id AND ee.status = "ativo"');
+            $stmt->execute([':etapa' => $proximaEtapa, ':concluido' => $proximaEtapa >= 3 ? 1 : 0, ':empresa_id' => $empresaId, ':usuario_id' => $usuarioId]);
         } else {
-            $stmt = $pdo->prepare('UPDATE usuarios SET onboarding_concluido = 1 WHERE id = :id');
-            $stmt->execute([':id' => $usuarioId]);
+            $proximaEtapa = min(3, $etapaAtual + 1);
+            $stmt = $pdo->prepare('UPDATE usuarios SET onboarding_concluido = :concluido WHERE id = :id');
+            $stmt->execute([':concluido' => $proximaEtapa >= 3 ? 1 : 0, ':id' => $usuarioId]);
         }
-        header('Location: dashboard.php');
+        if ($proximaEtapa >= 3) {
+            header('Location: dashboard.php');
+            exit;
+        }
+        $parametroEmpresa = $empresaId > 0 ? '&empresa_id=' . $empresaId : '';
+        header('Location: onboarding.php?etapa=' . $proximaEtapa . $parametroEmpresa);
         exit;
     } catch (Throwable $exception) {
         $erro = 'Não foi possível salvar seu progresso. A migration 013 precisa estar aplicada.';
     }
-}
-
-$empresa = null;
-if ($empresaId > 0) {
-    $stmt = $pdo->prepare('SELECT id, nome_fantasia, onboarding_concluido FROM empresas WHERE id = :id');
-    $stmt->execute([':id' => $empresaId]);
-    $empresa = $stmt->fetch();
 }
 
 $isEmpresa = $empresa !== null;
@@ -65,14 +70,32 @@ $etapas = $isEmpresa
         <p class="lead">Vamos deixar sua experiência pronta para começar.</p>
         <?php if ($erro): ?>
             <div class="alert alert-danger"><?= htmlspecialchars($erro) ?></div><?php endif; ?>
+        <div class="progress mb-4" role="progressbar" aria-label="Progresso do onboarding"
+            aria-valuenow="<?= $etapaAtual ?>" aria-valuemin="0" aria-valuemax="3">
+            <div class="progress-bar" style="width: <?= (int) (($etapaAtual / 3) * 100) ?>%"></div>
+        </div>
         <ol class="list-group list-group-numbered mb-4">
-            <?php foreach ($etapas as $etapa): ?>
-                <li class="list-group-item py-3"><?= htmlspecialchars($etapa) ?></li><?php endforeach; ?>
+            <?php foreach ($etapas as $indice => $etapa): ?>
+                <li
+                    class="list-group-item py-3 <?= $indice < $etapaAtual ? 'list-group-item-success' : ($indice === $etapaAtual ? 'list-group-item-primary' : '') ?>">
+                    <?= htmlspecialchars($etapa) ?>
+                    <span
+                        class="float-end"><?= $indice < $etapaAtual ? 'Concluído' : ($indice === $etapaAtual ? 'Em andamento' : '') ?></span>
+                </li>
+            <?php endforeach; ?>
         </ol>
         <form method="post">
             <?php if ($empresaId > 0): ?><input type="hidden" name="empresa_id"
                     value="<?= $empresaId ?>"><?php endif; ?>
-            <button class="btn btn-primary" type="submit">Concluir onboarding</button>
+            <input type="hidden" name="etapa" value="<?= $etapaAtual ?>">
+            <?php if ($etapaAtual === 0): ?><a class="btn btn-outline-primary"
+                    href="<?= $isEmpresa ? 'editar_empresa.php?id=' . $empresaId : 'meu_perfil.php' ?>">Completar
+                    etapa</a><?php elseif ($etapaAtual === 1): ?><a class="btn btn-outline-primary"
+                    href="<?= $isEmpresa ? 'cadastrar_produto.php?empresa_id=' . $empresaId : 'cadastrar_pet.php' ?>">Completar
+                    etapa</a><?php else: ?><a class="btn btn-outline-primary"
+                    href="<?= $isEmpresa ? 'painel_b2b.php?empresa_id=' . $empresaId : 'pets_adocao.php' ?>">Explorar</a><?php endif; ?>
+            <button class="btn btn-primary"
+                type="submit"><?= $etapaAtual >= 2 ? 'Concluir onboarding' : 'Avançar etapa' ?></button>
             <a class="btn btn-link" href="dashboard.php">Pular por enquanto</a>
         </form>
     </main>
