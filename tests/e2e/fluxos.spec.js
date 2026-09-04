@@ -32,7 +32,7 @@ test.describe('fluxos críticos reais', () => {
         await page.getByRole('button', { name: /Adicionar ao Carrinho/i }).click();
         await page.goto('checkout.php');
         await expect(page.getByRole('heading', { name: /Finalizar Compra/i })).toBeVisible();
-        await page.getByRole('button', { name: /Confirmar Pedido|Finalizar Compra|Comprar/i }).click();
+        await page.getByRole('button', { name: /Confirmar Compra|Confirmar Pedido|Finalizar Compra|Comprar/i }).click();
         await expect(page).toHaveURL(/pedido_confirmado\.php/);
         await expect(page.getByText(/Pedido confirmado/i)).toBeVisible();
     });
