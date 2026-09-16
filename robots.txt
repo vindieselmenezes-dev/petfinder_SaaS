@@ -1,0 +1,73 @@
+# PetFinder Brasil — robots.txt
+#
+# Estratégia: bloqueia tudo dentro de /public/ por padrão e libera
+# explicitamente só as páginas de conteúdo público (Allow é mais
+# específico que Disallow e prevalece, pela regra de "correspondência
+# mais longa" usada pelos principais buscadores — Google, Bing, Yandex).
+# Isso é de propósito mais seguro que listar cada página privada uma por
+# uma: se uma página nova e sensível for adicionada em /public/ no
+# futuro e ninguém lembrar de bloqueá-la aqui, o padrão já é "não
+# indexar", em vez do contrário.
+#
+# Diretórios de infraestrutura (código-fonte, config, banco, logs) não
+# ficam sob /public/ neste projeto, mas são bloqueados abaixo mesmo
+# assim, por precaução.
+
+User-agent: *
+
+Disallow: /public/
+Disallow: /app/
+Disallow: /config/
+Disallow: /database/
+Disallow: /storage/
+Disallow: /vendor/
+Disallow: /node_modules/
+Disallow: /docs/
+Disallow: /tests/
+
+# --- Conteúdo público: liberado mesmo estando sob /public/ ------------------
+
+# Institucional
+Allow: /public/sobre.php
+Allow: /public/contato.php
+Allow: /public/ajuda.php
+Allow: /public/blog.php
+Allow: /public/privacidade.php
+Allow: /public/termos.php
+
+# Pets
+Allow: /public/pets/pet.php
+Allow: /public/pets/pets_adocao.php
+Allow: /public/pets/pets_encontrados.php
+Allow: /public/pets/pets_perdidos.php
+
+# Empresas
+Allow: /public/empresas/empresa.php
+Allow: /public/empresas/empresas.php
+Allow: /public/empresas/planos.php
+
+# Loja
+Allow: /public/loja/produto.php
+Allow: /public/loja/produtos.php
+Allow: /public/loja/ofertas.php
+Allow: /public/loja/vitrine.php
+
+# Prestadores de serviço / categorias de agendamento
+Allow: /public/agendamentos/prestador.php
+Allow: /public/agendamentos/prestadores.php
+Allow: /public/agendamentos/adestramento.php
+Allow: /public/agendamentos/banho_e_tosa.php
+Allow: /public/agendamentos/clinica_veterinaria.php
+Allow: /public/agendamentos/hotelzinho.php
+
+# Parceiros / ONGs / campanhas
+Allow: /public/parceiros/parceiros.php
+Allow: /public/parceiros/parceiro.php
+Allow: /public/parceiros/campanha.php
+
+# Aponta direto para o gerador em PHP: funciona em qualquer servidor,
+# com ou sem mod_rewrite habilitado. Se o mod_rewrite estiver ativo,
+# /sitemap.xml também funciona (redireciona para o mesmo arquivo — ver
+# a regra em .htaccess), mas a URL abaixo é a garantida.
+# TROQUE "SITE_URL" pelo domínio real antes de publicar.
+Sitemap: SITE_URL/sitemap.php

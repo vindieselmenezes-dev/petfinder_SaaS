@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
+         bootstrap="tests/phpunit/bootstrap.php"
+         colors="true"
+         convertWarningsToExceptions="false"
+         cacheResult="false">
+    <testsuites>
+        <testsuite name="core">
+            <directory>tests/phpunit</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <!--
+            Auth::login()/logout() chamam funções de sessão (session_regenerate_id,
+            setcookie, session_destroy) que emitem avisos inofensivos quando
+            rodadas via CLI (sem um servidor web de verdade por trás). Isso não
+            acontece em produção; aqui só evitamos poluir a saída dos testes.
+        -->
+        <ini name="error_reporting" value="E_ALL &amp; ~E_WARNING &amp; ~E_DEPRECATED"/>
+    </php>
+</phpunit>

@@ -1,0 +1,8 @@
+.env
+vendor/
+node_modules/
+playwright-report/
+test-results/
+logs/
+storage/logs/*.log
+storage/cache/*.xml

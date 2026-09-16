@@ -1,0 +1,70 @@
+/* ==========================================================
+   PETFINDER BRASIL — BASE COMPARTILHADA
+   ==========================================================
+   Variáveis de cor, fonte, reset e estilos globais usados tanto
+   pelo dashboard (área logada) quanto pelas páginas públicas do
+   site. Qualquer ajuste de cor, espaçamento-base ou tipografia
+   da marca é feito UMA VEZ aqui — style.css e dashboard.css só
+   importam este arquivo e cuidam do que é específico de cada um.
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    /* Paleta */
+    --azul-escuro: #1B365D;
+    --azul-claro: #4FA3FF;
+    --verde: #2ECC71;
+    --laranja: #FF8C42;
+    --vermelho: #E74C3C;
+    --branco: #FFFFFF;
+    --cinza-claro: #F5F7FA;
+    --cinza: #E5E7EB;
+    --cinza-escuro: #2C3E50;
+    --texto: #343A40;
+    --preto: #1A1A1A;
+
+    /* Elevação e movimento */
+    --sombra: 0 10px 25px rgba(0, 0, 0, .08);
+    --sombra-leve: 0 2px 8px rgba(0, 0, 0, .06);
+    --transicao: .25s ease;
+    --raio: 12px;
+}
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--cinza-claro);
+    color: var(--texto);
+    line-height: 1.6;
+}
+
+/* Foco de teclado visível — acessibilidade, vale para o site inteiro */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--azul-claro);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
