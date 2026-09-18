@@ -44,6 +44,7 @@ function menuGrupo(string $titulo, string $icone, array $itens, string $paginaAt
 }
 ?>
 <aside class="sidebar" id="sidebarMenu">
+    <button type="button" class="sidebar-fechar" id="sidebarFechar" aria-label="Fechar menu">✕</button>
     <nav>
         <ul>
             <!-- Links Comuns para Todos os Usuários -->

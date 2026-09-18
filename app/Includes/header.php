@@ -20,6 +20,7 @@
     <link rel="manifest" href="<?= Url::raiz('manifest.json') ?>">
     <meta name="theme-color" content="#015C1E">
     <link rel="apple-touch-icon" href="<?= Url::asset('img/icons/apple-touch-icon.png') ?>">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="PetFinder">
@@ -31,7 +32,7 @@
     <script>
         if ("serviceWorker" in navigator) {
             window.addEventListener("load", () => {
-                navigator.serviceWorker.register("<?= Url::raiz('sw.js') ?>", { scope: "<?= Url::base() ?: '/' ?>" }).catch(() => { });
+                navigator.serviceWorker.register("<?= Url::raiz('sw.js') ?>", { scope: "<?= Url::base() . '/' ?>" }).catch(() => { });
             });
         }
 

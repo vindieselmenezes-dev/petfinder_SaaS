@@ -39,7 +39,7 @@ require_once __DIR__ . '/../app/Includes/menu.php';
 ?>
 
 <main class="container"
-    style="margin-top: 100px !important; margin-left: 240px !important; padding: 20px !important; display: block !important;">
+    style="margin-top: 100px !important; padding: 20px !important; display: block !important;">
 
     <div
         style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 40px auto 0 auto !important; position: relative !important; top: 0 !important; float: none !important; clear: both !important; display: block !important;">

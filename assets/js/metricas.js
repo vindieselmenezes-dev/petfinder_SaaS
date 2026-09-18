@@ -1,6 +1,12 @@
 (function () {
     "use strict";
 
+    // Lido do próprio <script src="..." data-endpoint="...">, calculado em
+    // PHP (Url::ajax()) na página que inclui este arquivo — assim o caminho
+    // sempre acerta, não importa a profundidade de pastas de quem incluiu.
+    var scriptAtual = document.currentScript;
+    var endpoint = (scriptAtual && scriptAtual.dataset.endpoint) || '/app/ajax/registrar_metrica.php';
+
     function registrar(elemento) {
         var empresaId = elemento.getAttribute('data-metrica-empresa');
         var tipo = elemento.getAttribute('data-metrica-tipo') || 'clique';
@@ -13,9 +19,9 @@
             referencia_id: elemento.getAttribute('data-metrica-referencia') ? Number(elemento.getAttribute('data-metrica-referencia')) : null
         });
         if (navigator.sendBeacon) {
-            navigator.sendBeacon('../app/ajax/registrar_metrica.php', new Blob([dados], { type: 'application/json' }));
+            navigator.sendBeacon(endpoint, new Blob([dados], { type: 'application/json' }));
         } else {
-            fetch('../app/ajax/registrar_metrica.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: dados, keepalive: true });
+            fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: dados, keepalive: true });
         }
     }
 

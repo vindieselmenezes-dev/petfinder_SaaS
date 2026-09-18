@@ -27,7 +27,7 @@ require_once "../../app/Includes/menu.php";
 ?> 
 
 <!-- AJUSTE ESTRUTURAL MACRO: Afasta do menu lateral e desce do topo fixo -->
-<main class="container" style="margin-top: 100px !important; margin-left: 240px !important; padding: 20px !important; display: block !important;"> 
+<main class="container" style="margin-top: 100px !important; padding: 20px !important; display: block !important;"> 
     
     <!-- CONTÊINER BRANCO UNIFICADO: Mesmo design de alto nível das telas anteriores -->
     <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 40px auto 0 auto !important; position: relative !important; display: block !important;"> 
@@ -47,7 +47,7 @@ require_once "../../app/Includes/menu.php";
         </div> 
 
         <!-- TABELA CORPORATIVA PADRONIZADA -->
-        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); font-family: sans-serif;"> 
+        <table class="tabela-pets tabela-cartao-mobile" style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); font-family: sans-serif;"> 
             <thead> 
                 <tr style="background: #34495e; color: white; text-align: left;"> 
                     <th style="padding: 15px; text-align: center; width: 100px;">Logo</th> 
@@ -62,20 +62,20 @@ require_once "../../app/Includes/menu.php";
                 <?php if (!empty($empresas) && count($empresas) > 0): ?> 
                     <?php foreach ($empresas as $emp): ?> 
                         <tr style="border-bottom: 1px solid #eaeaea;"> 
-                            <td style="padding: 15px; text-align: center;"> 
+                            <td data-col="foto" style="padding: 15px; text-align: center;"> 
                                 <?php $logoNome = !empty($emp['logo']) ? $emp['logo'] : 'sem-logo.png'; ?> 
                                 <img src="<?= htmlspecialchars(Foto::url($logoNome, 'logos')) ?>" width="50" height="50" style="object-fit: cover; border-radius: 6px; border: 1px solid #eee;" alt="Logo" onerror="this.src='../../assets/img/pets/sem-foto.png';"> 
                             </td> 
-                            <td style="padding: 15px; font-weight: bold; color: #333;"> 
+                            <td data-col="nome" style="padding: 15px; font-weight: bold; color: #333;"> 
                                 <?= htmlspecialchars($emp["nome"] ?? 'Sem Nome'); ?> 
                             </td> 
-                            <td style="padding: 15px; color: #555;"> 
+                            <td data-col="categoria" data-th="Categoria" style="padding: 15px; color: #555;"> 
                                 <?= htmlspecialchars($emp["categoria"] ?? 'Não informada'); ?> 
                             </td> 
-                            <td style="padding: 15px; color: #777;"> 
+                            <td data-col="cidade" data-th="Cidade" style="padding: 15px; color: #777;"> 
                                 📍 <?= htmlspecialchars($emp["cidade"] ?? 'Não informada'); ?> 
                             </td> 
-                            <td style="padding: 15px;"> 
+                            <td data-col="status" data-th="Status" style="padding: 15px;"> 
                                 <?php 
                                 $status = $emp['status'] ?? 'Ativo'; 
                                 $bg = '#e8f5e9'; 
@@ -89,7 +89,7 @@ require_once "../../app/Includes/menu.php";
                                     <?= htmlspecialchars($status); ?> 
                                 </span> 
                             </td> 
-                            <td style="padding: 15px; text-align: center; white-space: nowrap;"> 
+                            <td data-col="acoes" style="padding: 15px; text-align: center; white-space: nowrap;"> 
                                 <a href="painel_b2b.php?empresa_id=<?= (int)$emp['id']; ?>" style="color: #2ecc71; text-decoration: none; font-weight: bold; font-size: 14px; margin-right: 15px;">🚀 Acessar Painel</a> 
                                 <a href="editar_empresa.php?id=<?= (int)$emp['id']; ?>" style="color: #3498db; text-decoration: none; font-weight: bold; font-size: 14px;">✏️ Editar</a> 
                             </td> 

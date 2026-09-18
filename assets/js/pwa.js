@@ -6,7 +6,13 @@
     // ---------------------------------------------------------------
     if ("serviceWorker" in navigator) {
         window.addEventListener("load", function () {
-            navigator.serviceWorker.register("sw.js", { scope: "./" }).catch(function () {
+            // Sem "scope" explícito de propósito: o navegador usa a pasta
+            // onde o sw.js está como escopo automaticamente, o que é
+            // sempre válido. Um "scope" calculado à mão (ex: "./") depende
+            // de como o navegador resolve caminho relativo a partir da URL
+            // exata da página (com ou sem barra final), o que já causou
+            // erro de "scope not under max allowed" em alguns acessos.
+            navigator.serviceWorker.register("sw.js").catch(function () {
                 // sem SW o site continua funcionando normalmente, só sem
                 // cache offline — não precisa incomodar o usuário com isso.
             });

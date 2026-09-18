@@ -23,7 +23,7 @@
         });
     }).then(function (assinatura) {
         if (!assinatura) return;
-        return fetch('../app/ajax/salvar_push_subscription.php', {
+        return fetch(window.PetfinderPushSubscriptionUrl || '/app/ajax/salvar_push_subscription.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
             body: JSON.stringify(assinatura.toJSON())

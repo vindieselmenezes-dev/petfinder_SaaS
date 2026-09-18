@@ -30,7 +30,7 @@ require_once "../../app/Includes/header.php";
 require_once "../../app/Includes/menu.php";
 ?>
 
-<main class="conteudo" style="margin-top: 100px !important; margin-left: 240px !important; padding: 20px !important; display: block !important;">
+<main class="conteudo" style="margin-top: 100px !important; padding: 20px !important; display: block !important;">
 
 <div class="container mt-4">
 

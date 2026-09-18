@@ -30,12 +30,12 @@
     },
     {
       "name": "Pet perdido",
-      "url": "/petfinder-SaaS/public/pets_perdidos.php",
+      "url": "/petfinder-SaaS/public/pets/pets_perdidos.php",
       "icons": [{ "src": "assets/img/icons/icon-96.png", "sizes": "96x96" }]
     },
     {
       "name": "Meu perfil",
-      "url": "/petfinder-SaaS/public/meu_perfil.php",
+      "url": "/petfinder-SaaS/public/conta/meu_perfil.php",
       "icons": [{ "src": "assets/img/icons/icon-96.png", "sizes": "96x96" }]
     }
   ]

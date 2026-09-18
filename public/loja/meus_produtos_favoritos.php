@@ -19,7 +19,7 @@ require_once "../../app/Includes/header.php";
 require_once "../../app/Includes/menu.php";
 ?>
 
-<main class="container" style="margin-top: 100px !important; margin-left: 240px !important; padding: 20px !important; display: block !important;">
+<main class="container" style="margin-top: 100px !important; padding: 20px !important; display: block !important;">
     <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 40px auto 0 auto !important; position: relative !important; display: block !important;">
 
         <h1 style="color: #2c3e50; margin-bottom: 5px; font-family: 'Poppins', sans-serif; font-weight: bold;">🛍️ Produtos Favoritos</h1>

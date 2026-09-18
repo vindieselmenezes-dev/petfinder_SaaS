@@ -204,6 +204,13 @@
     z-index: 800;
 }
 
+/* Botão "✕" de fechar dentro da própria gaveta do menu — só existe
+   visualmente no mobile (no desktop a sidebar já fica sempre visível,
+   fixa, então não faz sentido ter botão de fechar nela). */
+.sidebar-fechar {
+    display: none;
+}
+
 /* ==========================================================
    CONTEÚDO
    ========================================================== */
@@ -214,6 +221,13 @@ main.container {
     margin-top: 100px !important;
     padding: 30px !important;
     display: block !important;
+}
+
+/* Páginas onde a sidebar só existe pra quem está logado (ex: pets_adocao.php
+   pra visitante) usam essa classe extra pra nunca reservar espaço de
+   sidebar nenhuma — em qualquer largura de tela, não só no mobile. */
+main.container.sem-sidebar {
+    margin-left: 0 !important;
 }
 
 .conteudo h1,
@@ -630,7 +644,7 @@ main.container h2 {
 
     .sidebar {
         transform: translateX(-100%);
-        width: 260px;
+        width: 100%;
         box-shadow: var(--sombra);
     }
 
@@ -640,6 +654,29 @@ main.container h2 {
 
     .sidebar-overlay.ativo {
         display: block;
+    }
+
+    .sidebar-fechar {
+        display: block;
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(255, 255, 255, .1);
+        border: none;
+        color: var(--branco);
+        font-size: 18px;
+        line-height: 1;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    /* Trava a rolagem da página por trás enquanto a gaveta do menu
+       está aberta, senão dá pra rolar o conteúdo escondido atrás do
+       overlay sem perceber. */
+    body.menu-aberto-sem-rolagem {
+        overflow: hidden;
     }
 
     .conteudo,
@@ -660,6 +697,89 @@ main.container h2 {
         display: block;
         overflow-x: auto;
         white-space: nowrap;
+    }
+
+    /* Tabelas que têm os atributos data-col/data-th (hoje: meus_pets.php)
+       ganham um tratamento melhor que rolagem lateral: cada linha vira
+       um cartão, com os campos empilhados e um rótulo pequeno em cima
+       de cada um — a mesma informação da versão desktop, só organizada
+       de um jeito que cabe numa tela estreita sem precisar rolar de
+       lado. Tabelas sem esses atributos continuam só com a rolagem
+       lateral acima. */
+    .tabela-cartao-mobile {
+        overflow-x: visible;
+        white-space: normal;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .tabela-cartao-mobile thead {
+        display: none;
+    }
+
+    .tabela-cartao-mobile tbody,
+    .tabela-cartao-mobile tr,
+    .tabela-cartao-mobile td {
+        display: block;
+        width: 100% !important;
+    }
+
+    .tabela-cartao-mobile tbody tr {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
+        padding: 14px;
+        margin-bottom: 14px;
+        border-bottom: none !important;
+    }
+
+    .tabela-cartao-mobile td {
+        padding: 3px 0 !important;
+        border: none !important;
+        text-align: left !important;
+        white-space: normal !important;
+    }
+
+    .tabela-cartao-mobile td[data-col="foto"] {
+        flex: 0 0 auto;
+        margin-right: 12px;
+    }
+
+    .tabela-cartao-mobile td[data-col="nome"] {
+        flex: 1 1 auto;
+        font-size: 16px;
+    }
+
+    .tabela-cartao-mobile td[data-th] {
+        flex-basis: 50%;
+        margin-top: 10px;
+    }
+
+    .tabela-cartao-mobile td[data-th]::before {
+        content: attr(data-th);
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        color: #94a3b8;
+        margin-bottom: 2px;
+    }
+
+    .tabela-cartao-mobile td[data-col="acoes"] {
+        flex-basis: 100%;
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        text-align: left !important;
+    }
+
+    .tabela-cartao-mobile td[data-col="acoes"] a {
+        margin-left: 0 !important;
     }
 }
 

@@ -20,6 +20,7 @@
             sidebar.classList.remove('aberto');
             overlay.classList.remove('ativo');
             toggle.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('menu-aberto-sem-rolagem');
         }
 
         function alternarMenu() {
@@ -27,10 +28,16 @@
             sidebar.classList.toggle('aberto');
             overlay.classList.toggle('ativo');
             toggle.setAttribute('aria-expanded', abrindo ? 'true' : 'false');
+            document.body.classList.toggle('menu-aberto-sem-rolagem', abrindo);
         }
 
         toggle.addEventListener('click', alternarMenu);
         overlay.addEventListener('click', fecharMenu);
+
+        var botaoFechar = document.getElementById('sidebarFechar');
+        if (botaoFechar) {
+            botaoFechar.addEventListener('click', fecharMenu);
+        }
     })();
 </script>
 
@@ -43,6 +50,7 @@ if ($pushVapidKey && Auth::check()):
     ?>
     <script>
         window.PetfinderCsrfToken = <?= json_encode(Csrf::gerarToken()) ?>;
+        window.PetfinderPushSubscriptionUrl = <?= json_encode(Url::ajax('salvar_push_subscription.php')) ?>;
         document.body.dataset.pushVapidKey = <?= json_encode($pushVapidKey) ?>;
     </script>
     <script src="<?= Url::asset('js/push-notifications.js') ?>"></script>
