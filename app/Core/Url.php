@@ -144,7 +144,6 @@ final class Url
         'solicitar_servico_prestador.php' => 'agendamentos',
         'suporte.php' => 'suporte',
         'suporte_admin.php' => 'suporte',
-        'testar_alerta.php' => 'pets',
         'vendas_empresa.php' => 'loja',
         'vitrine.php' => 'loja',
     ];

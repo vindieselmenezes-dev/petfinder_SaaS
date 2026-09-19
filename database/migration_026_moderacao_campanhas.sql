@@ -16,8 +16,8 @@
 --   - A chave `moderacao_campanhas_ativa` em `configuracoes` liga/desliga
 --     a exigência de revisão para publicações NOVAS. Trocar de '0' para
 --     '1' é a única ação necessária para exigir aprovação a partir dali
---     (edite direto na tabela `configuracoes`, não existe tela pra isso
---     ainda — mesmo padrão de `comissao_marketplace_percentual`).
+--     — pela tela public/admin/admin_configuracoes.php, ou direto na
+--     tabela `configuracoes` se preferir.
 --
 -- Aplicar depois da migration_025_mensagens_contato.sql.
 

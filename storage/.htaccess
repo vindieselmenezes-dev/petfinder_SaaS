@@ -1,0 +1,87 @@
+# ==========================================================
+# PETFINDER BRASIL
+# Cache de navegador + compressão (gzip/deflate)
+# ==========================================================
+# Tudo aqui é protegido por <IfModule>, então se algum módulo não
+# estiver habilitado no Apache, a diretiva correspondente é simplesmente
+# ignorada — nunca quebra o site por falta de módulo.
+
+# ---------------------------------------------------------
+# Compressão (gzip/deflate) das respostas de texto
+# ---------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+    AddOutputFilterByType DEFLATE application/javascript text/javascript
+    AddOutputFilterByType DEFLATE application/json application/xml application/xhtml+xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+
+    # Alguns navegadores antigos tinham bugs com gzip; mantém a mesma
+    # exceção clássica por precaução (não afeta navegadores atuais).
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</IfModule>
+
+# ---------------------------------------------------------
+# Cache de navegador (Expires)
+# ---------------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Imagens e fotos enviadas por usuários (uploads/) usam nomes únicos
+    # gerados no upload, então é seguro cachear por bastante tempo: se o
+    # conteúdo mudar, o nome do arquivo muda junto.
+    ExpiresByType image/jpeg          "access plus 1 year"
+    ExpiresByType image/png           "access plus 1 year"
+    ExpiresByType image/gif           "access plus 1 year"
+    ExpiresByType image/webp          "access plus 1 year"
+    ExpiresByType image/svg+xml       "access plus 1 year"
+    ExpiresByType image/x-icon        "access plus 1 year"
+    ExpiresByType image/vnd.microsoft.icon "access plus 1 year"
+
+    # Fontes, se algum dia forem servidas localmente
+    ExpiresByType font/woff2          "access plus 1 year"
+    ExpiresByType font/woff           "access plus 1 year"
+    ExpiresByType font/ttf            "access plus 1 year"
+
+    # CSS/JS: prazo mais curto (1 semana) porque esses arquivos não têm
+    # nome versionado — se forem atualizados num deploy, o navegador
+    # busca a versão nova em no máximo 7 dias.
+    ExpiresByType text/css            "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType text/javascript     "access plus 1 week"
+
+    # HTML e JSON não devem ficar em cache agressivo (conteúdo dinâmico)
+    ExpiresByType text/html           "access plus 0 seconds"
+    ExpiresByType application/json    "access plus 0 seconds"
+</IfModule>
+
+# ---------------------------------------------------------
+# Cache-Control explícito (reforça o Expires acima em proxies/CDNs
+# que dão mais valor a Cache-Control do que a Expires)
+# ---------------------------------------------------------
+<IfModule mod_headers.c>
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico|woff2?|ttf)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+
+    <FilesMatch "\.(html|php)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+# ---------------------------------------------------------
+# /sitemap.xml -> sitemap.php
+# ---------------------------------------------------------
+# Regra isolada e de correspondência exata: não afeta nenhuma outra URL
+# do site. Sem mod_rewrite disponível, /sitemap.xml simplesmente não
+# existiria como arquivo estático — o robots.txt aponta direto para
+# /sitemap.php, que funciona de qualquer forma, com ou sem esta regra.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^sitemap\.xml$ sitemap.php [L]
+</IfModule>

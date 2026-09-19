@@ -42,6 +42,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
         'lifetime' => 0,
         'path'     => '/',
+        // Cookie só trafega por HTTPS fora do ambiente local — mesmo
+        // critério que SegurancaHttp já usa pra forçar HTTPS. Marcar
+        // 'secure' em ambiente local (sem certificado) faria o cookie
+        // nunca ser aceito, quebrando o login em quem testa em localhost.
+        'secure'   => getenv('APP_ENV') !== 'local',
         'httponly' => true,
         'samesite' => 'Lax',
     ]);
