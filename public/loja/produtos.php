@@ -182,8 +182,8 @@ $produtos = $controller->listarAtivos($busca, $subcategoriaId, $marcaId, $precoM
                         <div class="card empresa-card h-100 shadow-sm">
 
                             <a href="produto.php?id=<?= (int) $produto['id'] ?>">
-                                <img src="<?= htmlspecialchars($imagem) ?>" class="card-img-top"
-                                    style="height:180px; object-fit:cover;" alt="<?= htmlspecialchars($produto['nome']) ?>">
+                                <img src="<?= htmlspecialchars($imagem) ?>" class="card-img-top produto-card-img"
+                                    style="height:180px;" alt="<?= htmlspecialchars($produto['nome']) ?>">
                             </a>
 
                             <div class="card-body">

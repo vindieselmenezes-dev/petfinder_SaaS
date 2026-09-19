@@ -106,7 +106,7 @@ $seoImagem = Foto::url(
                     ?>
 
                     <img src="<?= htmlspecialchars($foto) ?>" class="img-fluid rounded-4 shadow-sm w-100"
-                        style="object-fit: cover; max-height: 480px;" alt="<?= htmlspecialchars($pet["nome"]) ?>">
+                        style="aspect-ratio: 4 / 3; object-fit: contain; background: #f8f9fa;" alt="<?= htmlspecialchars($pet["nome"]) ?>">
 
                     <?php if (!empty($imagensAdicionais)): ?>
                         <div class="mt-3 d-flex flex-wrap gap-2">

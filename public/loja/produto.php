@@ -113,7 +113,8 @@ $seoImagem = Foto::url($imagens[0]["imagem"] ?? null, 'produtos');
                     ?>
 
                     <img id="imagemPrincipal" src="<?= htmlspecialchars($imagemPrincipal) ?>"
-                        class="img-fluid rounded-4 shadow-sm w-100 mb-2" style="object-fit:cover; max-height:420px;"
+                        class="img-fluid rounded-4 shadow-sm w-100 mb-2"
+                        style="object-fit:contain; max-height:420px; background:#f8f9fa;"
                         alt="<?= htmlspecialchars($produto["nome"]) ?>">
 
                     <?php if (count($imagens) > 1): ?>
