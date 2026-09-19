@@ -849,6 +849,15 @@ img {
     object-fit: cover;
 }
 
+/* Fotos de pet "corpo inteiro" cortavam a cabeça com o corte central
+   padrão acima. Aqui o enquadramento é puxado pra cima (30% em vez de
+   50%/centro), já que a cabeça costuma ficar no terço superior da
+   foto. Só na imagem — o card em si continua .empresa-card, com todo
+   o resto do estilo (badge, botões, título) intacto. */
+.pet-card-img {
+    object-position: center 30%;
+}
+
 .empresa-card .card-body {
     padding: 25px;
 }
