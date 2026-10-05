@@ -13,7 +13,7 @@ seu projeto original:
 
 ## Fase 1 — Fundação do sistema
 
-Esta é a primeira etapa da reestruturação do PetFinder Brasil, focada na
+Esta é a primeira etapa da reestruturação do EcoSistemPet, focada na
 **base do sistema**: inicialização única, autenticação centralizada,
 configuração e sessão. As próximas fases (visual/CSS e organização das
 páginas em módulos) ficam para as próximas entregas.

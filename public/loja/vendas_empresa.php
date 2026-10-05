@@ -59,7 +59,7 @@ require_once "../../app/Includes/menu.php";
     <p><a href="<?= Url::pagina('meus_produtos.php') ?>?empresa_id=<?= $empresaId ?>">← Voltar para Produtos</a></p>
 
     <p class="text-muted" style="max-width: 640px;">
-        Valores <strong>simulados</strong> — o PetFinder ainda não tem integração com
+        Valores <strong>simulados</strong> — o EcoSistemPet ainda não tem integração com
         um gateway de pagamento real, então nenhum valor é efetivamente transferido.
         Esta tela mostra quanto seria retido pela plataforma e quanto vocês receberiam
         em cada venda, com a taxa de comissão atual do marketplace.

@@ -56,7 +56,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' &
             $notificacaoController->criar(
                 (int) $chamado['usuario_id'],
                 "💬 Seu chamado foi respondido",
-                "Suporte PetFinder respondeu ao chamado \"$assuntoChamado\".",
+                "Suporte EcoSistemPet respondeu ao chamado \"$assuntoChamado\".",
                 'Sistema',
                 $linkChamado
             );
@@ -142,7 +142,7 @@ $corStatus = [
             ?>
                 <div class="record-card" style="<?= $ehRespostaAdmin ? 'background:#eaf4ff; border-color:#bcdcff;' : ''; ?>">
                     <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                        <strong style="font-size:13px;"><?= $ehRespostaAdmin ? '🛠️ Suporte PetFinder' : htmlspecialchars($resp['usuario_nome']); ?></strong>
+                        <strong style="font-size:13px;"><?= $ehRespostaAdmin ? '🛠️ Suporte EcoSistemPet' : htmlspecialchars($resp['usuario_nome']); ?></strong>
                         <span style="font-size:12px; color:#999;"><?= date('d/m/Y H:i', strtotime($resp['criado_em'])); ?></span>
                     </div>
                     <p style="margin:0; white-space:pre-line;"><?= htmlspecialchars($resp['resposta']); ?></p>

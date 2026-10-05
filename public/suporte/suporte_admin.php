@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../app/Helpers/Csrf.php';
 $pdo = Database::conectar(); 
 
 
-// 2. REGRA DE SEGURANÇA: Apenas administradores globais do PetFinder acessam esta área
+// 2. REGRA DE SEGURANÇA: Apenas administradores globais do EcoSistemPet acessam esta área
 if (!isset($_SESSION['usuario_id'])) { 
     header('Location: ' . Url::pagina('login.php')); 
     exit(); 

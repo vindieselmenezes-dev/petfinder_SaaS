@@ -71,7 +71,7 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
                     Você ainda não tem nenhuma parceria cadastrada.
                 </p>
                 <a href="<?= Url::pagina('cadastrar_parceiro.php') ?>" class="btn btn-success">
-                    Quero ser parceiro do PetFinder
+                    Quero ser parceiro do EcoSistemPet
                 </a>
             </div>
 

@@ -1,4 +1,4 @@
-# PetFinder Brasil — robots.txt
+# EcoSistemPet — robots.txt
 #
 # Estratégia: bloqueia tudo dentro de /public/ por padrão e libera
 # explicitamente só as páginas de conteúdo público (Allow é mais

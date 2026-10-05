@@ -9,20 +9,31 @@ if (!isset($_SESSION['usuario_id']) || ($_SESSION['perfil_tipo'] ?? '') !== 'adm
 } 
 
 require_once '../../app/Models/Usuario.php'; 
+require_once '../../app/Helpers/Csrf.php';
 $pdo = Database::conectar(); 
 
 $usuarioModel = new Usuario(); 
 $usuarios = $usuarioModel->listarTodos(); 
 
-if (isset($_GET['delete_id'])) { 
-    $deleteId = (int) $_GET['delete_id']; 
-    if ($deleteId > 0 && $deleteId !== (int)$_SESSION['usuario_id']) { 
-        if ($usuarioModel->deletar($deleteId)) { 
+// Exclusão agora exige POST + token CSRF (antes era um link GET
+// "?delete_id=", explorável via CSRF sem precisar de JS: bastava
+// um <img src="...?delete_id=X"> em outro site pra apagar um
+// usuário com a sessão do admin logado).
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
+        http_response_code(419);
+        echo '<h1>Sessão expirada</h1><p>Recarregue a página e tente novamente.</p>';
+        exit;
+    }
+
+    $deleteId = (int) $_POST['delete_id'];
+    if ($deleteId > 0 && $deleteId !== (int)$_SESSION['usuario_id']) {
+        if ($usuarioModel->deletar($deleteId)) {
             session_write_close();
             header('Location: ' . Url::pagina('admin_usuarios.php'));
             exit;
-        } 
-    } 
+        }
+    }
 } 
 
 $tituloPagina = "Gestão de Usuários";
@@ -59,7 +70,11 @@ require_once '../../app/Includes/menu.php';
                             <td style="text-align: center; white-space:nowrap;"> 
                                 <a href="admin_usuario_detalhe.php?id=<?= $usuario['id']; ?>" class="btn-acao" style="background:#2563eb; color:white;">👁️ Ver Perfil</a>
                                 <?php if ($usuario['id'] !== $_SESSION['usuario_id']): ?> 
-                                    <a href="admin_usuarios.php?delete_id=<?= $usuario['id']; ?>" onclick="return confirm('Deseja remover este usuário?');" class="btn-acao" style="background:#e74c3c; color:white;">🗑 Excluir</a> 
+                                    <form method="POST" style="display:inline" onsubmit="return confirm('Deseja remover este usuário?');">
+                                        <?= Csrf::campoHtml() ?>
+                                        <input type="hidden" name="delete_id" value="<?= $usuario['id']; ?>">
+                                        <button type="submit" class="btn-acao" style="background:#e74c3c; color:white; border:none; cursor:pointer;">🗑 Excluir</button>
+                                    </form>
                                 <?php else: ?> 
                                     <span style="background: #2ecc71; color: white; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: bold;">Você (Ativo)</span> 
                                 <?php endif; ?> 

@@ -32,10 +32,10 @@ foreach ($horarios as $horario) {
 }
 
 $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-$seoTitulo = $empresa ? $empresa["nome_fantasia"] . " - PetFinder Brasil" : "Empresa não encontrada - PetFinder Brasil";
+$seoTitulo = $empresa ? $empresa["nome_fantasia"] . " - EcoSistemPet" : "Empresa não encontrada - EcoSistemPet";
 $seoDescricao = $empresa
-    ? (trim((string) ($empresa["descricao"] ?? $empresa["categoria"] ?? "Empresa no PetFinder Brasil.")) ?: "Empresa no PetFinder Brasil.")
-    : "Empresa não encontrada no PetFinder Brasil.";
+    ? (trim((string) ($empresa["descricao"] ?? $empresa["categoria"] ?? "Empresa no EcoSistemPet.")) ?: "Empresa no EcoSistemPet.")
+    : "Empresa não encontrada no EcoSistemPet.";
 $seoImagem = Foto::url($empresa ? ($empresa["capa"] ?? null) : null, 'empresas');
 
 ?>
@@ -48,7 +48,7 @@ $seoImagem = Foto::url($empresa ? ($empresa["capa"] ?? null) : null, 'empresas')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= $empresa ? htmlspecialchars($empresa["nome_fantasia"]) . " - " : "" ?>PetFinder Brasil</title>
+    <title><?= $empresa ? htmlspecialchars($empresa["nome_fantasia"]) . " - " : "" ?>EcoSistemPet</title>
     <?= Seo::tags($seoTitulo, $seoDescricao, Url::pagina('empresa.php') . '?id=' . $id, $seoImagem, "business.business") ?>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -58,16 +58,21 @@ $seoImagem = Foto::url($empresa ? ($empresa["capa"] ?? null) : null, 'empresas')
 </head>
 
 <body style="padding-top:38px;">
-    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="Voltar para a página anterior">← Voltar</button></div>
+    <div
+        style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;">
+        <button type="button"
+            onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}"
+            style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;"
+            aria-label="Voltar para a página anterior">← Voltar</button></div>
 
     <header class="border-bottom py-3 mb-4">
 
         <div class="container d-flex align-items-center justify-content-between">
 
             <a href="../../index.html" class="d-flex align-items-center text-decoration-none">
-                <img src="../../assets/img/logo.png" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="../../assets/img/logo.png" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -308,14 +313,16 @@ $seoImagem = Foto::url($empresa ? ($empresa["capa"] ?? null) : null, 'empresas')
                             <?php endif; ?>
 
                             <?php if ($empresa && in_array((int) $empresa['categoria_id'], [2, 3], true)): ?>
-                                <a href="<?= Url::pagina('agendar_consulta.php') ?>?empresa_id=<?= (int) $empresa['id'] ?>" class="btn btn-outline-success w-100 mt-2">
+                                <a href="<?= Url::pagina('agendar_consulta.php') ?>?empresa_id=<?= (int) $empresa['id'] ?>"
+                                    class="btn btn-outline-success w-100 mt-2">
                                     <i class="bi bi-calendar-heart"></i>
                                     Agendar Consulta
                                 </a>
-                            <?php elseif ($empresa && in_array((int) $empresa['categoria_id'], [4, 5, 6], true)): ?>
-                                <a href="<?= Url::pagina('solicitar_servico_empresa.php') ?>?empresa_id=<?= (int) $empresa['id'] ?>" class="btn btn-outline-success w-100 mt-2">
+                            <?php elseif ($empresa && in_array((int) $empresa['categoria_id'], [4, 5, 6, 7], true)): ?>
+                                <a href="<?= Url::pagina('pedir_servico.php') ?>?categoria_id=<?= (int) $empresa['categoria_id'] ?>"
+                                    class="btn btn-outline-success w-100 mt-2">
                                     <i class="bi bi-calendar-heart"></i>
-                                    Solicitar Serviço
+                                    Pedir orçamento
                                 </a>
                             <?php endif; ?>
 
@@ -332,7 +339,7 @@ $seoImagem = Foto::url($empresa ? ($empresa["capa"] ?? null) : null, 'empresas')
     </main>
 
     <footer class="border-top py-4 text-center text-muted">
-        © <?= date("Y") ?> PetFinder Brasil
+        © <?= date("Y") ?> EcoSistemPet
     </footer>
 
     <script src="../../assets/js/metricas.js" data-endpoint="<?= Url::ajax('registrar_metrica.php') ?>"></script>

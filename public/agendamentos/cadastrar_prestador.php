@@ -193,7 +193,7 @@ $tituloPagina = match ($tipo) {
 <?php elseif ($tipo === 'adestrador'): ?>
     Ofereça aulas e serviços de adestramento como profissional autônomo, sem precisar de CNPJ ou empresa registrada.
 <?php else: ?>
-    Faça parte do PetFinder Brasil e ofereça seus serviços de passeio para tutores da sua cidade e região.
+    Faça parte do EcoSistemPet e ofereça seus serviços de passeio para tutores da sua cidade e região.
 <?php endif; ?>
 </p>
 

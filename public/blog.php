@@ -80,7 +80,7 @@ function exibirComentarios(array $comentarios): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Blog - PetFinder Brasil</title>
+    <title>Blog - EcoSistemPet</title>
 
     <!-- BOOTSTRAP -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -100,9 +100,9 @@ function exibirComentarios(array $comentarios): string
         <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
 
             <a href="../index.html" class="d-flex align-items-center text-decoration-none">
-                <img src="../assets/img/logo.png" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="../assets/img/logo.png" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -125,7 +125,7 @@ function exibirComentarios(array $comentarios): string
 
         <div class="row mb-4">
             <div class="col-lg-8">
-                <h1 class="fw-bold">Blog PetFinder</h1>
+                <h1 class="fw-bold">Blog EcoSistemPet</h1>
                 <p class="text-muted">Dicas, cuidados e informações práticas para cuidar melhor do seu pet.</p>
             </div>
         </div>

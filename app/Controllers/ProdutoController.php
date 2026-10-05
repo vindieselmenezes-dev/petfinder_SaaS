@@ -201,9 +201,26 @@ class ProdutoController
         float $precoMax = 0.0,
         string $ordem = 'recente',
         string $cidade = '',
-        int $categoriaId = 0
+        int $categoriaId = 0,
+        string $empresa = '',
+        bool $apenasPromocao = false,
+        array $subcategoriasSelecionadas = [],
+        float $avaliacaoMinima = 0.0
     ): array {
-        return $this->produto->listarAtivos(trim($busca), $subcategoriaId, $marcaId, $precoMin, $precoMax, $ordem, trim($cidade), $categoriaId);
+        return $this->produto->listarAtivos(
+            trim($busca),
+            $subcategoriaId,
+            $marcaId,
+            $precoMin,
+            $precoMax,
+            $ordem,
+            trim($cidade),
+            $categoriaId,
+            trim($empresa),
+            $apenasPromocao,
+            $subcategoriasSelecionadas,
+            $avaliacaoMinima
+        );
     }
 
     public function listarDestaques(int $limite = 4): array

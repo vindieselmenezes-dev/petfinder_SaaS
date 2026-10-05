@@ -59,7 +59,7 @@ links continuam funcionando se o projeto estiver em subpasta.
 
 ## Importante sobre dinheiro
 
-O PetFinder **não recebe nem intermedia** doações: a página só exibe a chave PIX
+O EcoSistemPet **não recebe nem intermedia** doações: a página só exibe a chave PIX
 ou o link do parceiro, e o valor arrecadado é informado manualmente por ele.
 Isso evita qualquer obrigação de gateway de pagamento, split e repasse — se um
 dia isso for desejado, o ponto de entrada é `campanha_apoios`, que já guarda a

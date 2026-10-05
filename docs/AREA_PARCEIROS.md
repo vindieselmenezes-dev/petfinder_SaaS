@@ -59,7 +59,7 @@ links continuam funcionando se o projeto estiver em subpasta.
 
 ## Importante sobre dinheiro
 
-O PetFinder **não recebe nem intermedia** doações: a página só exibe a chave PIX
+O EcoSistemPet **não recebe nem intermedia** doações: a página só exibe a chave PIX
 ou o link do parceiro, e o valor arrecadado é informado manualmente por ele.
 Isso evita qualquer obrigação de gateway de pagamento, split e repasse — se um
 dia isso for desejado, o ponto de entrada é `campanha_apoios`, que já guarda a
@@ -200,7 +200,7 @@ não tinham `aria-label` — ou seja, além de não levar a lugar nenhum, um lei
 de tela não conseguia dizer qual rede cada ícone representava.
 
 Adicionei `aria-label` e `title` em cada um. Os links continuam como
-placeholder (`#`) porque **não tenho as URLs reais** dos perfis do PetFinder
+placeholder (`#`) porque **não tenho as URLs reais** dos perfis do EcoSistemPet
 Brasil — troque pelos links de verdade assim que existirem (tem um comentário
 `TODO` no HTML, logo acima dos ícones, lembrando de adicionar também
 `target="_blank" rel="noopener"` quando isso acontecer).
@@ -246,7 +246,7 @@ Antes não existia nada — os dados iam para lugar nenhum. Agora:
 usuais de termos de uso — não é aconselhamento jurídico. Os trechos entre
 colchetes (`[razão social a definir]`, `[CNPJ a definir]`, `[endereço a
 definir]`, `[cidade/UF a definir]`) precisam ser preenchidos com os dados
-jurídicos reais de quem for operar o PetFinder Brasil de verdade, e o ideal
+jurídicos reais de quem for operar o EcoSistemPet de verdade, e o ideal
 é revisar com um advogado antes de publicar.
 
 ### Links "Sobre"/"Contato" dentro de Ajuda

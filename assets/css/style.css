@@ -1,5 +1,5 @@
 /* ==========================================================
-   PetFinder Brasil
+   EcoSistemPet
    Arquivo: assets/css/style.css (site público)
    ==========================================================
    Variáveis, fonte, reset e estilos globais agora ficam em
@@ -158,6 +158,10 @@ img {
     font-size: 22px;
     cursor: pointer;
     display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
     z-index: 999;
     transition: var(--transicao);
     box-shadow: var(--sombra);
@@ -165,6 +169,178 @@ img {
 
 #btnTopo:hover {
     transform: translateY(-4px);
+}
+
+/* ==========================================================
+   NAVEGAÇÃO INFERIOR DO PWA
+   ========================================================== */
+
+.pwa-bottom-nav,
+.pwa-more-backdrop,
+.pwa-more-panel {
+    display: none;
+}
+
+html.pwa-instalado body {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom));
+}
+
+html.pwa-instalado .pwa-bottom-nav {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 1050;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+    border-top: 1px solid #e1e7e4;
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 -4px 16px rgba(25, 48, 40, 0.08);
+    backdrop-filter: blur(12px);
+}
+
+.pwa-bottom-nav a,
+.pwa-bottom-nav button {
+    min-width: 0;
+    min-height: 52px;
+    padding: 5px 2px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #56645e;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.pwa-bottom-nav a[aria-current="page"],
+.pwa-bottom-nav a:active,
+.pwa-bottom-nav button[aria-expanded="true"] {
+    color: #176b4a;
+}
+
+.pwa-bottom-nav i {
+    font-size: 19px;
+    line-height: 1;
+}
+
+.pwa-bottom-nav span {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 10px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+html.pwa-instalado #btnTopo {
+    right: 14px;
+    bottom: calc(78px + env(safe-area-inset-bottom));
+}
+
+html.pwa-instalado .pwa-more-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1090;
+    display: block;
+    border: 0;
+    background: rgba(17, 34, 28, 0.38);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+html.pwa-instalado .pwa-more-panel {
+    position: fixed;
+    inset-inline: 0;
+    bottom: calc(64px + env(safe-area-inset-bottom));
+    z-index: 1100;
+    display: block;
+    max-height: min(72vh, 560px);
+    padding: 18px 16px 14px;
+    overflow-y: auto;
+    border: 1px solid #e1e7e4;
+    border-bottom: 0;
+    border-radius: 14px 14px 0 0;
+    background: #fff;
+    box-shadow: 0 -8px 28px rgba(17, 34, 28, 0.14);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(14px);
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+}
+
+html.pwa-mais-aberto .pwa-more-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+html.pwa-mais-aberto .pwa-more-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+.pwa-more-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.pwa-more-header h2 {
+    margin: 0;
+    color: #1b365d;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.pwa-more-close {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #e1e7e4;
+    border-radius: 50%;
+    background: #f6f8f7;
+    color: #33443d;
+}
+
+.pwa-more-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.pwa-more-links a {
+    min-height: 48px;
+    padding: 8px 10px;
+    border: 1px solid #e7ece9;
+    border-radius: 8px;
+    color: #34473f;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-decoration: none;
+}
+
+.pwa-more-links a:active {
+    border-color: #94c3ab;
+    background: #f3f8f5;
+}
+
+html.pwa-mais-aberto body {
+    overflow: hidden;
 }
 
 /* ==========================================================
@@ -203,6 +379,7 @@ img {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -213,6 +390,7 @@ img {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -558,13 +736,16 @@ img {
         border-radius: 20px;
         box-shadow: 0 15px 40px rgba(0, 0, 0, .08);
     }
+
     .navbar-nav {
         align-items: flex-start;
     }
+
     .navbar .d-flex.align-items-center.gap-2 {
         flex-wrap: wrap;
         margin-top: 20px;
     }
+
     .form-select {
         width: 100%;
     }
@@ -575,9 +756,11 @@ img {
         width: 50px;
         height: 50px;
     }
+
     .navbar-brand h3 {
         font-size: 1.1rem;
     }
+
     .navbar-brand small {
         display: none;
     }
@@ -592,10 +775,11 @@ img {
 }
 
 .hero-image {
+    display: block;
     width: 100%;
-    height: auto;
-    max-height: 720px;
+    height: 100%;
     object-fit: contain;
+    object-position: center;
 }
 
 /* ==========================================================
@@ -604,37 +788,8 @@ img {
 
 #hero .carousel-item {
     position: relative;
-}
-
-#hero .carousel-item::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, .45);
-    z-index: 1;
-}
-
-/* ==========================================================
-   CAPTION
-   ========================================================== */
-
-.carousel-caption {
-    z-index: 2;
-    bottom: 18%;
-}
-
-.carousel-caption h1 {
-    font-size: 3.6rem;
-    font-weight: 800;
-    color: #fff;
-    text-shadow: 0 5px 20px rgba(0, 0, 0, .35);
-}
-
-.carousel-caption p {
-    color: #fff;
-    font-size: 1.25rem;
-    margin: 25px auto;
-    max-width: 750px;
+    height: clamp(160px, 34vw, 520px);
+    background: #f2f8fb;
 }
 
 /* ==========================================================
@@ -738,18 +893,6 @@ img {
     margin-bottom: 0;
 }
 
-/* ==========================================================
-   ANIMAÇÕES HERO
-   ========================================================== */
-
-.carousel-caption h1 {
-    animation: aparecer .8s ease;
-}
-
-.carousel-caption p {
-    animation: aparecer 1.2s ease;
-}
-
 .hero-search {
     animation: aparecer 1.6s ease;
 }
@@ -758,66 +901,25 @@ img {
    RESPONSIVIDADE
    ========================================================== */
 
-@media(max-width:1200px) {
-    .hero-image {
-        height: 620px;
-    }
+padding: 14px 18px;
 }
 
-@media(max-width:992px) {
-    .hero-image {
-        height: 560px;
-    }
-    .carousel-caption {
-        bottom: 14%;
-    }
-    .carousel-caption h1 {
-        font-size: 2.6rem;
-    }
+.categoria-card {
+    min-height: 145px;
+    padding: 22px 15px;
 }
 
-@media(max-width:768px) {
-    .hero-image {
-        height: 500px;
-    }
-    .carousel-caption {
-        bottom: 12%;
-    }
-    .carousel-caption h1 {
-        font-size: 2rem;
-    }
-    .carousel-caption p {
-        font-size: 1rem;
-    }
-    .hero-search .btn {
-        padding: 14px 18px;
-    }
-    .categoria-card {
-        min-height: 145px;
-        padding: 22px 15px;
-    }
-    .categoria-card i {
-        font-size: 2.2rem;
-    }
+.categoria-card i {
+    font-size: 2.2rem;
+}
 }
 
 @media(max-width:576px) {
-    .hero-image {
-        height: 420px;
-    }
-    .carousel-caption {
-        bottom: 8%;
-    }
-    .carousel-caption h1 {
-        font-size: 1.6rem;
-    }
-    .carousel-caption p {
-        display: none;
-    }
     .hero-search .form-control {
         font-size: 15px;
         padding: 12px;
     }
+
     #estatisticas h2 {
         font-size: 2rem;
     }
@@ -1019,6 +1121,7 @@ img.produto-card-img {
     .empresa-card img {
         height: 220px;
     }
+
     #veterinarios img {
         height: 220px;
     }
@@ -1028,9 +1131,11 @@ img.produto-card-img {
     .empresa-card img {
         height: 200px;
     }
+
     #veterinarios img {
         height: 200px;
     }
+
     #empresas-destaque h2,
     #veterinarios h2 {
         font-size: 1.8rem;
@@ -1041,6 +1146,7 @@ img.produto-card-img {
     .empresa-card {
         margin-bottom: 20px;
     }
+
     #veterinarios .card {
         margin-bottom: 20px;
     }
@@ -1256,9 +1362,11 @@ img.produto-card-img {
     .produto-card img {
         height: 190px;
     }
+
     .bg-primary h2 {
         font-size: 1.9rem;
     }
+
     #servicos .card-body {
         padding: 25px;
     }
@@ -1268,12 +1376,15 @@ img.produto-card-img {
     .produto-card {
         margin-bottom: 20px;
     }
+
     .produto-card h5 {
         min-height: auto;
     }
+
     .bg-primary {
         text-align: center;
     }
+
     .bg-primary .btn-warning {
         width: 100%;
         margin-top: 20px;
@@ -1499,9 +1610,11 @@ img.produto-card-img {
     #meu-pet {
         text-align: center;
     }
+
     #meu-pet img {
         margin-bottom: 40px;
     }
+
     #newsletter .btn {
         width: 100%;
         margin-top: 15px;
@@ -1512,12 +1625,15 @@ img.produto-card-img {
     #meu-pet h2 {
         font-size: 2rem;
     }
+
     #blog img {
         height: 200px;
     }
+
     #footer {
         text-align: center;
     }
+
     #footer .fs-3 {
         justify-content: center;
     }
@@ -1527,9 +1643,11 @@ img.produto-card-img {
     #blog img {
         height: 180px;
     }
+
     #newsletter h2 {
         font-size: 1.8rem;
     }
+
     #newsletter .form-control {
         margin-bottom: 15px;
     }
@@ -1585,4 +1703,119 @@ img.produto-card-img {
 .btn-app-download:hover {
     background: #f0f0f0;
     color: #212529;
+}
+
+/* ===== Pilha de pets (grupos de 5 no card de adoção) ===== */
+.pilha-pets-card {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+    padding: 28px 16px;
+    text-align: center;
+    transition: box-shadow .2s ease, transform .2s ease;
+}
+
+.pilha-pets-card:hover,
+.pilha-pets-card:focus-visible {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .14);
+    transform: translateY(-3px);
+}
+
+.pilha-fotos {
+    position: relative;
+    width: 160px;
+    height: 130px;
+    margin-bottom: 20px;
+}
+
+.pilha-foto {
+    position: absolute;
+    top: 15px;
+    left: 30px;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
+    transition: transform .2s ease;
+}
+
+.pilha-foto-0 {
+    transform: translate(-46px, 10px) rotate(-12deg);
+    z-index: 1;
+}
+
+.pilha-foto-1 {
+    transform: translate(-22px, -6px) rotate(-6deg);
+    z-index: 2;
+}
+
+.pilha-foto-2 {
+    transform: translate(0, 4px) rotate(0deg);
+    z-index: 3;
+}
+
+.pilha-foto-3 {
+    transform: translate(22px, -6px) rotate(6deg);
+    z-index: 2;
+}
+
+.pilha-foto-4 {
+    transform: translate(46px, 10px) rotate(12deg);
+    z-index: 1;
+}
+
+.pilha-pets-card:hover .pilha-foto-0 {
+    transform: translate(-58px, 8px) rotate(-16deg);
+}
+
+.pilha-pets-card:hover .pilha-foto-1 {
+    transform: translate(-28px, -10px) rotate(-8deg);
+}
+
+.pilha-pets-card:hover .pilha-foto-3 {
+    transform: translate(28px, -10px) rotate(8deg);
+}
+
+.pilha-pets-card:hover .pilha-foto-4 {
+    transform: translate(58px, 8px) rotate(16deg);
+}
+
+.pilha-info strong {
+    display: block;
+    font-size: 1.05rem;
+    color: #1B365D;
+}
+
+.pilha-info span {
+    font-size: .85rem;
+    color: #7f8c8d;
+}
+
+.pilha-expandida {
+    animation: pilhaAbrir .25s ease;
+}
+
+@keyframes pilhaAbrir {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

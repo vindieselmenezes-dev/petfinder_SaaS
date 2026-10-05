@@ -21,10 +21,10 @@ $statusCores = [
 ];
 
 $corStatus = $pet ? ($statusCores[$pet["status"]] ?? "secondary") : "secondary";
-$seoTitulo = $pet ? $pet["nome"] . " - PetFinder Brasil" : "Pet não encontrado - PetFinder Brasil";
+$seoTitulo = $pet ? $pet["nome"] . " - EcoSistemPet" : "Pet não encontrado - EcoSistemPet";
 $seoDescricao = $pet
-    ? "Conheça " . $pet["nome"] . ", pet com status " . $pet["status"] . ". Encontre informações e formas de ajudar no PetFinder Brasil."
-    : "Pet não encontrado no PetFinder Brasil.";
+    ? "Conheça " . $pet["nome"] . ", pet com status " . $pet["status"] . ". Encontre informações e formas de ajudar no EcoSistemPet."
+    : "Pet não encontrado no EcoSistemPet.";
 $seoImagem = Foto::url(
     ($pet && $pet["foto"] !== "sem-foto.png") ? ($pet["foto"] ?? null) : null,
     'pets'
@@ -40,7 +40,7 @@ $seoImagem = Foto::url(
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= $pet ? htmlspecialchars($pet["nome"]) . " - " : "" ?>PetFinder Brasil</title>
+    <title><?= $pet ? htmlspecialchars($pet["nome"]) . " - " : "" ?>EcoSistemPet</title>
     <?= Seo::tags($seoTitulo, $seoDescricao, Url::pagina('pet.php') . '?id=' . $id, $seoImagem, "article") ?>
 
     <!-- BOOTSTRAP -->
@@ -66,10 +66,10 @@ $seoImagem = Foto::url(
 
             <a href="../../index.html" class="d-flex align-items-center text-decoration-none">
 
-                <img src="../../assets/img/logo.png" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="../../assets/img/logo.png" alt="EcoSistemPet" height="40" class="me-2">
 
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
 
@@ -254,7 +254,7 @@ $seoImagem = Foto::url(
     </main>
 
     <footer class="border-top py-4 text-center text-muted">
-        © <?= date("Y") ?> PetFinder Brasil
+        © <?= date("Y") ?> EcoSistemPet
     </footer>
 
     <!-- BOOTSTRAP JS -->

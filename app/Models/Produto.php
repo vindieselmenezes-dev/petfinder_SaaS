@@ -281,7 +281,11 @@ class Produto
         float $precoMax = 0.0,
         string $ordem = 'recente',
         string $cidade = '',
-        int $categoriaId = 0
+        int $categoriaId = 0,
+        string $empresa = '',
+        bool $apenasPromocao = false,
+        array $subcategoriasSelecionadas = [],
+        float $avaliacaoMinima = 0.0
     ): array {
 
         $sql = "
@@ -315,8 +319,17 @@ class Produto
         $params = [];
 
         if ($busca !== '') {
-            $sql .= " AND p.nome LIKE :busca ";
-            $params[':busca'] = "%{$busca}%";
+            $sql .= " AND (
+                p.nome LIKE :busca_nome
+                OR s.nome LIKE :busca_subcategoria
+                OR m.nome LIKE :busca_marca
+                OR e.nome_fantasia LIKE :busca_empresa
+            ) ";
+            $termoBusca = "%{$busca}%";
+            $params[':busca_nome'] = $termoBusca;
+            $params[':busca_subcategoria'] = $termoBusca;
+            $params[':busca_marca'] = $termoBusca;
+            $params[':busca_empresa'] = $termoBusca;
         }
 
         if ($subcategoriaId > 0) {
@@ -340,8 +353,43 @@ class Produto
         }
 
         if ($cidade !== '') {
-            $sql .= " AND e.cidade = :cidade ";
-            $params[':cidade'] = $cidade;
+            $sql .= " AND (e.cidade LIKE :cidade OR e.estado LIKE :estado) ";
+            $params[':cidade'] = "%{$cidade}%";
+            $params[':estado'] = "%{$cidade}%";
+        }
+
+        if ($empresa !== '') {
+            $sql .= " AND e.nome_fantasia LIKE :empresa ";
+            $params[':empresa'] = "%{$empresa}%";
+        }
+
+        if ($apenasPromocao) {
+            $sql .= " AND p.preco_promocional IS NOT NULL AND p.preco_promocional > 0 AND p.preco_promocional < p.preco_venda ";
+        }
+
+        if ($avaliacaoMinima > 0) {
+            $sql .= " AND e.avaliacao >= :avaliacao_minima ";
+            $params[':avaliacao_minima'] = $avaliacaoMinima;
+        }
+
+        if (!empty($subcategoriasSelecionadas)) {
+            $subcatIds = [];
+            foreach ($subcategoriasSelecionadas as $item) {
+                $valor = (int) $item;
+                if ($valor > 0) {
+                    $subcatIds[] = $valor;
+                }
+            }
+
+            if (!empty($subcatIds)) {
+                $idsUnicos = array_values(array_unique($subcatIds));
+                $placeholders = [];
+                foreach ($idsUnicos as $index => $valor) {
+                    $placeholders[] = ':subcategoria_' . $index;
+                    $params[':subcategoria_' . $index] = $valor;
+                }
+                $sql .= " AND p.subcategoria_id IN (" . implode(', ', $placeholders) . ") ";
+            }
         }
 
         if ($categoriaId > 0) {

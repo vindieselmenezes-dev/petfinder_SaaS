@@ -8,7 +8,7 @@ declare(strict_types=1);
  * ==========================================================
  * Substitui a antiga faixa estática "Empresas Parceiras" da home.
  * Aqui ficam as ONGs, protetores e empresas que ajudam a divulgar e
- * crescer o PetFinder — com destaque para o que realmente precisa de
+ * crescer o EcoSistemPet — com destaque para o que realmente precisa de
  * gente: campanhas, eventos e doações.
  */
 
@@ -108,10 +108,10 @@ function urlFiltroTipoCampanha(string $tipo): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= htmlspecialchars($tituloPagina) ?> - PetFinder Brasil</title>
+    <title><?= htmlspecialchars($tituloPagina) ?> - EcoSistemPet</title>
 
     <meta name="description"
-        content="ONGs, protetores e empresas parceiras do PetFinder Brasil. Veja campanhas, eventos e pedidos de doação e descubra como ajudar.">
+        content="ONGs, protetores e empresas parceiras do EcoSistemPet. Veja campanhas, eventos e pedidos de doação e descubra como ajudar.">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -134,9 +134,9 @@ function urlFiltroTipoCampanha(string $tipo): string
         <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
 
             <a href="<?= Url::raiz('index.html') ?>" class="d-flex align-items-center text-decoration-none">
-                <img src="<?= Url::asset('img/logo.png') ?>" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="<?= Url::asset('img/logo.png') ?>" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -162,7 +162,7 @@ function urlFiltroTipoCampanha(string $tipo): string
 
                 <div class="col-lg-7">
 
-                    <h1 class="fw-bold mb-3">🤝 Parceiros que fazem o PetFinder crescer</h1>
+                    <h1 class="fw-bold mb-3">🤝 Parceiros que fazem o EcoSistemPet crescer</h1>
 
                     <p class="lead mb-4">
                         ONGs, protetores independentes e empresas que abraçam a causa animal e ajudam
@@ -412,7 +412,7 @@ function urlFiltroTipoCampanha(string $tipo): string
 
             <h2 class="fw-bold mb-1">🏳️ Quem caminha com a gente</h2>
             <p class="text-muted">
-                ONGs, protetores e empresas que divulgam o PetFinder e apoiam a causa animal.
+                ONGs, protetores e empresas que divulgam o EcoSistemPet e apoiam a causa animal.
             </p>
 
             <form method="GET" class="row g-2 mb-4 align-items-end bg-light p-3 rounded-3">
@@ -558,7 +558,7 @@ function urlFiltroTipoCampanha(string $tipo): string
                     <h3 class="fw-bold">Sua ONG ou empresa também pode estar aqui</h3>
                     <p class="mb-0">
                         Parceiros ganham perfil público, espaço para divulgar campanhas, eventos e
-                        pedidos de doação, e aparecem na home do PetFinder. Em troca, ajudam a levar
+                        pedidos de doação, e aparecem na home do EcoSistemPet. Em troca, ajudam a levar
                         a plataforma para mais tutores — e mais pets encontram um lar.
                     </p>
                 </div>
@@ -577,7 +577,7 @@ function urlFiltroTipoCampanha(string $tipo): string
 
     <footer class="bg-dark text-light py-4">
         <div class="container text-center">
-            © <?= date('Y') ?> PetFinder Brasil ·
+            © <?= date('Y') ?> EcoSistemPet ·
             <a href="<?= Url::raiz('index.html') ?>" class="text-light">Voltar para a home</a>
         </div>
     </footer>

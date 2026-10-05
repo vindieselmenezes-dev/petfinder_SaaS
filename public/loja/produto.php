@@ -33,10 +33,10 @@ unset($_SESSION['carrinho_flash']);
 if ($produto && !empty($produto['empresa_id'])) {
     (new MetricaEmpresa())->registrar((int) $produto['empresa_id'], 'visualizacao', 'produto', $id, $_SESSION['usuario_id'] ?? null);
 }
-$seoTitulo = $produto ? $produto["nome"] . " - PetFinder Brasil" : "Produto não encontrado - PetFinder Brasil";
+$seoTitulo = $produto ? $produto["nome"] . " - EcoSistemPet" : "Produto não encontrado - EcoSistemPet";
 $seoDescricao = $produto
-    ? (trim((string) ($produto["descricao"] ?? "")) ?: "Confira este produto no PetFinder Brasil.")
-    : "Produto não encontrado no PetFinder Brasil.";
+    ? (trim((string) ($produto["descricao"] ?? "")) ?: "Confira este produto no EcoSistemPet.")
+    : "Produto não encontrado no EcoSistemPet.";
 $seoImagem = Foto::url($imagens[0]["imagem"] ?? null, 'produtos');
 
 ?>
@@ -49,7 +49,7 @@ $seoImagem = Foto::url($imagens[0]["imagem"] ?? null, 'produtos');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= $produto ? htmlspecialchars($produto["nome"]) . " - " : "" ?>PetFinder Brasil</title>
+    <title><?= $produto ? htmlspecialchars($produto["nome"]) . " - " : "" ?>EcoSistemPet</title>
     <?= Seo::tags($seoTitulo, $seoDescricao, Url::pagina('produto.php') . '?id=' . $id, $seoImagem, "product") ?>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -66,9 +66,9 @@ $seoImagem = Foto::url($imagens[0]["imagem"] ?? null, 'produtos');
         <div class="container d-flex align-items-center justify-content-between">
 
             <a href="../../index.html" class="d-flex align-items-center text-decoration-none">
-                <img src="../../assets/img/logo.png" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="../../assets/img/logo.png" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -305,7 +305,7 @@ $seoImagem = Foto::url($imagens[0]["imagem"] ?? null, 'produtos');
     </main>
 
     <footer class="border-top py-4 text-center text-muted">
-        © <?= date("Y") ?> PetFinder Brasil
+        © <?= date("Y") ?> EcoSistemPet
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>

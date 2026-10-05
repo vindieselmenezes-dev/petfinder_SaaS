@@ -107,7 +107,7 @@ $urlCampanha = $campanha
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= htmlspecialchars($campanha['titulo'] ?? 'Campanha não encontrada') ?> - PetFinder Brasil</title>
+    <title><?= htmlspecialchars($campanha['titulo'] ?? 'Campanha não encontrada') ?> - EcoSistemPet</title>
 
     <?php if ($campanha !== null && !empty($campanha['resumo'])): ?>
         <meta name="description" content="<?= htmlspecialchars($campanha['resumo']) ?>">
@@ -292,7 +292,7 @@ $urlCampanha = $campanha
                             <?php endif; ?>
 
                             <p class="small text-muted mb-0">
-                                O valor vai direto para o parceiro — o PetFinder não recebe nem
+                                O valor vai direto para o parceiro — o EcoSistemPet não recebe nem
                                 intermedia doações.
                             </p>
 
@@ -374,7 +374,7 @@ $urlCampanha = $campanha
 
     <footer class="bg-dark text-light py-4">
         <div class="container text-center">
-            © <?= date('Y') ?> PetFinder Brasil ·
+            © <?= date('Y') ?> EcoSistemPet ·
             <a href="<?= Url::pagina('parceiros.php') ?>" class="text-light">Ver todas as campanhas</a>
         </div>
     </footer>

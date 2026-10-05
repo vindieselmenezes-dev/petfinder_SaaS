@@ -1,5 +1,5 @@
 /**
- * PetFinder Brasil — Compartilhamento
+ * EcoSistemPet — Compartilhamento
  * ==========================================================
  * Copia o link de uma campanha/evento/doação para a área de
  * transferência, com feedback visual no botão.

@@ -219,7 +219,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Cadastre sua Empresa - PetFinder Brasil</title>
+<title>Cadastre sua Empresa - EcoSistemPet</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -235,7 +235,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <div class="container">
 
-        <h1><a href="../../index.html">PetFinder Brasil</a></h1>
+        <h1><a href="../../index.html">EcoSistemPet</a></h1>
 
         <p>Anuncie seu negócio para milhares de tutores de pets.</p>
 
@@ -569,7 +569,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <div class="container">
         <p>
-            © <?= date("Y") ?> PetFinder Brasil
+            © <?= date("Y") ?> EcoSistemPet
             <br>
             Informação, cuidado e carinho para seu pet.
         </p>

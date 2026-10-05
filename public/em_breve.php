@@ -17,7 +17,7 @@ $recurso = trim($_GET["recurso"] ?? "Esta funcionalidade");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Em breve - PetFinder Brasil</title>
+    <title>Em breve - EcoSistemPet</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -31,9 +31,9 @@ $recurso = trim($_GET["recurso"] ?? "Esta funcionalidade");
     <header class="border-bottom py-3 mb-4">
         <div class="container d-flex align-items-center">
             <a href="../index.html" class="d-flex align-items-center text-decoration-none">
-                <img src="../assets/img/logo.png" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="../assets/img/logo.png" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -58,7 +58,7 @@ $recurso = trim($_GET["recurso"] ?? "Esta funcionalidade");
     </main>
 
     <footer class="border-top py-4 text-center text-muted mt-5">
-        © <?= date("Y") ?> PetFinder Brasil
+        © <?= date("Y") ?> EcoSistemPet
     </footer>
 
 </body>

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * PETFINDER BRASIL
  * Model: Parceiro
  * ==========================================================
- * ONGs, protetores independentes e empresas que apoiam o PetFinder
+ * ONGs, protetores independentes e empresas que apoiam o EcoSistemPet
  * (divulgação, patrocínio, parceria institucional).
  *
  * Um parceiro só aparece publicamente depois de aprovado por um

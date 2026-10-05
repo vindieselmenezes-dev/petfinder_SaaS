@@ -58,7 +58,6 @@
     // A instalação é manual, via Safari > Compartilhar > Adicionar à Tela
     // de Início — por isso mostramos instruções em vez de tentar instalar.
     if (isIOS) {
-        esconder(btnGooglePlay);
         btnAppStore.addEventListener("click", function (evento) {
             evento.preventDefault();
             var modalEl = document.getElementById("modalInstalarIos");

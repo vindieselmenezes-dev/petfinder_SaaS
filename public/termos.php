@@ -8,7 +8,7 @@ declare(strict_types=1);
  * ==========================================================
  * Conteúdo-modelo. Os trechos marcados com [ ] são dados jurídicos
  * reais (razão social, CNPJ, endereço, foro) que precisam ser
- * preenchidos pelo responsável pelo PetFinder Brasil antes da
+ * preenchidos pelo responsável pelo EcoSistemPet antes da
  * publicação. O ideal é ter um advogado revisando antes de publicar
  * oficialmente.
  */
@@ -27,7 +27,7 @@ $dataAtualizacao = '15 de setembro de 2026';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Termos de Uso - PetFinder Brasil</title>
+    <title>Termos de Uso - EcoSistemPet</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -50,9 +50,9 @@ $dataAtualizacao = '15 de setembro de 2026';
         <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
 
             <a href="<?= Url::raiz('index.html') ?>" class="d-flex align-items-center text-decoration-none">
-                <img src="<?= Url::asset('img/logo.png') ?>" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="<?= Url::asset('img/logo.png') ?>" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -72,15 +72,15 @@ $dataAtualizacao = '15 de setembro de 2026';
 
                 <p>
                     Estes Termos de Uso regulam o acesso e a utilização da plataforma
-                    <strong>PetFinder Brasil</strong>, operada por
+                    <strong>EcoSistemPet</strong>, operada por
                     <strong>[razão social a definir]</strong>, inscrita no CNPJ sob o nº
-                    <strong>[CNPJ a definir]</strong> ("PetFinder", "nós"). Ao criar uma conta ou
+                    <strong>[CNPJ a definir]</strong> ("EcoSistemPet", "nós"). Ao criar uma conta ou
                     usar o site, você concorda com estes termos.
                 </p>
 
-                <h2 class="h5 fw-bold mt-4">1. O que é o PetFinder</h2>
+                <h2 class="h5 fw-bold mt-4">1. O que é o EcoSistemPet</h2>
                 <p>
-                    O PetFinder é uma plataforma que conecta tutores, ONGs, protetores
+                    O EcoSistemPet é uma plataforma que conecta tutores, ONGs, protetores
                     independentes, clínicas veterinárias, prestadores de serviço e empresas do
                     setor pet. Isso inclui: alertas de pets perdidos e encontrados, anúncios de
                     adoção, agendamento de serviços, uma loja de produtos e uma área de parceiros
@@ -89,7 +89,7 @@ $dataAtualizacao = '15 de setembro de 2026';
 
                 <h2 class="h5 fw-bold mt-4">2. Somos um intermediário</h2>
                 <p>
-                    O PetFinder <strong>não é dono</strong> dos pets anunciados, <strong>não
+                    O EcoSistemPet <strong>não é dono</strong> dos pets anunciados, <strong>não
                     presta</strong> os serviços de veterinária, banho e tosa ou adestramento
                     listados na plataforma, e <strong>não é parte</strong> nas negociações de
                     adoção ou nas doações feitas a parceiros. Cada anúncio, agendamento ou
@@ -111,7 +111,7 @@ $dataAtualizacao = '15 de setembro de 2026';
                 </ul>
 
                 <h2 class="h5 fw-bold mt-4">4. Regras de uso</h2>
-                <p>Ao usar o PetFinder, você concorda em não:</p>
+                <p>Ao usar o EcoSistemPet, você concorda em não:</p>
                 <ul>
                     <li>Publicar anúncios falsos de pets perdidos, encontrados ou para adoção;</li>
                     <li>Usar a área de parceiros para arrecadar doações sem a intenção real de usá-las para a causa animal;</li>
@@ -124,14 +124,14 @@ $dataAtualizacao = '15 de setembro de 2026';
                 <p>
                     Produtos vendidos na loja e serviços agendados na plataforma são oferecidos
                     por empresas e prestadores cadastrados, cada um responsável pela qualidade,
-                    entrega e cumprimento do que foi anunciado. O PetFinder pode intermediar
+                    entrega e cumprimento do que foi anunciado. O EcoSistemPet pode intermediar
                     eventuais problemas através do suporte, mas a relação de consumo é entre você
                     e o fornecedor do produto ou serviço.
                 </p>
 
                 <h2 class="h5 fw-bold mt-4">6. Doações a parceiros</h2>
                 <p>
-                    O PetFinder <strong>não recebe nem intermedia</strong> valores doados a ONGs e
+                    O EcoSistemPet <strong>não recebe nem intermedia</strong> valores doados a ONGs e
                     empresas parceiras: a doação é feita diretamente pela chave PIX ou link
                     informado pelo próprio parceiro em seu perfil. Confira sempre os dados antes
                     de transferir qualquer valor.
@@ -139,7 +139,7 @@ $dataAtualizacao = '15 de setembro de 2026';
 
                 <h2 class="h5 fw-bold mt-4">7. Propriedade intelectual</h2>
                 <p>
-                    A marca, o layout e o código do PetFinder pertencem a
+                    A marca, o layout e o código do EcoSistemPet pertencem a
                     <strong>[razão social a definir]</strong>. O conteúdo que você publica (fotos
                     de pets, textos de campanhas, avaliações) continua sendo seu, mas você nos dá
                     permissão para exibi-lo na plataforma para cumprir a finalidade para a qual foi
@@ -148,7 +148,7 @@ $dataAtualizacao = '15 de setembro de 2026';
 
                 <h2 class="h5 fw-bold mt-4">8. Limitação de responsabilidade</h2>
                 <p>
-                    Na medida permitida pela lei, o PetFinder não se responsabiliza por danos
+                    Na medida permitida pela lei, o EcoSistemPet não se responsabiliza por danos
                     indiretos decorrentes do uso da plataforma, incluindo — mas não se limitando a
                     — resultados de adoções, qualidade de serviços de terceiros, ou o destino de
                     doações feitas diretamente a parceiros.
@@ -185,7 +185,7 @@ $dataAtualizacao = '15 de setembro de 2026';
 
     <footer class="bg-dark text-light py-4">
         <div class="container text-center">
-            © <?= date('Y') ?> PetFinder Brasil ·
+            © <?= date('Y') ?> EcoSistemPet ·
             <a href="<?= Url::raiz('index.html') ?>" class="text-light">Voltar para a home</a>
         </div>
     </footer>

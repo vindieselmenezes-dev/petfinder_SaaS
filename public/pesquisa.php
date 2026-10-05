@@ -35,7 +35,7 @@ $temResultados = $topicos || $empresas || $produtos || $pets;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pesquisa - PetFinder Brasil</title>
+    <title>Pesquisa - EcoSistemPet</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -48,9 +48,9 @@ $temResultados = $topicos || $empresas || $produtos || $pets;
     <header class="border-bottom py-3 mb-4">
         <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
             <a href="../index.html" class="d-flex align-items-center text-decoration-none">
-                <img src="../assets/img/logo.png" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="../assets/img/logo.png" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -196,7 +196,7 @@ $temResultados = $topicos || $empresas || $produtos || $pets;
     </main>
 
     <footer class="border-top py-4 text-center text-muted">
-        © <?= date("Y") ?> PetFinder Brasil
+        © <?= date("Y") ?> EcoSistemPet
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>

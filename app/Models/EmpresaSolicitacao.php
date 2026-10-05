@@ -23,7 +23,7 @@ class EmpresaSolicitacao
     public const STATUS_VALIDOS = ['pendente', 'aceita', 'recusada', 'concluida', 'cancelada'];
 
     /** Categorias que usam este fluxo genérico (as que não têm agendamento próprio) */
-    public const CATEGORIAS_SUPORTADAS = [4, 5, 6];
+    public const CATEGORIAS_SUPORTADAS = [4, 5, 6, 7];
 
     public function __construct()
     {

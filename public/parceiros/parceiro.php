@@ -36,7 +36,7 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= htmlspecialchars($parceiro['nome'] ?? 'Parceiro não encontrado') ?> - PetFinder Brasil</title>
+    <title><?= htmlspecialchars($parceiro['nome'] ?? 'Parceiro não encontrado') ?> - EcoSistemPet</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -120,7 +120,7 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
                             <?php if (!empty($parceiro['como_ajuda'])): ?>
                                 <p class="mb-0">
                                     <i class="bi bi-hand-thumbs-up text-success"></i>
-                                    <strong>Como apoia o PetFinder:</strong>
+                                    <strong>Como apoia o EcoSistemPet:</strong>
                                     <?= htmlspecialchars($parceiro['como_ajuda']) ?>
                                 </p>
                             <?php endif; ?>
@@ -299,7 +299,7 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
                             <hr>
 
                             <p class="small mb-0">
-                                O PetFinder <strong>não recebe nem intermedia</strong> esses valores:
+                                O EcoSistemPet <strong>não recebe nem intermedia</strong> esses valores:
                                 a doação vai direto para o parceiro. Confira os dados antes de transferir.
                             </p>
 
@@ -326,7 +326,7 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
 
     <footer class="bg-dark text-light py-4">
         <div class="container text-center">
-            © <?= date('Y') ?> PetFinder Brasil ·
+            © <?= date('Y') ?> EcoSistemPet ·
             <a href="<?= Url::pagina('parceiros.php') ?>" class="text-light">Todos os parceiros</a>
         </div>
     </footer>

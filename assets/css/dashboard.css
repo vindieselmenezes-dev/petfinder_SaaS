@@ -33,6 +33,12 @@
     box-shadow: var(--sombra-leve);
 }
 
+.logo-area-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
 .logo-area h2 {
     color: var(--azul-escuro);
     margin-bottom: 2px;
@@ -246,6 +252,16 @@ main.container h2 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 25px;
+}
+
+.cards>a.card {
+    color: inherit;
+    text-decoration: none;
+}
+
+.cards>a.card:hover {
+    color: inherit;
+    text-decoration: none;
 }
 
 .card {
@@ -636,7 +652,14 @@ main.container h2 {
    RESPONSIVO — MOBILE
    ========================================================== */
 
-@media (max-width: 900px) {
+@media (max-width: 1024px),
+(max-height: 500px) and (orientation: landscape) {
+
+    .topo {
+        height: 72px;
+        gap: 12px;
+        padding: 0 16px;
+    }
 
     .menu-toggle {
         display: inline-block;
@@ -644,7 +667,8 @@ main.container h2 {
 
     .sidebar {
         transform: translateX(-100%);
-        width: 100%;
+        top: 72px;
+        width: min(86vw, 320px);
         box-shadow: var(--sombra);
     }
 
@@ -681,6 +705,8 @@ main.container h2 {
 
     .conteudo,
     main.container {
+        width: 100%;
+        max-width: 100%;
         margin-left: 0 !important;
         padding: 20px !important;
     }
@@ -691,6 +717,15 @@ main.container h2 {
 
     .logo-area span {
         display: none;
+    }
+
+    .usuario-area {
+        min-width: 0;
+        max-width: 30%;
+        overflow: hidden;
+        font-size: 13px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .tabela-pets {
@@ -780,6 +815,120 @@ main.container h2 {
 
     .tabela-cartao-mobile td[data-col="acoes"] a {
         margin-left: 0 !important;
+    }
+}
+
+@media (max-width: 1024px) and (orientation: portrait) {
+    :root {
+        --sidebar-retrato: clamp(128px, 24vw, 180px);
+    }
+
+    .topo {
+        height: auto;
+        min-height: 96px;
+        align-content: center;
+        flex-wrap: wrap;
+        gap: 4px 8px;
+        padding: 8px 12px;
+    }
+
+    .topo>div:first-child {
+        flex: 1 1 100%;
+        min-width: 0;
+        gap: 8px !important;
+        overflow: visible;
+    }
+
+    .menu-toggle,
+    .sidebar-fechar,
+    .sidebar-overlay {
+        display: none !important;
+    }
+
+    .logo-area-img {
+        width: 38px;
+        height: 38px;
+    }
+
+    .logo-area {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .logo-area h2 {
+        font-size: 16px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .usuario-area {
+        display: flex;
+        flex: 1 1 100%;
+        justify-content: flex-end;
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        overflow: visible;
+        font-size: 12px;
+        white-space: normal;
+    }
+
+    .sidebar,
+    .sidebar.aberto {
+        top: 96px;
+        bottom: 0;
+        left: 0;
+        width: var(--sidebar-retrato);
+        padding: 8px 0;
+        overflow-x: hidden;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .sidebar nav {
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    .sidebar a,
+    .sidebar-grupo summary {
+        gap: 6px;
+        padding: 11px 8px;
+        font-size: 11px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+    }
+
+    .sidebar-subitens a {
+        padding: 9px 7px 9px 12px;
+        font-size: 10px;
+    }
+
+    .sidebar-grupo-chevron {
+        font-size: 13px;
+    }
+
+    .conteudo,
+    main.container {
+        width: calc(100% - var(--sidebar-retrato)) !important;
+        max-width: calc(100% - var(--sidebar-retrato)) !important;
+        margin-left: var(--sidebar-retrato) !important;
+        padding: 12px !important;
+    }
+
+    .rodape {
+        margin-left: var(--sidebar-retrato);
+    }
+
+    .cards {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+    }
+
+    .cards>a.card {
+        padding: 18px;
     }
 }
 

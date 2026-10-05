@@ -22,7 +22,7 @@ $controller = new PetController();
 $token = trim($_GET["token"] ?? "");
 $pet = $token !== "" ? $controller->buscarPorToken($token) : null;
 
-$seoTitulo = $pet ? "Identidade de " . $pet["nome"] . " - PetFinder Brasil" : "Identidade Pet - PetFinder Brasil";
+$seoTitulo = $pet ? "Identidade de " . $pet["nome"] . " - EcoSistemPet" : "Identidade Pet - EcoSistemPet";
 
 ?>
 
@@ -35,7 +35,7 @@ $seoTitulo = $pet ? "Identidade de " . $pet["nome"] . " - PetFinder Brasil" : "I
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title><?= htmlspecialchars($seoTitulo) ?></title>
-    <?= Seo::tags($seoTitulo, "Cartão de identidade digital do pet no PetFinder Brasil.", Url::pagina('identidade_pet.php') . '?token=' . urlencode($token), Foto::url(null, 'pets'), "website") ?>
+    <?= Seo::tags($seoTitulo, "Cartão de identidade digital do pet no EcoSistemPet.", Url::pagina('identidade_pet.php') . '?token=' . urlencode($token), Foto::url(null, 'pets'), "website") ?>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -78,8 +78,8 @@ $seoTitulo = $pet ? "Identidade de " . $pet["nome"] . " - PetFinder Brasil" : "I
     <header class="border-bottom py-3 mb-2 bg-white">
         <div class="container d-flex align-items-center">
             <a href="../../index.html" class="d-flex align-items-center text-decoration-none">
-                <img src="../../assets/img/logo.png" alt="PetFinder Brasil" height="36" class="me-2">
-                <span class="fw-bold text-dark">PetFinder Brasil</span>
+                <img src="../../assets/img/logo.png" alt="EcoSistemPet" height="36" class="me-2">
+                <span class="fw-bold text-dark">EcoSistemPet</span>
             </a>
         </div>
     </header>
@@ -154,7 +154,7 @@ $seoTitulo = $pet ? "Identidade de " . $pet["nome"] . " - PetFinder Brasil" : "I
     </main>
 
     <footer class="border-top py-4 text-center text-muted mt-4">
-        © <?= date("Y") ?> PetFinder Brasil
+        © <?= date("Y") ?> EcoSistemPet
     </footer>
 
 </body>

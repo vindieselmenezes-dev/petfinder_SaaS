@@ -1,4 +1,4 @@
-# PetFinder Brasil — Mapa do Site e Funcionalidades
+# EcoSistemPet — Mapa do Site e Funcionalidades
 
 > Levantado a partir do código em `petfinder-SaaS.zip` (122 páginas em `public/`, 27 models, 8 módulos). Refere-se ao estado atual do projeto, já incluindo as melhorias implementadas nesta conversa (moderação de campanhas, descadastro de newsletter, rate limiting, sitemap/robots).
 

@@ -23,11 +23,19 @@ $rateLimiter = new RateLimiter();
 $erros = [];
 $enviado = false;
 $bloqueado = false;
+$pedidoBanhoTosa = (($_POST['pedido'] ?? $_GET['pedido'] ?? '') === 'banho_e_tosa');
+$dadosPedido = [
+    'pet_nome' => '',
+    'servico' => '',
+    'data_desejada' => '',
+    'periodo' => '',
+    'detalhes' => '',
+];
 
 $form = [
-    'nome'     => Auth::check() ? Auth::nome() : '',
-    'email'    => Auth::check() ? Auth::email() : '',
-    'assunto'  => '',
+    'nome' => Auth::check() ? Auth::nome() : '',
+    'email' => Auth::check() ? Auth::email() : '',
+    'assunto' => '',
     'mensagem' => '',
 ];
 
@@ -48,10 +56,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $armadilha = trim($_POST['site'] ?? '');
 
     $form = [
-        'nome'     => trim($_POST['nome'] ?? ''),
-        'email'    => trim($_POST['email'] ?? ''),
-        'assunto'  => trim($_POST['assunto'] ?? ''),
+        'nome' => trim($_POST['nome'] ?? ''),
+        'email' => trim($_POST['email'] ?? ''),
+        'assunto' => trim($_POST['assunto'] ?? ''),
         'mensagem' => trim($_POST['mensagem'] ?? ''),
+    ];
+    $dadosPedido = [
+        'pet_nome' => trim($_POST['pet_nome'] ?? ''),
+        'servico' => trim($_POST['servico'] ?? ''),
+        'data_desejada' => trim($_POST['data_desejada'] ?? ''),
+        'periodo' => trim($_POST['periodo'] ?? ''),
+        'detalhes' => trim($_POST['detalhes'] ?? ''),
     ];
 
     if ($bloqueado) {
@@ -61,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Preencheu o honeypot: finge sucesso, não grava nada.
         $enviado = true;
         $form = ['nome' => '', 'email' => '', 'assunto' => '', 'mensagem' => ''];
+        $dadosPedido = ['pet_nome' => '', 'servico' => '', 'data_desejada' => '', 'periodo' => '', 'detalhes' => ''];
     } else {
 
         if (mb_strlen($form['nome']) < 2) {
@@ -71,18 +87,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $erros[] = 'Informe um e-mail válido.';
         }
 
-        if (mb_strlen($form['mensagem']) < 10) {
+        if ($pedidoBanhoTosa) {
+            if (mb_strlen($dadosPedido['pet_nome']) < 2 || mb_strlen($dadosPedido['pet_nome']) > 150) {
+                $erros[] = 'Informe o nome do pet.';
+            }
+
+            if (!in_array($dadosPedido['servico'], ['Banho', 'Tosa', 'Banho e tosa completos', 'Higiene completa'], true)) {
+                $erros[] = 'Selecione o serviço desejado.';
+            }
+
+            $dataDesejada = DateTimeImmutable::createFromFormat('!Y-m-d', $dadosPedido['data_desejada']);
+            if (!$dataDesejada || $dataDesejada->format('Y-m-d') !== $dadosPedido['data_desejada'] || $dadosPedido['data_desejada'] < date('Y-m-d')) {
+                $erros[] = 'Selecione uma data válida a partir de hoje.';
+            }
+
+            if (!in_array($dadosPedido['periodo'], ['', 'Manhã', 'Tarde', 'Noite'], true)) {
+                $erros[] = 'Selecione um período válido.';
+            }
+        } elseif (mb_strlen($form['mensagem']) < 10) {
             $erros[] = 'Escreva uma mensagem um pouco mais detalhada (mínimo 10 caracteres).';
         }
 
         if (count($erros) === 0) {
+            $assuntoContato = $pedidoBanhoTosa ? 'Pedido de banho e tosa' : $form['assunto'];
+            $mensagemContato = $form['mensagem'];
+
+            if ($pedidoBanhoTosa) {
+                $mensagemContato = implode("\n", [
+                    'Pedido geral de banho e tosa.',
+                    'Pet: ' . $dadosPedido['pet_nome'],
+                    'Serviço: ' . $dadosPedido['servico'],
+                    'Data desejada: ' . $dadosPedido['data_desejada'],
+                    'Período: ' . ($dadosPedido['periodo'] ?: 'Sem preferência'),
+                ]);
+                if ($dadosPedido['detalhes'] !== '') {
+                    $mensagemContato .= "\nObservações: " . $dadosPedido['detalhes'];
+                }
+            }
 
             $id = $mensagemModel->salvar([
                 'usuario_id' => Auth::check() ? Auth::id() : null,
-                'nome'       => $form['nome'],
-                'email'      => $form['email'],
-                'assunto'    => $form['assunto'],
-                'mensagem'   => $form['mensagem'],
+                'nome' => $form['nome'],
+                'email' => $form['email'],
+                'assunto' => $assuntoContato,
+                'mensagem' => $mensagemContato,
             ]);
 
             if ($id !== false) {
@@ -93,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $notificacaoModel->criar(
                         (int) $adminId,
                         'Nova mensagem de contato',
-                        $form['nome'] . ' enviou uma mensagem' . ($form['assunto'] !== '' ? ': ' . $form['assunto'] : '.'),
+                        $form['nome'] . ' enviou uma mensagem' . ($assuntoContato !== '' ? ': ' . $assuntoContato : '.'),
                         'Sistema',
                         Url::pagina('admin_contatos.php')
                     );
@@ -101,14 +149,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 Mailer::enviar(
                     getenv('EMAIL_CONTATO') ?: 'contato@petfinder.local',
-                    'Nova mensagem de contato: ' . ($form['assunto'] ?: 'Sem assunto'),
+                    'Nova mensagem de contato: ' . ($assuntoContato ?: 'Sem assunto'),
                     '<p><strong>Nome:</strong> ' . htmlspecialchars($form['nome']) . '</p>'
-                        . '<p><strong>E-mail:</strong> ' . htmlspecialchars($form['email']) . '</p>'
-                        . '<p><strong>Mensagem:</strong><br>' . nl2br(htmlspecialchars($form['mensagem'])) . '</p>'
+                    . '<p><strong>E-mail:</strong> ' . htmlspecialchars($form['email']) . '</p>'
+                    . '<p><strong>Mensagem:</strong><br>' . nl2br(htmlspecialchars($mensagemContato)) . '</p>'
                 );
 
                 $enviado = true;
                 $form = ['nome' => '', 'email' => '', 'assunto' => '', 'mensagem' => ''];
+                $dadosPedido = ['pet_nome' => '', 'servico' => '', 'data_desejada' => '', 'periodo' => '', 'detalhes' => ''];
 
             } else {
                 $erros[] = 'Não foi possível enviar sua mensagem agora. Tente novamente em instantes.';
@@ -128,7 +177,7 @@ $tituloPagina = 'Contato';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Contato - PetFinder Brasil</title>
+    <title>Contato - EcoSistemPet</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -151,9 +200,9 @@ $tituloPagina = 'Contato';
         <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
 
             <a href="<?= Url::raiz('index.html') ?>" class="d-flex align-items-center text-decoration-none">
-                <img src="<?= Url::asset('img/logo.png') ?>" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="<?= Url::asset('img/logo.png') ?>" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -174,8 +223,12 @@ $tituloPagina = 'Contato';
     <main class="container my-5">
 
         <div class="text-center mb-5">
-            <h1 class="fw-bold">📬 Fale com a gente</h1>
-            <p class="text-muted">Dúvidas, sugestões, parcerias ou imprensa — escolha o assunto e mande sua mensagem.</p>
+            <h1 class="fw-bold"><?= $pedidoBanhoTosa ? 'Solicitar banho e tosa' : '📬 Fale com a gente' ?></h1>
+            <p class="text-muted">
+                <?= $pedidoBanhoTosa
+                    ? 'Nossa equipe vai procurar um prestador e responder pelo e-mail informado. O envio não confirma o agendamento.'
+                    : 'Dúvidas, sugestões, parcerias ou imprensa — escolha o assunto e mande sua mensagem.' ?>
+            </p>
         </div>
 
         <div class="row g-4">
@@ -253,6 +306,9 @@ $tituloPagina = 'Contato';
                         <form method="POST" class="row g-3">
 
                             <?= Csrf::campoHtml() ?>
+                            <?php if ($pedidoBanhoTosa): ?>
+                                <input type="hidden" name="pedido" value="banho_e_tosa">
+                            <?php endif; ?>
 
                             <!-- Honeypot: invisível para pessoas, tentador para robôs de spam -->
                             <div style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;"
@@ -273,29 +329,75 @@ $tituloPagina = 'Contato';
                                     value="<?= htmlspecialchars($form['email']) ?>">
                             </div>
 
-                            <div class="col-12">
-                                <label class="form-label" for="assunto">Assunto</label>
-                                <select name="assunto" id="assunto" class="form-select">
-                                    <?php
-                                    $opcoesAssunto = ['' => 'Selecione (opcional)', 'Dúvida' => 'Dúvida', 'Sugestão' => 'Sugestão', 'Parceria' => 'Quero ser parceiro', 'Imprensa' => 'Imprensa', 'Outro' => 'Outro'];
-                                    foreach ($opcoesAssunto as $valor => $rotulo):
-                                        ?>
-                                        <option value="<?= htmlspecialchars($valor) ?>" <?= $form['assunto'] === $valor ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($rotulo) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+                            <?php if ($pedidoBanhoTosa): ?>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="pet_nome">Nome do pet *</label>
+                                    <input type="text" name="pet_nome" id="pet_nome" class="form-control" required
+                                        maxlength="150" value="<?= htmlspecialchars($dadosPedido['pet_nome']) ?>">
+                                </div>
 
-                            <div class="col-12">
-                                <label class="form-label" for="mensagem">Mensagem *</label>
-                                <textarea name="mensagem" id="mensagem" class="form-control" rows="5" required
-                                    placeholder="Conte com detalhes o que você precisa..."><?= htmlspecialchars($form['mensagem']) ?></textarea>
-                            </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="servico">Serviço desejado *</label>
+                                    <select name="servico" id="servico" class="form-select" required>
+                                        <option value="">Selecione</option>
+                                        <?php foreach (['Banho', 'Tosa', 'Banho e tosa completos', 'Higiene completa'] as $opcao): ?>
+                                            <option value="<?= htmlspecialchars($opcao) ?>" <?= $dadosPedido['servico'] === $opcao ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($opcao) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label" for="data_desejada">Data desejada *</label>
+                                    <input type="date" name="data_desejada" id="data_desejada" class="form-control"
+                                        min="<?= date('Y-m-d') ?>" required
+                                        value="<?= htmlspecialchars($dadosPedido['data_desejada']) ?>">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label" for="periodo">Período preferido</label>
+                                    <select name="periodo" id="periodo" class="form-select">
+                                        <option value="">Sem preferência</option>
+                                        <?php foreach (['Manhã', 'Tarde', 'Noite'] as $opcao): ?>
+                                            <option value="<?= htmlspecialchars($opcao) ?>" <?= $dadosPedido['periodo'] === $opcao ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($opcao) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label" for="detalhes">Observações</label>
+                                    <textarea name="detalhes" id="detalhes" class="form-control" rows="4"
+                                        placeholder="Porte do pet, necessidades especiais ou outras informações"><?= htmlspecialchars($dadosPedido['detalhes']) ?></textarea>
+                                </div>
+                            <?php else: ?>
+                                <div class="col-12">
+                                    <label class="form-label" for="assunto">Assunto</label>
+                                    <select name="assunto" id="assunto" class="form-select">
+                                        <?php
+                                        $opcoesAssunto = ['' => 'Selecione (opcional)', 'Dúvida' => 'Dúvida', 'Sugestão' => 'Sugestão', 'Parceria' => 'Quero ser parceiro', 'Imprensa' => 'Imprensa', 'Outro' => 'Outro'];
+                                        foreach ($opcoesAssunto as $valor => $rotulo):
+                                            ?>
+                                            <option value="<?= htmlspecialchars($valor) ?>" <?= $form['assunto'] === $valor ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($rotulo) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label" for="mensagem">Mensagem *</label>
+                                    <textarea name="mensagem" id="mensagem" class="form-control" rows="5" required
+                                        placeholder="Conte com detalhes o que você precisa..."><?= htmlspecialchars($form['mensagem']) ?></textarea>
+                                </div>
+                            <?php endif; ?>
 
                             <div class="col-12">
                                 <button type="submit" class="btn btn-success">
-                                    <i class="bi bi-send-fill"></i> Enviar mensagem
+                                    <i class="bi bi-send-fill"></i>
+                                    <?= $pedidoBanhoTosa ? 'Enviar pedido à equipe' : 'Enviar mensagem' ?>
                                 </button>
                             </div>
 
@@ -313,7 +415,7 @@ $tituloPagina = 'Contato';
 
     <footer class="bg-dark text-light py-4">
         <div class="container text-center">
-            © <?= date('Y') ?> PetFinder Brasil ·
+            © <?= date('Y') ?> EcoSistemPet ·
             <a href="<?= Url::raiz('index.html') ?>" class="text-light">Voltar para a home</a>
         </div>
     </footer>

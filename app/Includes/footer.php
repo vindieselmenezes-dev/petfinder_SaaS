@@ -1,12 +1,11 @@
 <footer class="rodape">
-    © <?= date('Y'); ?> PetFinder Brasil
+    © <?= date('Y'); ?> EcoSistemPet
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Abre/fecha o menu lateral no celular (a sidebar fica escondida por padrão
-    // abaixo de 900px de largura — ver dashboard.css).
+    // Abre/fecha o menu lateral em telas estreitas e celulares em paisagem.
     (function () {
         var toggle = document.getElementById('menuToggle');
         var sidebar = document.getElementById('sidebarMenu');

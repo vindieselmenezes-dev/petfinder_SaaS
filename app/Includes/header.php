@@ -7,14 +7,14 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= isset($tituloPagina) ? htmlspecialchars($tituloPagina) . ' - PetFinder Brasil' : 'PetFinder Brasil' ?>
+    <title><?= isset($tituloPagina) ? htmlspecialchars($tituloPagina) . ' - EcoSistemPet' : 'EcoSistemPet' ?>
     </title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
-    <link rel="stylesheet" href="<?= Url::asset('css/dashboard.css') ?>">
+    <link rel="stylesheet" href="<?= Url::asset('css/dashboard.css') ?>?v=20261003-mobile">
 
     <!-- PWA -->
     <link rel="manifest" href="<?= Url::raiz('manifest.json') ?>">
@@ -23,7 +23,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="PetFinder">
+    <meta name="apple-mobile-web-app-title" content="EcoSistemPet">
 
 </head>
 
@@ -67,11 +67,18 @@
                     ← <span>Voltar</span>
                 </button>
 
-                <div class="logo-area">
+                <div class="logo-area d-flex align-items-center gap-2">
 
-                    <h2><a href="<?= Url::raiz('index.html') ?>">🐾 PetFinder Brasil</a></h2>
+                    <a href="<?= Url::raiz('index.html') ?>">
+                        <img src="<?= Url::asset('img/logo.png') ?>" alt="EcoSistemPet" class="logo-area-img" width="48"
+                            height="48">
+                    </a>
 
-                    <span>Informação, cuidado e carinho para seu pet.</span>
+                    <div>
+                        <h2><a href="<?= Url::raiz('index.html') ?>">EcoSistemPet</a></h2>
+
+                        <span>Informação, cuidado e carinho para seu pet.</span>
+                    </div>
 
                 </div>
             </div>

@@ -120,7 +120,7 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
     <div style="background:#fff; padding:30px; border-radius:12px; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
 
         <h1 class="fw-bold" style="font-size:26px; margin-bottom:6px;">
-            🤝 <?= $editando ? 'Editar parceiro' : 'Seja um parceiro do PetFinder' ?>
+            🤝 <?= $editando ? 'Editar parceiro' : 'Seja um parceiro do EcoSistemPet' ?>
         </h1>
 
         <p style="color:#7f8c8d;">
@@ -188,7 +188,7 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
             </div>
 
             <div class="col-12">
-                <label class="form-label" for="como_ajuda">Como vocês ajudam a divulgar o PetFinder?</label>
+                <label class="form-label" for="como_ajuda">Como vocês ajudam a divulgar o EcoSistemPet?</label>
                 <input type="text" name="como_ajuda" id="como_ajuda" class="form-control" maxlength="255"
                     placeholder="Ex: divulgamos os pets perdidos nas nossas redes e em eventos"
                     value="<?= htmlspecialchars($form['como_ajuda']) ?>">

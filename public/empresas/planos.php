@@ -26,7 +26,7 @@ $exibindoParaEntidadeExistente = $empresaId > 0 || $prestadorId > 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= $prestadorId > 0 ? 'Planos para Prestadores' : 'Planos para Empresas' ?> - PetFinder Brasil</title>
+    <title><?= $prestadorId > 0 ? 'Planos para Prestadores' : 'Planos para Empresas' ?> - EcoSistemPet</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../../assets/css/style.css">
@@ -38,8 +38,8 @@ $exibindoParaEntidadeExistente = $empresaId > 0 || $prestadorId > 0;
     <header class="border-bottom py-3 mb-4">
         <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
             <a href="../../index.html" class="d-flex align-items-center text-decoration-none">
-                <img src="../../assets/img/logo.png" alt="PetFinder Brasil" height="40" class="me-2">
-                <div class="fw-bold text-dark">PetFinder Brasil</div>
+                <img src="../../assets/img/logo.png" alt="EcoSistemPet" height="40" class="me-2">
+                <div class="fw-bold text-dark">EcoSistemPet</div>
             </a>
             <?php if (!isset($_SESSION['usuario_id'])): ?>
                 <a href="<?= Url::pagina('login.php') ?>" class="btn btn-outline-success">Já tenho conta</a>
@@ -159,7 +159,7 @@ $exibindoParaEntidadeExistente = $empresaId > 0 || $prestadorId > 0;
     </main>
 
     <footer class="border-top py-4 text-center text-muted">
-        © <?= date("Y") ?> PetFinder Brasil
+        © <?= date("Y") ?> EcoSistemPet
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>

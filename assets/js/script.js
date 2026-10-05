@@ -1,5 +1,5 @@
 /* ===========================================================
-   PetFinder Brasil
+   EcoSistemPet
    assets/js/script.js
    Parte 1
 =========================================================== */
@@ -33,7 +33,7 @@ function iniciarSistema() {
     // ativa comportamentos de navegação em botões que mantêm a estrutura HTML
     configurarAcoesBotoes();
 
-    console.log("PetFinder Brasil iniciado.");
+    console.log("EcoSistemPet iniciado.");
 
 }
 
@@ -221,7 +221,7 @@ function selecionarTodos(id) {
    MENSAGEM DE BOAS-VINDAS
 =========================================================== */
 
-console.log("%cPetFinder Brasil",
+console.log("%cEcoSistemPet",
 
     "color:#ffffff;background:#1B365D;padding:10px;font-size:18px;border-radius:5px;");
 

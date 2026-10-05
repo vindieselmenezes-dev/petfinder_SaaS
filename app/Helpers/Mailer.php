@@ -49,21 +49,21 @@ class Mailer
                 $mailer->Password = getenv('SMTP_PASSWORD') ?: '';
                 $mailer->SMTPSecure = getenv('SMTP_ENCRYPTION') ?: PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                 $mailer->CharSet = 'UTF-8';
-                $mailer->setFrom(getenv('EMAIL_REMETENTE') ?: 'no-reply@petfinder.local', 'PetFinder Brasil');
+                $mailer->setFrom(getenv('EMAIL_REMETENTE') ?: 'no-reply@petfinder.local', 'EcoSistemPet');
                 $mailer->addAddress($destinatario);
                 $mailer->isHTML(true);
                 $mailer->Subject = $assunto;
                 $mailer->Body = $corpoHtml;
                 return $mailer->send();
             } catch (Throwable $exception) {
-                error_log('Falha SMTP PetFinder: ' . $exception->getMessage());
+                error_log('Falha SMTP EcoSistemPet: ' . $exception->getMessage());
                 return false;
             }
         }
 
         $remetente = getenv('EMAIL_REMETENTE') ?: 'no-reply@petfinder.local';
         $cabecalhos = [
-            'From: PetFinder Brasil <' . $remetente . '>',
+            'From: EcoSistemPet <' . $remetente . '>',
             'MIME-Version: 1.0',
             'Content-Type: text/html; charset=UTF-8',
         ];

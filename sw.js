@@ -1,5 +1,5 @@
 /*
- * Service Worker do PetFinder Brasil.
+ * Service Worker do EcoSistemPet.
  *
  * Estratégia:
  * - Assets estáticos (css/js/imagens/ícones): cache-first, com atualização
@@ -14,7 +14,7 @@
  *   nunca passa pelo cache — vai direto pra rede, do jeito que já era.
  */
 
-const VERSION = "petfinder-v2";
+const VERSION = "petfinder-v4";
 const STATIC_CACHE = `${VERSION}-static`;
 const OFFLINE_URL = "offline.html";
 
@@ -60,7 +60,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("push", (event) => {
     const dados = event.data ? event.data.json() : {};
-    event.waitUntil(self.registration.showNotification(dados.title || "PetFinder Brasil", {
+    event.waitUntil(self.registration.showNotification(dados.title || "EcoSistemPet", {
         body: dados.body || "Você tem uma nova atualização.",
         icon: "/petfinder-SaaS/assets/img/icons/icon-192.png",
         data: { url: dados.url || "/petfinder-SaaS/public/notificacoes.php" }

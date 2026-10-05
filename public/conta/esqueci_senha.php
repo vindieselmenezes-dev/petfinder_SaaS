@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             Mailer::enviar(
                 $usuario['email'],
-                'Redefinição de senha - PetFinder Brasil',
+                'Redefinição de senha - EcoSistemPet',
                 "Olá, {$usuario['nome']}!<br><br>Clique no link abaixo pra criar uma nova senha (válido por 1 hora):<br>
                 <a href=\"$link\">$link</a><br><br>Se você não pediu isso, pode ignorar este e-mail."
             );
