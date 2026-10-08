@@ -6,3 +6,5 @@ test-results/
 logs/
 storage/logs/*.log
 storage/cache/*.xml
+
+.scannerwork/

@@ -27,18 +27,19 @@ $campanha = $editando ? $campanhaModel->buscarPorId($campanhaId, false) : null;
 
 if ($editando && $campanha === null) {
     Flash::erro('Publicação não encontrada.');
-    header('Location: ' . Url::pagina('painel_parceiro.php'));
+    Url::redirecionar(Url::pagina('painel_parceiro.php'));
     exit;
 }
 
-$parceiroId = $editando
-    ? (int) $campanha['parceiro_id']
-    : (isset($_GET['parceiro_id']) ? (int) $_GET['parceiro_id'] : 0);
+$parceiroId = isset($_GET['parceiro_id']) ? (int) $_GET['parceiro_id'] : 0;
+if ($editando) {
+    $parceiroId = (int) $campanha['parceiro_id'];
+}
 
 if (!$parceiroModel->podeAdministrar($parceiroId, (int) Auth::id(), Auth::ehAdministrador())) {
     http_response_code(403);
     Flash::erro('Você não tem permissão para publicar em nome deste parceiro.');
-    header('Location: ' . Url::pagina('painel_parceiro.php'));
+    Url::redirecionar(Url::pagina('painel_parceiro.php'));
     exit;
 }
 
@@ -69,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $imagem = null;
 
-    if (count($erros) === 0) {
+    if (empty($erros)) {
 
         $imagem = $controller->processarImagem($_FILES['imagem'] ?? [], 'campanhas', 'campanha');
 
@@ -78,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (count($erros) === 0) {
+    if (empty($erros)) {
 
         $form['imagem'] = $imagem ?? '';
 
@@ -95,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ? 'Alterações salvas! Como você mudou o conteúdo, a publicação volta para análise antes de aparecer no site de novo.'
                         : 'Publicação atualizada!'
                 );
-                header('Location: ' . Url::pagina('painel_parceiro.php'));
+                Url::redirecionar(Url::pagina('painel_parceiro.php'));
                 exit;
             }
 
@@ -111,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ? 'Publicação enviada! Ela fica visível no site assim que um administrador aprovar.'
                         : 'Publicação criada com sucesso!'
                 );
-                header('Location: ' . Url::pagina('painel_parceiro.php'));
+                Url::redirecionar(Url::pagina('painel_parceiro.php'));
                 exit;
             }
 
@@ -158,7 +159,7 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
             </div>
         <?php endif; ?>
 
-        <?php if (count($erros) > 0): ?>
+        <?php if (!empty($erros)): ?>
             <div class="alert alert-danger">
                 <ul class="mb-0">
                     <?php foreach ($erros as $erro): ?>

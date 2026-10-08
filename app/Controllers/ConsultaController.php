@@ -14,6 +14,8 @@ require_once __DIR__ . '/NotificacaoController.php';
 
 class ConsultaController
 {
+    private const PREFIXO_CONSULTA = 'Sua consulta em ';
+
     private Consulta $consulta;
     private NotificacaoController $notificacao;
 
@@ -80,10 +82,10 @@ class ConsultaController
 
         if ($sucesso && $consultaAntes && (int) $consultaAntes['empresa_id'] === $empresaId) {
             $mensagens = [
-                'Confirmada' => ['titulo' => '✅ Consulta confirmada!', 'texto' => 'Sua consulta em ' . $consultaAntes['empresa_nome'] . ' foi confirmada.'],
-                'Em Atendimento' => ['titulo' => '🩺 Consulta iniciada', 'texto' => 'Sua consulta em ' . $consultaAntes['empresa_nome'] . ' está em atendimento.'],
-                'Concluída' => ['titulo' => '🎉 Consulta concluída', 'texto' => 'Sua consulta em ' . $consultaAntes['empresa_nome'] . ' foi concluída. Que tal avaliar o atendimento?'],
-                'Cancelada' => ['titulo' => 'Consulta cancelada', 'texto' => 'Sua consulta em ' . $consultaAntes['empresa_nome'] . ' foi cancelada pela clínica.'],
+                'Confirmada' => ['titulo' => '✅ Consulta confirmada!', 'texto' => self::PREFIXO_CONSULTA . $consultaAntes['empresa_nome'] . ' foi confirmada.'],
+                'Em Atendimento' => ['titulo' => '🩺 Consulta iniciada', 'texto' => self::PREFIXO_CONSULTA . $consultaAntes['empresa_nome'] . ' está em atendimento.'],
+                'Concluída' => ['titulo' => '🎉 Consulta concluída', 'texto' => self::PREFIXO_CONSULTA . $consultaAntes['empresa_nome'] . ' foi concluída. Que tal avaliar o atendimento?'],
+                'Cancelada' => ['titulo' => 'Consulta cancelada', 'texto' => self::PREFIXO_CONSULTA . $consultaAntes['empresa_nome'] . ' foi cancelada pela clínica.'],
             ];
 
             if (isset($mensagens[$status])) {

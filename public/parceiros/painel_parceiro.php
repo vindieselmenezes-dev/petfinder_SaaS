@@ -29,7 +29,7 @@ function badgeStatusParceria(string $status): string
         'pendente' => ['classe' => 'bg-warning text-dark', 'rotulo' => '⏳ Em análise'],
         'aprovado' => ['classe' => 'bg-success', 'rotulo' => '✅ Aprovado'],
         'recusado' => ['classe' => 'bg-danger', 'rotulo' => '❌ Recusado'],
-        'inativo'  => ['classe' => 'bg-secondary', 'rotulo' => '⏸️ Inativo'],
+        'inativo' => ['classe' => 'bg-secondary', 'rotulo' => '⏸️ Inativo'],
     ];
 
     $config = $mapa[$status] ?? ['classe' => 'bg-secondary', 'rotulo' => $status];
@@ -175,7 +175,7 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
 
                                             <?php
                                             $campanhaId = (int) $campanha['id'];
-                                            $percentual = Campanha::percentualMeta(
+                                            $percentual = CampanhaApresentacao::percentualMeta(
                                                 $campanha['meta_valor'] !== null ? (float) $campanha['meta_valor'] : null,
                                                 (float) $campanha['valor_arrecadado']
                                             );
@@ -195,8 +195,8 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
                                                 </td>
 
                                                 <td>
-                                                    <?= Campanha::iconeTipo($campanha['tipo']) ?>
-                                                    <?= htmlspecialchars(Campanha::rotuloTipo($campanha['tipo'])) ?>
+                                                    <?= CampanhaApresentacao::iconeTipo($campanha['tipo']) ?>
+                                                    <?= htmlspecialchars(CampanhaApresentacao::rotuloTipo($campanha['tipo'])) ?>
                                                 </td>
 
                                                 <td class="small">
@@ -236,7 +236,8 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
                                                     <?php if ($statusModeracao === 'pendente'): ?>
                                                         <br><span class="badge bg-warning text-dark mt-1">⏳ Aguardando aprovação</span>
                                                     <?php elseif ($statusModeracao === 'recusada'): ?>
-                                                        <br><span class="badge bg-danger mt-1" title="<?= htmlspecialchars($campanha['observacao_moderacao'] ?? '') ?>">
+                                                        <br><span class="badge bg-danger mt-1"
+                                                            title="<?= htmlspecialchars($campanha['observacao_moderacao'] ?? '') ?>">
                                                             ❌ Não aprovada
                                                         </span>
                                                     <?php endif; ?>
@@ -249,15 +250,12 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
                                                         <a href="<?= Url::pagina('campanha_form.php') ?>?id=<?= $campanhaId ?>"
                                                             class="btn btn-outline-secondary btn-sm">✏️</a>
 
-                                                        <form method="POST"
-                                                            action="<?= Url::pagina('campanha_acoes.php') ?>"
+                                                        <form method="POST" action="<?= Url::pagina('campanha_acoes.php') ?>"
                                                             onsubmit="return confirm('Excluir esta publicação? Essa ação não pode ser desfeita.');">
                                                             <?= Csrf::campoHtml() ?>
                                                             <input type="hidden" name="acao" value="excluir">
-                                                            <input type="hidden" name="campanha_id"
-                                                                value="<?= $campanhaId ?>">
-                                                            <button type="submit"
-                                                                class="btn btn-outline-danger btn-sm">🗑️</button>
+                                                            <input type="hidden" name="campanha_id" value="<?= $campanhaId ?>">
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm">🗑️</button>
                                                         </form>
 
                                                     </div>
@@ -268,12 +266,13 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
                                                         <?= Csrf::campoHtml() ?>
                                                         <input type="hidden" name="acao" value="arrecadado">
                                                         <input type="hidden" name="campanha_id" value="<?= $campanhaId ?>">
-                                                        <input type="text" inputmode="decimal" name="valor"
-                                                            class="form-control form-control-sm" style="width:100px;"
+                                                        <label for="valor-arrecadado-<?= $campanhaId ?>" class="visually-hidden">Valor
+                                                            total arrecadado</label>
+                                                        <input id="valor-arrecadado-<?= $campanhaId ?>" type="text" inputmode="decimal"
+                                                            name="valor" class="form-control form-control-sm" style="width:100px;"
                                                             placeholder="R$ total"
                                                             value="<?= htmlspecialchars(number_format((float) $campanha['valor_arrecadado'], 2, ',', '')) ?>">
-                                                        <button type="submit"
-                                                            class="btn btn-outline-success btn-sm">💾</button>
+                                                        <button type="submit" class="btn btn-outline-success btn-sm">💾</button>
                                                     </form>
 
                                                 </td>

@@ -14,6 +14,7 @@ if (!isset($_SESSION["usuario_id"])) {
 require_once "../../app/Controllers/ProdutoController.php";
 
 $produtoController = new ProdutoController();
+$imagemController = new ProdutoImagemController();
 $usuarioId  = (int) $_SESSION["usuario_id"];
 
 $produtoId = (int) ($_GET["produto_id"] ?? 0);
@@ -28,7 +29,7 @@ $imagemId  = (int) ($_GET["imagem_id"] ?? 0);
 $produto = $produtoController->buscarPorId($produtoId);
 
 if ($produto !== null && (int) $produto["empresa_usuario_id"] === $usuarioId) {
-    $produtoController->excluirImagem($imagemId, $produtoId);
+    $imagemController->excluirImagem($imagemId, $produtoId);
 }
 
 header("Location: editar_produto.php?id=" . $produtoId);

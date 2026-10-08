@@ -26,7 +26,7 @@ $editando = $id > 0;
 if ($editando && !$parceiroModel->podeAdministrar($id, (int) Auth::id(), Auth::ehAdministrador())) {
     http_response_code(403);
     Flash::erro('Você não tem permissão para editar este parceiro.');
-    header('Location: ' . Url::pagina('painel_parceiro.php'));
+    Url::redirecionar(Url::pagina('painel_parceiro.php'));
     exit;
 }
 
@@ -34,7 +34,7 @@ $parceiro = $editando ? $parceiroModel->buscarPorId($id, false) : null;
 
 if ($editando && $parceiro === null) {
     Flash::erro('Parceiro não encontrado.');
-    header('Location: ' . Url::pagina('painel_parceiro.php'));
+    Url::redirecionar(Url::pagina('painel_parceiro.php'));
     exit;
 }
 
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form = $controller->dadosParceiroDoPost($_POST);
     $erros = $controller->validarParceiro($form);
 
-    if (count($erros) === 0) {
+    if (empty($erros)) {
 
         $logo = $controller->processarImagem($_FILES['logo'] ?? [], 'parceiros', 'parceiro');
 
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (count($erros) === 0) {
+    if (empty($erros)) {
 
         $form['logo'] = $logo ?? '';
 
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($parceiroModel->atualizar($id, $form)) {
                 Flash::sucesso('Dados do parceiro atualizados!');
-                header('Location: ' . Url::pagina('painel_parceiro.php'));
+                Url::redirecionar(Url::pagina('painel_parceiro.php'));
                 exit;
             }
 
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Flash::sucesso(
                     'Candidatura enviada! Nossa equipe vai analisar e você recebe um retorno em breve.'
                 );
-                header('Location: ' . Url::pagina('painel_parceiro.php'));
+                Url::redirecionar(Url::pagina('painel_parceiro.php'));
                 exit;
             }
 
@@ -132,7 +132,7 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
             <?php endif; ?>
         </p>
 
-        <?php if (count($erros) > 0): ?>
+        <?php if (!empty($erros)): ?>
             <div class="alert alert-danger">
                 <ul class="mb-0">
                     <?php foreach ($erros as $erro): ?>

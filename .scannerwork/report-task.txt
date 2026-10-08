@@ -1,6 +1,0 @@
-projectKey=petfinder-saas
-serverUrl=http://localhost:9000
-serverVersion=26.9.0.129388
-dashboardUrl=http://localhost:9000/dashboard?id=petfinder-saas
-ceTaskId=ccaafb0f-6685-488b-8ad1-d39a02de6547
-ceTaskUrl=http://localhost:9000/api/ce/task?id=ccaafb0f-6685-488b-8ad1-d39a02de6547

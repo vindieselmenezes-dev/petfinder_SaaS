@@ -38,7 +38,7 @@ $itens = $stmt->fetchAll();
 
 // Descobrir qual o ID do último item desta página para servir de cursor para a próxima
 $proximoId = 0;
-if (count($itens) > 0) {
+if (!empty($itens)) {
     $proximoId = $itens[count($itens) - 1]['id'];
 }
 
@@ -65,12 +65,12 @@ $temMaisRegistros = $stmtCheckMore->fetch() ? true : false;
     </style>
 </head>
 <body style="padding-top:38px;">
-    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="Voltar para a página anterior">← Voltar</button></div>
+    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="← Voltar para a página anterior">← Voltar</button></div>
     <div class="container">
         <h1>🛍️ Vitrine de Comércios e Serviços Pet</h1>
         <p style="text-align:center;"><a href="<?= Url::raiz('index.html') ?>" style="color:#7f8c8d; text-decoration:none;">🏠 Voltar para a Home</a></p>
 
-        <?php if (count($itens) > 0): ?>
+        <?php if (!empty($itens)): ?>
             <?php foreach ($itens as $item): ?>
                 <div class="product-card">
                     <span class="type-badge"><?php echo htmlspecialchars($item['categoria_nome']); ?></span>

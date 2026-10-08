@@ -14,13 +14,13 @@ $sugestoes = [
 ];
 
 if (!isset($categorias[$categoriaId])) {
-    header('Location: ' . Url::pagina('banho_e_tosa.php'));
+    Url::redirecionar(Url::pagina('banho_e_tosa.php'));
     exit;
 }
 
 if (!Auth::check()) {
     $voltar = Url::pagina('pedir_servico.php') . '?' . http_build_query(['categoria_id' => $categoriaId]);
-    header('Location: ' . Url::pagina('login.php') . '?' . http_build_query(['voltar' => $voltar]));
+    Url::redirecionar(Url::pagina('login.php') . '?' . http_build_query(['voltar' => $voltar]));
     exit;
 }
 
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($pedidoId !== false) {
             Flash::sucesso('Pedido enviado. As empresas em destaque receberam o aviso primeiro. Você verá os orçamentos quando as empresas responderem.');
-            header('Location: ' . Url::pagina('minhas_solicitacoes_empresa.php'));
+            Url::redirecionar(Url::pagina('minhas_solicitacoes_empresa.php'));
             exit;
         }
 

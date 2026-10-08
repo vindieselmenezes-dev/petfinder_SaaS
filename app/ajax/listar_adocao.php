@@ -7,6 +7,7 @@ require_once __DIR__ . '/../bootstrap.php';
 header('Content-Type: application/json');
 
 $controller = new PetController();
+$buscaController = new PetBuscaController();
 
 $busca      = trim($_GET['busca'] ?? '');
 $cidade     = trim($_GET['cidade'] ?? '');
@@ -23,7 +24,6 @@ $alturaMin  = isset($_GET['altura_min']) ? (float) $_GET['altura_min'] : 0.0;
 $alturaMax  = isset($_GET['altura_max']) ? (float) $_GET['altura_max'] : 0.0;
 $status     = trim($_GET['status'] ?? 'Para Adoção');
 $ordem      = trim($_GET['ordem'] ?? 'criado_em');
-$direcao    = trim($_GET['direcao'] ?? 'DESC');
 
 /*
 |--------------------------------------------------------------------------
@@ -35,23 +35,22 @@ if ($cidade === 'Selecione sua cidade') {
     $cidade = '';
 }
 
-$pets = $controller->buscarAdocaoPublico(
-    $busca,
-    $cidade,
-    $especieId,
-    $racaId,
-    $sexo,
-    $cor,
-    $castrado,
-    $idadeMin,
-    $idadeMax,
-    $pesoMin,
-    $pesoMax,
-    $alturaMin,
-    $alturaMax,
-    $status,
-    $ordem,
-    $direcao
-);
+$pets = $buscaController->buscarAdocaoPublico([
+    'busca' => $busca,
+    'cidade' => $cidade,
+    'especieId' => $especieId,
+    'racaId' => $racaId,
+    'sexo' => $sexo,
+    'cor' => $cor,
+    'castrado' => $castrado,
+    'idadeMin' => $idadeMin,
+    'idadeMax' => $idadeMax,
+    'pesoMin' => $pesoMin,
+    'pesoMax' => $pesoMax,
+    'alturaMin' => $alturaMin,
+    'alturaMax' => $alturaMax,
+    'status' => $status,
+    'ordem' => $ordem,
+]);
 
 echo json_encode($pets);

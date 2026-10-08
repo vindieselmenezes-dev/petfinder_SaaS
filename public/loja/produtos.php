@@ -50,20 +50,20 @@ if ($precoFiltro !== '') {
 }
 
 $categorias = $controller->listarCategorias();
-$produtos = $controller->listarAtivos(
-    $busca,
-    $subcategoriaId,
-    $marcaId,
-    $precoMin,
-    $precoMax,
-    $ordem,
-    $cidade,
-    $categoriaId,
-    $empresa,
-    $apenasPromocao,
-    $subcategoriasSelecionadas,
-    $avaliacaoMinima
-);
+$produtos = $controller->listarAtivos([
+    'busca' => $busca,
+    'subcategoria_id' => $subcategoriaId,
+    'marca_id' => $marcaId,
+    'preco_min' => $precoMin,
+    'preco_max' => $precoMax,
+    'ordem' => $ordem,
+    'cidade' => $cidade,
+    'categoria_id' => $categoriaId,
+    'empresa' => $empresa,
+    'apenas_promocao' => $apenasPromocao,
+    'subcategorias' => $subcategoriasSelecionadas,
+    'avaliacao_minima' => $avaliacaoMinima,
+]);
 
 $categoriasProdutos = [
     'Alimentação' => ['Ração'],
@@ -94,8 +94,8 @@ foreach ($subcategorias as $subcategoria) {
 
     <title>Produtos - EcoSistemPet</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
     <link rel="stylesheet" href="../../assets/css/style.css">
 
     <style>
@@ -211,7 +211,7 @@ foreach ($subcategorias as $subcategoria) {
         <button type="button"
             onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}"
             style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;"
-            aria-label="Voltar para a página anterior">← Voltar</button>
+            aria-label="← Voltar para a página anterior">← Voltar</button>
     </div>
 
     <header class="border-bottom py-3 mb-4">
@@ -246,14 +246,14 @@ foreach ($subcategorias as $subcategoria) {
 
             <div class="row g-2 align-items-end">
                 <div class="col-xl-3 col-lg-4 col-md-6">
-                    <label class="form-label small fw-semibold">🔎 Buscar produto</label>
-                    <input type="text" name="busca" class="form-control rounded-pill"
+                    <label for="filtro-busca" class="form-label small fw-semibold">🔎 Buscar produto</label>
+                    <input id="filtro-busca" type="text" name="busca" class="form-control rounded-pill"
                         placeholder="Nome, marca, categoria ou loja" value="<?= htmlspecialchars($busca) ?>">
                 </div>
 
                 <div class="col-xl-2 col-lg-3 col-md-6">
-                    <label class="form-label small fw-semibold">💰 Faixa de preço</label>
-                    <select name="preco_filtro" class="form-select rounded-pill">
+                    <label for="filtro-preco" class="form-label small fw-semibold">💰 Faixa de preço</label>
+                    <select id="filtro-preco" name="preco_filtro" class="form-select rounded-pill">
                         <option value="">Qualquer valor</option>
                         <option value="0-50" <?= $precoFiltro === '0-50' ? 'selected' : '' ?>>Até R$ 50</option>
                         <option value="50.01-100" <?= $precoFiltro === '50.01-100' ? 'selected' : '' ?>>R$ 50,01 a R$ 100
@@ -267,20 +267,20 @@ foreach ($subcategorias as $subcategoria) {
                 </div>
 
                 <div class="col-xl-2 col-lg-3 col-md-6">
-                    <label class="form-label small fw-semibold">🏪 Empresa / Petshop</label>
-                    <input type="text" name="empresa" class="form-control rounded-pill" placeholder="Nome da empresa"
-                        value="<?= htmlspecialchars($empresa) ?>">
+                    <label for="filtro-empresa" class="form-label small fw-semibold">🏪 Empresa / Petshop</label>
+                    <input id="filtro-empresa" type="text" name="empresa" class="form-control rounded-pill"
+                        placeholder="Nome da empresa" value="<?= htmlspecialchars($empresa) ?>">
                 </div>
 
                 <div class="col-xl-2 col-lg-3 col-md-6">
-                    <label class="form-label small fw-semibold">📍 Região (cidade ou UF)</label>
-                    <input type="text" name="cidade" class="form-control rounded-pill"
+                    <label for="filtro-cidade" class="form-label small fw-semibold">📍 Região (cidade ou UF)</label>
+                    <input id="filtro-cidade" type="text" name="cidade" class="form-control rounded-pill"
                         placeholder="Ex: Belo Horizonte ou MG" value="<?= htmlspecialchars($cidade) ?>">
                 </div>
 
                 <div class="col-xl-1 col-lg-2 col-md-4">
-                    <label class="form-label small fw-semibold">⭐ Avaliação da loja</label>
-                    <select name="avaliacao" class="form-select rounded-pill">
+                    <label for="filtro-avaliacao" class="form-label small fw-semibold">⭐ Avaliação da loja</label>
+                    <select id="filtro-avaliacao" name="avaliacao" class="form-select rounded-pill">
                         <option value="" <?= $avaliacaoMinima === 0.0 ? 'selected' : '' ?>>Qualquer</option>
                         <option value="4.5" <?= $avaliacaoMinima === 4.5 ? 'selected' : '' ?>>4,5+</option>
                         <option value="4.0" <?= $avaliacaoMinima === 4.0 ? 'selected' : '' ?>>4,0+</option>
@@ -289,16 +289,16 @@ foreach ($subcategorias as $subcategoria) {
                 </div>
 
                 <div class="col-xl-1 col-lg-2 col-md-4">
-                    <label class="form-label small fw-semibold">🏷️ Promoções</label>
-                    <select name="promocao" class="form-select rounded-pill">
+                    <label for="filtro-promocao" class="form-label small fw-semibold">🏷️ Promoções</label>
+                    <select id="filtro-promocao" name="promocao" class="form-select rounded-pill">
                         <option value="">Todas</option>
                         <option value="1" <?= $apenasPromocao ? 'selected' : '' ?>>Com promoção</option>
                     </select>
                 </div>
 
                 <div class="col-xl-2 col-lg-3 col-md-6">
-                    <label class="form-label small fw-semibold">Ordenar</label>
-                    <select name="ordem" class="form-select rounded-pill">
+                    <label for="filtro-ordem" class="form-label small fw-semibold">Ordenar</label>
+                    <select id="filtro-ordem" name="ordem" class="form-select rounded-pill">
                         <option value="recente" <?= $ordem === "recente" ? "selected" : "" ?>>Mais recentes</option>
                         <option value="menor_preco" <?= $ordem === "menor_preco" ? "selected" : "" ?>>Menor preço</option>
                         <option value="maior_preco" <?= $ordem === "maior_preco" ? "selected" : "" ?>>Maior preço</option>
@@ -456,7 +456,7 @@ foreach ($subcategorias as $subcategoria) {
         © <?= date("Y") ?> EcoSistemPet
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
 </body>
 

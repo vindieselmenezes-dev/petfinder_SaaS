@@ -146,6 +146,9 @@ final class ImagemUpload
                     imagewebp($redimensionada, $caminho, $qualidade);
                 }
                 break;
+            default:
+                // Tipo não suportado: nenhuma imagem é gravada.
+                break;
         }
 
         imagedestroy($origem);

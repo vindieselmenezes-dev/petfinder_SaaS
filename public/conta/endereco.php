@@ -81,13 +81,13 @@ $estados = [
 
     <h1>📍 Meu Endereço</h1>
 
-    <?php 
+    <?php
 // Pega o tipo de usuário logado (assume tutor se não encontrar)
-$tipoUsuarioPerfil = $_SESSION['perfil_tipo'] ?? 'tutor'; 
+$tipoUsuarioPerfil = $_SESSION['perfil_tipo'] ?? 'tutor';
 
 // SÓ EXIBE A FRASE SE O USUÁRIO NÃO FOR UMA EMPRESA
-if ($tipoUsuarioPerfil !== 'empresa'): 
 ?>
+<?php if ($tipoUsuarioPerfil !== 'empresa'): ?>
     <p>Esse endereço aparece nos seus pets cadastrados</p>
 <?php endif; ?>
 

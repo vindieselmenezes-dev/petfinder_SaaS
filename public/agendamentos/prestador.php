@@ -54,14 +54,19 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
 
     <title><?= $prestador ? htmlspecialchars($prestador["usuario_nome"]) . " - " : "" ?>EcoSistemPet</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
     <link rel="stylesheet" href="../../assets/css/style.css">
 
 </head>
 
 <body style="padding-top:38px;">
-    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="Voltar para a página anterior">← Voltar</button></div>
+    <div
+        style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;">
+        <button type="button"
+            onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}"
+            style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;"
+            aria-label="← Voltar para a página anterior">← Voltar</button></div>
 
     <header class="border-bottom py-3 mb-4">
         <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
@@ -107,7 +112,9 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
                             style="border-radius:50%; object-fit:cover;" alt="Foto do profissional">
                         <div>
                             <span class="badge bg-primary mb-1"><?= $badge ?></span>
-                            <h1 class="h3 mb-0"><?= htmlspecialchars($prestador["usuario_nome"] . ' ' . $prestador["usuario_sobrenome"]) ?></h1>
+                            <h1 class="h3 mb-0">
+                                <?= htmlspecialchars($prestador["usuario_nome"] . ' ' . $prestador["usuario_sobrenome"]) ?>
+                            </h1>
                             <div>
                                 <?php if ((float) $prestador['avaliacao'] > 0): ?>
                                     ⭐ <?= number_format((float) $prestador['avaliacao'], 1) ?>
@@ -129,23 +136,29 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
 
                     <?php if (!empty($servicos)): ?>
                         <?php if ($veiculo): ?>
-                        <h5 class="mt-4">🚗 Veículo</h5>
-                        <ul>
-                            <li><?= htmlspecialchars($veiculo['tipo_veiculo']) ?><?= $veiculo['modelo'] ? ' — ' . htmlspecialchars($veiculo['modelo']) : '' ?><?= $veiculo['ano'] ? ' (' . htmlspecialchars($veiculo['ano']) . ')' : '' ?></li>
-                            <li>Capacidade: <?= (int) $veiculo['capacidade_pets'] ?> pet(s) por corrida</li>
-                            <?php if ($veiculo['ar_condicionado']): ?><li>Ar-condicionado</li><?php endif; ?>
-                            <?php if ($veiculo['caixa_transporte']): ?><li>Possui caixa de transporte</li><?php endif; ?>
-                            <?php if ($veiculo['aceita_animais_grandes']): ?><li>Aceita animais de grande porte</li><?php endif; ?>
-                        </ul>
-                        <?php if ($veiculo['valor_km'] || $veiculo['valor_corrida_minima']): ?>
-                            <p>
-                                <?php if ($veiculo['valor_km']): ?>Km rodado: <strong>R$ <?= number_format((float) $veiculo['valor_km'], 2, ',', '.') ?></strong><br><?php endif; ?>
-                                <?php if ($veiculo['valor_corrida_minima']): ?>Corrida mínima: <strong>R$ <?= number_format((float) $veiculo['valor_corrida_minima'], 2, ',', '.') ?></strong><?php endif; ?>
-                            </p>
+                            <h5 class="mt-4">🚗 Veículo</h5>
+                            <ul>
+                                <li><?= htmlspecialchars($veiculo['tipo_veiculo']) ?><?= $veiculo['modelo'] ? ' — ' . htmlspecialchars($veiculo['modelo']) : '' ?><?= $veiculo['ano'] ? ' (' . htmlspecialchars($veiculo['ano']) . ')' : '' ?>
+                                </li>
+                                <li>Capacidade: <?= (int) $veiculo['capacidade_pets'] ?> pet(s) por corrida</li>
+                                <?php if ($veiculo['ar_condicionado']): ?>
+                                    <li>Ar-condicionado</li><?php endif; ?>
+                                <?php if ($veiculo['caixa_transporte']): ?>
+                                    <li>Possui caixa de transporte</li><?php endif; ?>
+                                <?php if ($veiculo['aceita_animais_grandes']): ?>
+                                    <li>Aceita animais de grande porte</li><?php endif; ?>
+                            </ul>
+                            <?php if ($veiculo['valor_km'] || $veiculo['valor_corrida_minima']): ?>
+                                <p>
+                                    <?php if ($veiculo['valor_km']): ?>Km rodado: <strong>R$
+                                            <?= number_format((float) $veiculo['valor_km'], 2, ',', '.') ?></strong><br><?php endif; ?>
+                                    <?php if ($veiculo['valor_corrida_minima']): ?>Corrida mínima: <strong>R$
+                                            <?= number_format((float) $veiculo['valor_corrida_minima'], 2, ',', '.') ?></strong><?php endif; ?>
+                                </p>
+                            <?php endif; ?>
                         <?php endif; ?>
-                    <?php endif; ?>
 
-                    <h5 class="mt-4">Serviços oferecidos</h5>
+                        <h5 class="mt-4">Serviços oferecidos</h5>
                         <ul>
                             <?php foreach ($servicos as $servico): ?>
                                 <li><?= htmlspecialchars($servico) ?></li>
@@ -171,6 +184,12 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
                                 $porDia[$d['dia_semana']][] = $d['periodo'];
                             }
                             ?>
+                            <thead class="visually-hidden">
+                                <tr>
+                                    <th scope="col">Dia da semana</th>
+                                    <th scope="col">Períodos</th>
+                                </tr>
+                            </thead>
                             <tbody>
                                 <?php foreach ($porDia as $dia => $periodos): ?>
                                     <tr>
@@ -186,10 +205,12 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
                         <h5 class="mt-4">Valores</h5>
                         <p>
                             <?php if ($prestador['valor_hora']): ?>
-                                Passeio/hora: <strong>R$ <?= number_format((float) $prestador['valor_hora'], 2, ',', '.') ?></strong><br>
+                                Passeio/hora: <strong>R$
+                                    <?= number_format((float) $prestador['valor_hora'], 2, ',', '.') ?></strong><br>
                             <?php endif; ?>
                             <?php if ($prestador['valor_diaria']): ?>
-                                Diária: <strong>R$ <?= number_format((float) $prestador['valor_diaria'], 2, ',', '.') ?></strong><br>
+                                Diária: <strong>R$
+                                    <?= number_format((float) $prestador['valor_diaria'], 2, ',', '.') ?></strong><br>
                             <?php endif; ?>
                             <?php if ($prestador['forma_pagamento']): ?>
                                 <small class="text-muted">Pagamento: <?= htmlspecialchars($prestador['forma_pagamento']) ?></small>
@@ -220,15 +241,19 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
                             <?= Csrf::campoHtml() ?>
                             <input type="hidden" name="prestador_id" value="<?= (int) $prestador['id'] ?>">
                             <div class="grupo-form">
-                                <label class="form-label small">Deixe sua avaliação</label>
-                                <select name="nota" class="form-select w-auto d-inline-block me-2" required>
+                                <label class="form-label small" for="nota-avaliacao">Deixe sua avaliação</label>
+                                <select id="nota-avaliacao" name="nota" class="form-select w-auto d-inline-block me-2" required>
                                     <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
                                     <option value="4">⭐⭐⭐⭐ Muito bom</option>
                                     <option value="3">⭐⭐⭐ Bom</option>
                                     <option value="2">⭐⭐ Regular</option>
                                     <option value="1">⭐ Ruim</option>
                                 </select>
-                                <input type="text" name="comentario" class="form-control d-inline-block w-auto" placeholder="Comentário (opcional)" style="min-width:250px;">
+                                <label for="comentario-avaliacao" class="visually-hidden">Comentário da avaliação
+                                    (opcional)</label>
+                                <input id="comentario-avaliacao" type="text" name="comentario"
+                                    class="form-control d-inline-block w-auto" placeholder="Comentário (opcional)"
+                                    style="min-width:250px;">
                                 <button type="submit" class="btn btn-outline-primary">Enviar avaliação</button>
                             </div>
                         </form>
@@ -247,7 +272,8 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
                         <?php if (!empty($prestador["cidade"])): ?>
                             <p class="mb-2">
                                 <i class="bi bi-geo-alt-fill"></i>
-                                <?= htmlspecialchars($prestador["cidade"]) ?> / <?= htmlspecialchars($prestador["estado"] ?? '') ?>
+                                <?= htmlspecialchars($prestador["cidade"]) ?> /
+                                <?= htmlspecialchars($prestador["estado"] ?? '') ?>
                             </p>
                         <?php endif; ?>
 
@@ -265,7 +291,8 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
                         <?php endif; ?>
 
                         <?php if (!empty($prestador["instagram"])): ?>
-                            <p class="mb-1 small"><i class="bi bi-instagram"></i> <?= htmlspecialchars($prestador["instagram"]) ?></p>
+                            <p class="mb-1 small"><i class="bi bi-instagram"></i>
+                                <?= htmlspecialchars($prestador["instagram"]) ?></p>
                         <?php endif; ?>
 
                     </div>
@@ -276,14 +303,17 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
 
                             <div class="alert alert-secondary">
                                 Este é o seu perfil profissional.
-                                <a href="solicitacoes_prestador.php?prestador_id=<?= (int) $prestador['id'] ?>">Ver solicitações recebidas</a>
+                                <a href="solicitacoes_prestador.php?prestador_id=<?= (int) $prestador['id'] ?>">Ver solicitações
+                                    recebidas</a>
                             </div>
 
                             <?php if ($trialVencido): ?>
                                 <div class="alert alert-danger">
-                                    ⏰ Seu período de teste venceu. Seu perfil parou de aparecer nas buscas e não recebe novas solicitações.
+                                    ⏰ Seu período de teste venceu. Seu perfil parou de aparecer nas buscas e não recebe novas
+                                    solicitações.
                                     <br>
-                                    <a href="<?= Url::pagina('planos.php') ?>?prestador_id=<?= (int) $prestador['id'] ?>" class="btn btn-success btn-sm mt-2">📈 Ver planos</a>
+                                    <a href="<?= Url::pagina('planos.php') ?>?prestador_id=<?= (int) $prestador['id'] ?>"
+                                        class="btn btn-success btn-sm mt-2">📈 Ver planos</a>
                                 </div>
                             <?php endif; ?>
 
@@ -305,8 +335,8 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
 
                                     <?php if (!empty($meusPets)): ?>
                                         <div class="grupo-form">
-                                            <label class="form-label small">Pet</label>
-                                            <select name="pet_id" class="form-select">
+                                            <label class="form-label small" for="pet-solicitacao">Pet</label>
+                                            <select id="pet-solicitacao" name="pet_id" class="form-select">
                                                 <option value="">Selecione (opcional)</option>
                                                 <?php foreach ($meusPets as $pet): ?>
                                                     <option value="<?= (int) $pet['id'] ?>"><?= htmlspecialchars($pet['nome']) ?></option>
@@ -316,13 +346,13 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
                                     <?php endif; ?>
 
                                     <div class="grupo-form">
-                                        <label class="form-label small">Data desejada</label>
-                                        <input type="date" name="data_desejada" class="form-control">
+                                        <label class="form-label small" for="data-solicitada">Data desejada</label>
+                                        <input id="data-solicitada" type="date" name="data_desejada" class="form-control">
                                     </div>
 
                                     <div class="grupo-form">
-                                        <label class="form-label small">Período</label>
-                                        <select name="periodo" class="form-select">
+                                        <label class="form-label small" for="periodo-solicitado">Período</label>
+                                        <select id="periodo-solicitado" name="periodo" class="form-select">
                                             <option value="">Sem preferência</option>
                                             <option value="Manhã">Manhã</option>
                                             <option value="Tarde">Tarde</option>
@@ -331,8 +361,9 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
                                     </div>
 
                                     <div class="grupo-form">
-                                        <label class="form-label small">Mensagem</label>
-                                        <textarea name="mensagem" rows="3" class="form-control" placeholder="Conte um pouco sobre o que você precisa..."></textarea>
+                                        <label class="form-label small" for="mensagem-solicitacao">Mensagem</label>
+                                        <textarea id="mensagem-solicitacao" name="mensagem" rows="3" class="form-control"
+                                            placeholder="Conte um pouco sobre o que você precisa..."></textarea>
                                     </div>
 
                                     <button type="submit" class="btn btn-success w-100">Enviar solicitação</button>
@@ -362,7 +393,7 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
         © <?= date("Y") ?> EcoSistemPet
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
 </body>
 

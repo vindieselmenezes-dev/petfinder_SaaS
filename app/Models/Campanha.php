@@ -508,27 +508,4 @@ class Campanha
             ':parceiro_id' => $parceiroId,
         ]);
     }
-
-    /**
-     * Percentual da meta atingido (0 a 100). Devolve null quando a
-     * publicação não tem meta em dinheiro — aí a barra nem aparece.
-     */
-    public static function percentualMeta(?float $meta, ?float $arrecadado): ?int
-    {
-        if ($meta === null || $meta <= 0) {
-            return null;
-        }
-
-        return (int) min(100, round((($arrecadado ?? 0) / $meta) * 100));
-    }
-
-    public static function rotuloTipo(?string $tipo): string
-    {
-        return self::TIPOS[$tipo ?? '']['rotulo'] ?? 'Publicação';
-    }
-
-    public static function iconeTipo(?string $tipo): string
-    {
-        return self::TIPOS[$tipo ?? '']['icone'] ?? '🐾';
-    }
 }

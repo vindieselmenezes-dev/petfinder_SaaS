@@ -169,7 +169,7 @@ require_once __DIR__ . '/../app/Includes/menu.php';
                     <div class="numero"><?= $resumoParceiros['campanhas']; ?></div>
                 </a>
 
-                <?php if (count($minhasParcerias) > 0): ?>
+                <?php if (!empty($minhasParcerias)): ?>
                     <a href="<?= Url::pagina('painel_parceiro.php') ?>" class="card">
                         <div class="icone">🤝</div>
                         <h3>Painel do Parceiro</h3>

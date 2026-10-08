@@ -95,7 +95,7 @@ require_once "../../app/Includes/menu.php";
         </thead>
         <tbody>
 
-            <?php if (count($vendas) > 0): ?>
+            <?php if (!empty($vendas)): ?>
 
                 <?php foreach ($vendas as $venda): ?>
                     <tr>

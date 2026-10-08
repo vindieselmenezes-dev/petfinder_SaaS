@@ -13,7 +13,7 @@ $usuarioId  = Auth::id();
 $petId = (int) ($_GET["id"] ?? 0);
 
 if ($petId <= 0) {
-    header('Location: ' . Url::pagina('meus_pets.php'));
+    Url::redirecionar(Url::pagina('meus_pets.php'));
     exit;
 }
 
@@ -21,7 +21,7 @@ $pet = $controller->buscarPorId($petId);
 
 if (!$pet || (int) $pet['usuario_id'] !== $usuarioId) {
     Flash::erro("Pet não encontrado ou você não tem permissão.");
-    header('Location: ' . Url::pagina('meus_pets.php'));
+    Url::redirecionar(Url::pagina('meus_pets.php'));
     exit;
 }
 
@@ -33,5 +33,5 @@ $stmt->execute([$petId]);
 
 Flash::sucesso("Que ótima notícia! " . htmlspecialchars($pet['nome']) . " foi marcado como recuperado.");
 
-header('Location: ' . Url::pagina('meus_pets.php'));
+Url::redirecionar(Url::pagina('meus_pets.php'));
 exit;

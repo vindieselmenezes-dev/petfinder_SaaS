@@ -3,39 +3,39 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/bootstrap.php';
- 
-require_once __DIR__ . '/../../app/Models/Usuario.php'; 
+
+require_once __DIR__ . '/../../app/Models/Usuario.php';
 require_once __DIR__ . '/../../app/Helpers/EmpresaAcesso.php';
 require_once __DIR__ . '/../../app/Helpers/Csrf.php';
-$pdo = Database::conectar(); 
+$pdo = Database::conectar();
 
 
-if (!isset($_SESSION['usuario_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') { 
-    die("Acesso não autorizado."); 
-} 
+if (!isset($_SESSION['usuario_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+    die("Acesso não autorizado.");
+}
 
-if (!Csrf::validar($_POST['csrf_token'] ?? null)) { 
-    die("Erro: token de segurança inválido ou expirado. Atualize a página e tente novamente."); 
-} 
+if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
+    die("Erro: token de segurança inválido ou expirado. Atualize a página e tente novamente.");
+}
 
-$empresaId    = (int)($_POST['empresa_id'] ?? 0); 
-$prontuarioId = (int)($_POST['prontuario_id'] ?? 0); 
-$diagnostico  = trim($_POST['diagnostico'] ?? ""); 
-$tratamento   = trim($_POST['tratamento'] ?? ""); 
+$empresaId    = (int)($_POST['empresa_id'] ?? 0);
+$prontuarioId = (int)($_POST['prontuario_id'] ?? 0);
+$diagnostico  = trim($_POST['diagnostico'] ?? "");
+$tratamento   = trim($_POST['tratamento'] ?? "");
 $medicamentos = trim($_POST['medicamentos'] ?? "");
 $recomendacoes = trim($_POST['recomendacoes'] ?? "");
-$usuarioId    = (int)$_SESSION['usuario_id']; 
+$usuarioId    = (int)$_SESSION['usuario_id'];
 
-if (empty($diagnostico) || $prontuarioId === 0 || $empresaId === 0) { 
-    die("Erro: Dados incompletos para processar a retificação."); 
-} 
+if (empty($diagnostico) || $prontuarioId === 0 || $empresaId === 0) {
+    die("Erro: Dados incompletos para processar a retificação.");
+}
 
 if (!EmpresaAcesso::temAcesso($pdo, $empresaId, $usuarioId, ['proprietario', 'administrador', 'veterinario'])) {
     die("Erro: você não tem permissão pra retificar prontuários nesta empresa.");
 }
 
-try { 
-    $pdo->beginTransaction(); 
+try {
+    $pdo->beginTransaction();
 
     // 1. Busca o prontuário original, confirmando que pertence a essa empresa
     $stmtAntigo = $pdo->prepare("
@@ -48,7 +48,7 @@ try {
     $prontuarioAntigo = $stmtAntigo->fetch(PDO::FETCH_ASSOC);
 
     if (!$prontuarioAntigo) {
-        throw new Exception("Prontuário original não encontrado ou não pertence a esta empresa.");
+        throw new RegistroNaoEncontradoException("Prontuário original não encontrado ou não pertence a esta empresa.");
     }
 
     // 2. IMUTABILIDADE DE VERDADE: insere uma NOVA linha em vez de sobrescrever
@@ -71,20 +71,19 @@ try {
     // 3. Trilha de auditoria, guardando o que era antes
     $payloadAnterior = "Retificação do prontuário #$prontuarioId. Diagnóstico anterior: " . ($prontuarioAntigo['diagnostico'] ?? '');
     $stmtAudit = $pdo->prepare("
-        INSERT INTO auditoria (usuario_id, tabela, acao, registro_id, detalhes) 
+        INSERT INTO auditoria (usuario_id, tabela, acao, registro_id, detalhes)
         VALUES (?, 'prontuarios', 'UPDATE', ?, ?)
-    "); 
-    $stmtAudit->execute([$usuarioId, $novoProntuarioId, $payloadAnterior]); 
+    ");
+    $stmtAudit->execute([$usuarioId, $novoProntuarioId, $payloadAnterior]);
 
-    $pdo->commit(); 
+    $pdo->commit();
 
     echo "<script>
-        alert('Registro clínico retificado com sucesso! O original foi preservado e uma nova versão foi anexada.'); 
+        alert('Registro clínico retificado com sucesso! O original foi preservado e uma nova versão foi anexada.');
         window.location.href='" . Url::pagina('painel_b2b.php') . "?empresa_id=" . $empresaId . "';
-    </script>"; 
+    </script>";
 
-} catch (Exception $e) { 
-    $pdo->rollBack(); 
-    die("Erro crítico ao retificar prontuário: " . $e->getMessage()); 
+} catch (Exception $e) {
+    $pdo->rollBack();
+    die("Erro crítico ao retificar prontuário: " . $e->getMessage());
 }
-?>

@@ -169,19 +169,22 @@ $statusRotulos = [
 
                                 <div class="row g-2">
                                     <div class="col-md-4">
-                                        <label class="form-label small">Quem vai atender</label>
-                                        <input type="text" name="profissional_responsavel" class="form-control form-control-sm"
-                                            placeholder="Ex: Ana (tosadora)">
+                                        <label class="form-label small" for="profissional-<?= (int) $s['id'] ?>">Quem vai
+                                            atender</label>
+                                        <input id="profissional-<?= (int) $s['id'] ?>" type="text" name="profissional_responsavel"
+                                            class="form-control form-control-sm" placeholder="Ex: Ana (tosadora)">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label small">Data e hora confirmadas</label>
-                                        <input type="datetime-local" name="data_hora_confirmada"
-                                            class="form-control form-control-sm">
+                                        <label class="form-label small" for="confirmacao-data-<?= (int) $s['id'] ?>">Data e hora
+                                            confirmadas</label>
+                                        <input id="confirmacao-data-<?= (int) $s['id'] ?>" type="datetime-local"
+                                            name="data_hora_confirmada" class="form-control form-control-sm">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label small">Recado para o tutor</label>
-                                        <input type="text" name="observacoes_empresa" class="form-control form-control-sm"
-                                            placeholder="Ex: Buscamos o pet às 14h">
+                                        <label class="form-label small" for="recado-tutor-<?= (int) $s['id'] ?>">Recado para o
+                                            tutor</label>
+                                        <input id="recado-tutor-<?= (int) $s['id'] ?>" type="text" name="observacoes_empresa"
+                                            class="form-control form-control-sm" placeholder="Ex: Buscamos o pet às 14h">
                                     </div>
                                 </div>
 

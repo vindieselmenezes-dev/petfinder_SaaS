@@ -14,7 +14,7 @@ if ($empresaIdLegada > 0) {
 }
 
 if (in_array($categoriaIdLegada, [4, 5, 6, 7], true)) {
-    header('Location: ' . Url::pagina('pedir_servico.php') . '?categoria_id=' . $categoriaIdLegada, true, 302);
+    Url::redirecionar(Url::pagina('pedir_servico.php') . '?categoria_id=' . $categoriaIdLegada, true, 302);
     exit;
 }
 
@@ -25,7 +25,7 @@ if (!isset($_SESSION["usuario_id"])) {
     if ($empresaIdParaRetorno > 0) {
         $voltar .= '?empresa_id=' . $empresaIdParaRetorno;
     }
-    header('Location: ' . Url::pagina('login.php') . '?' . http_build_query(['voltar' => $voltar]));
+    Url::redirecionar(Url::pagina('login.php') . '?' . http_build_query(['voltar' => $voltar]));
     exit;
 }
 
@@ -82,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($novoId !== false) {
             Flash::sucesso("Pedido enviado! A empresa vai confirmar em breve.");
-            header('Location: ' . Url::pagina('minhas_solicitacoes_empresa.php'));
+            Url::redirecionar(Url::pagina('minhas_solicitacoes_empresa.php'));
             exit;
         }
 

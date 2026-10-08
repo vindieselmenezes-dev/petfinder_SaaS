@@ -63,8 +63,8 @@ function renderizarCardEmpresa(array $empresa, int $categoriaId): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotelzinho para Cães e Pets - EcoSistemPet</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
     <link rel="stylesheet" href="../../assets/css/style.css">
     <style>
         .banner-hotel-frame {
@@ -90,7 +90,7 @@ function renderizarCardEmpresa(array $empresa, int $categoriaId): string
         <button type="button"
             onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}"
             style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;"
-            aria-label="Voltar para a página anterior">← Voltar</button>
+            aria-label="← Voltar para a página anterior">← Voltar</button>
     </div>
 
     <header class="border-bottom py-3 mb-4">
@@ -119,20 +119,20 @@ function renderizarCardEmpresa(array $empresa, int $categoriaId): string
 
             <div class="row g-4 mb-5 text-center">
                 <div class="col-md-4">
-                    <img src="../../assets/img/servicos/hotelzinho-suite.jpg" class="rounded-3 mb-2"
+                    <img src="../../assets/img/servicos/hotelzinho-suite.jpg" alt="Suíte do hotelzinho" class="rounded-3 mb-2"
                         style="height:160px;width:100%;object-fit:cover;">
                     <h5>Suítes confortáveis</h5>
                     <p class="text-muted small">Espaços individuais e higienizados, pensados pro conforto do seu pet.
                     </p>
                 </div>
                 <div class="col-md-4">
-                    <img src="../../assets/img/servicos/hotelzinho-recreacao.jpg" class="rounded-3 mb-2"
+                    <img src="../../assets/img/servicos/hotelzinho-recreacao.jpg" alt="Área de recreação do hotelzinho" class="rounded-3 mb-2"
                         style="height:160px;width:100%;object-fit:cover;">
                     <h5>Área de recreação</h5>
                     <p class="text-muted small">Espaço livre pra brincar e gastar energia com outros pets.</p>
                 </div>
                 <div class="col-md-4">
-                    <img src="../../assets/img/servicos/hotelzinho-suites.webp" class="rounded-3 mb-2"
+                    <img src="../../assets/img/servicos/hotelzinho-suites.webp" alt="Hotelzinho com acompanhamento 24 horas" class="rounded-3 mb-2"
                         style="height:160px;width:100%;object-fit:cover;">
                     <h5>Acompanhamento 24h</h5>
                     <p class="text-muted small">Equipe disponível o dia inteiro pra cuidar de alimentação e bem-estar.
@@ -174,7 +174,7 @@ function renderizarCardEmpresa(array $empresa, int $categoriaId): string
         © <?= date("Y") ?> EcoSistemPet
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
 </body>
 

@@ -83,7 +83,7 @@ require_once "../../app/Includes/menu.php";
 
         <tbody>
 
-            <?php if (count($produtos) > 0): ?>
+            <?php if (!empty($produtos)): ?>
 
                 <?php foreach ($produtos as $produto): ?>
 

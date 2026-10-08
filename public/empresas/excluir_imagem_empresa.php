@@ -14,6 +14,7 @@ if (!isset($_SESSION["usuario_id"])) {
 require_once "../../app/Controllers/EmpresaController.php";
 
 $controller = new EmpresaController();
+$galeriaController = new EmpresaGaleriaController();
 $usuarioId  = (int) $_SESSION["usuario_id"];
 
 $empresaId = (int) ($_GET["empresa_id"] ?? 0);
@@ -28,7 +29,7 @@ $imagemId  = (int) ($_GET["imagem_id"] ?? 0);
 $empresa = $controller->buscarPorId($empresaId);
 
 if ($empresa !== null && (int) $empresa["usuario_id"] === $usuarioId) {
-    $controller->excluirImagemGaleria($imagemId, $empresaId);
+    $galeriaController->excluirImagemGaleria($imagemId, $empresaId);
 }
 
 header("Location: editar_empresa.php?id=" . $empresaId);

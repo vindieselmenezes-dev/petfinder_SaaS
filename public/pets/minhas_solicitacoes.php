@@ -25,12 +25,10 @@ if (isset($_GET['enviado'])) {
     $tipoMensagem = 'sucesso';
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancelar_id'])) {
-    if (Csrf::validar($_POST['csrf_token'] ?? null)) {
-        $resultado = $controller->cancelar((int) $_POST['cancelar_id'], $usuarioId);
-        $mensagem = $resultado['sucesso'] ? 'Solicitação cancelada.' : $resultado['erro'];
-        $tipoMensagem = $resultado['sucesso'] ? 'sucesso' : 'erro';
-    }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancelar_id']) && Csrf::validar($_POST['csrf_token'] ?? null)) {
+    $resultado = $controller->cancelar((int) $_POST['cancelar_id'], $usuarioId);
+    $mensagem = $resultado['sucesso'] ? 'Solicitação cancelada.' : $resultado['erro'];
+    $tipoMensagem = $resultado['sucesso'] ? 'sucesso' : 'erro';
 }
 
 $solicitacoes = $controller->listarEnviadas($usuarioId);
@@ -57,12 +55,12 @@ $corStatus = [
         <div class="mensagem <?= $tipoMensagem; ?>"><?= htmlspecialchars($mensagem); ?></div>
     <?php endif; ?>
 
-    <?php if (count($solicitacoes) > 0): ?>
+    <?php if (!empty($solicitacoes)): ?>
         <?php foreach ($solicitacoes as $s): ?>
             <div class="org-item" style="display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; align-items:center; gap:12px;">
                     <?php if (Foto::existe($s['pet_foto'], 'pets')): ?>
-                        <img src="<?= htmlspecialchars(Foto::url($s['pet_foto'], 'pets')) ?>" width="50" height="50" style="border-radius:50%; object-fit:cover;">
+                        <img src="<?= htmlspecialchars(Foto::url($s['pet_foto'], 'pets')) ?>" width="50" height="50" alt="Foto de <?= htmlspecialchars((string) $s['pet_nome']) ?>" style="border-radius:50%; object-fit:cover;">
                     <?php else: ?>
                         <div style="width:50px; height:50px; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center;">🐶</div>
                     <?php endif; ?>

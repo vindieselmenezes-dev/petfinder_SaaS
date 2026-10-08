@@ -13,36 +13,25 @@ require_once __DIR__ . '/../Models/Pet.php';
 
 class PetController
 {
+    private const STATUS_COM_TUTOR = 'Com Tutor';
+    private const STATUS_PARA_ADOCAO = 'Para Adoção';
+
     /**
      * Status válidos para um pet
      */
     private const STATUS_VALIDOS = [
-        "Com Tutor",
+        self::STATUS_COM_TUTOR,
         "Perdido",
         "Encontrado",
-        "Para Adoção",
+        self::STATUS_PARA_ADOCAO,
         "Adotado"
-    ];
-
-    /**
-     * Tamanho máximo permitido por imagem (em bytes) - 5 MB
-     */
-    private const TAMANHO_MAX_IMAGEM = 5 * 1024 * 1024;
-
-    /**
-     * Tipos MIME realmente aceitos (confirmados pelo conteúdo do arquivo,
-     * não pela extensão do nome)
-     */
-    private const MIME_PERMITIDOS = [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
     ];
 
     /**
      * Model
      */
     private Pet $pet;
+    private PetImagem $imagem;
 
     /**
      * Construtor
@@ -50,6 +39,7 @@ class PetController
     public function __construct()
     {
         $this->pet = new Pet();
+        $this->imagem = new PetImagem();
     }
 
     /**
@@ -71,113 +61,6 @@ class PetController
     public function listarRacas(int $especieId): array
     {
         return $this->pet->listarRacas($especieId);
-    }
-
-    /**
-     * Verifica se um arquivo enviado é realmente uma imagem válida,
-     * lendo o conteúdo real do arquivo (não confiando no nome/extensão)
-     */
-    private function arquivoEhImagemValida(string $caminhoTemporario, int $tamanho): bool
-    {
-        if ($tamanho <= 0 || $tamanho > self::TAMANHO_MAX_IMAGEM) {
-            return false;
-        }
-
-        // getimagesize() lê o cabeçalho real do arquivo - se não for uma
-        // imagem de verdade (mesmo que tenha nome "foto.jpg"), retorna false
-        $infoImagem = @getimagesize($caminhoTemporario);
-
-        if ($infoImagem === false) {
-            return false;
-        }
-
-        $mimeReal = $infoImagem['mime'] ?? '';
-
-        if (!in_array($mimeReal, self::MIME_PERMITIDOS, true)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Processa uploads de múltiplas fotos de um pet.
-     * A primeira imagem válida vira a foto principal do pet,
-     * enquanto as demais são armazenadas na galeria adicional.
-     */
-    public function processarImagensUpload(array $arquivos, string $fotoAtual = "sem-foto.png"): array
-    {
-        $permitidas = ["jpg", "jpeg", "png", "webp"];
-        $imagensExtras = [];
-        $foto = $fotoAtual !== "" ? $fotoAtual : "sem-foto.png";
-
-        $diretorio = dirname(__DIR__, 2) . "/uploads/pets";
-
-        if (!is_dir($diretorio)) {
-            mkdir($diretorio, 0777, true);
-        }
-
-        $arquivosParaProcessar = [];
-
-        if (isset($arquivos["name"])) {
-            if (is_array($arquivos["name"])) {
-                foreach ($arquivos["name"] as $index => $nomeArquivo) {
-                    if (($arquivos["error"][$index] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
-                        continue;
-                    }
-
-                    $arquivosParaProcessar[] = [
-                        "name" => $nomeArquivo,
-                        "tmp_name" => $arquivos["tmp_name"][$index] ?? "",
-                        "error" => $arquivos["error"][$index] ?? UPLOAD_ERR_NO_FILE,
-                        "size" => (int) ($arquivos["size"][$index] ?? 0),
-                    ];
-                }
-            } elseif (($arquivos["error"] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
-                $arquivosParaProcessar[] = [
-                    "name" => $arquivos["name"] ?? "",
-                    "tmp_name" => $arquivos["tmp_name"] ?? "",
-                    "error" => $arquivos["error"] ?? UPLOAD_ERR_NO_FILE,
-                    "size" => (int) ($arquivos["size"] ?? 0),
-                ];
-            }
-        }
-
-        $fotoPrincipalDefinida = ($foto !== "sem-foto.png" && $foto !== "" && $foto !== null);
-
-        foreach ($arquivosParaProcessar as $arquivo) {
-            $extensao = strtolower(pathinfo($arquivo["name"], PATHINFO_EXTENSION));
-
-            // 1ª camada: extensão do nome (filtro rápido, mas não confiável sozinho)
-            if (!in_array($extensao, $permitidas, true)) {
-                continue;
-            }
-
-            // 2ª e 3ª camadas: tamanho real + conteúdo real do arquivo
-            // (garante que não é um arquivo malicioso disfarçado de imagem)
-            if (!$this->arquivoEhImagemValida($arquivo["tmp_name"], $arquivo["size"])) {
-                continue;
-            }
-
-            $novoNome = uniqid("pet_", true) . "." . $extensao;
-            $destino = $diretorio . "/" . $novoNome;
-
-            if (!ImagemUpload::salvar($arquivo["tmp_name"], $destino)) {
-                continue;
-            }
-
-            if (!$fotoPrincipalDefinida) {
-                $foto = $novoNome;
-                $fotoPrincipalDefinida = true;
-            } else {
-                $imagensExtras[] = $novoNome;
-            }
-        }
-
-        return [
-            "foto" => $foto,
-            "imagens" => $imagensExtras
-        ];
     }
 
     /**
@@ -216,7 +99,7 @@ class PetController
         $dados["cor"] = $dados["cor"] ?? "";
         $dados["status"] = in_array($dados["status"] ?? "", self::STATUS_VALIDOS, true)
             ? $dados["status"]
-            : "Com Tutor";
+            : self::STATUS_COM_TUTOR;
         $dados["peso"] = $dados["peso"] ?? null;
         $dados["altura"] = $dados["altura"] ?? null;
         $dados["data_nascimento"] = $dados["data_nascimento"] ?? null;
@@ -236,10 +119,8 @@ class PetController
             return false;
         }
 
-        if (!empty($imagens)) {
-            if (!$this->pet->salvarImagens($petId, array_values($imagens))) {
-                return false;
-            }
+        if (!empty($imagens) && !$this->imagem->salvarImagens($petId, array_values($imagens))) {
+            return false;
         }
 
         return true;
@@ -319,7 +200,7 @@ class PetController
         $dados["cor"] = $dados["cor"] ?? "";
         $dados["status"] = in_array($dados["status"] ?? "", self::STATUS_VALIDOS, true)
             ? $dados["status"]
-            : "Com Tutor";
+            : self::STATUS_COM_TUTOR;
         $dados["peso"] = $dados["peso"] ?? null;
         $dados["altura"] = $dados["altura"] ?? null;
         $dados["data_nascimento"] = $dados["data_nascimento"] ?? null;
@@ -335,7 +216,7 @@ class PetController
         }
 
         if (!empty($imagens)) {
-            return $this->pet->salvarImagens($id, $imagens);
+            return $this->imagem->salvarImagens($id, $imagens);
         }
 
         return true;
@@ -347,102 +228,6 @@ class PetController
     public function excluir(int $id, int $usuarioId): bool
     {
         return $this->pet->excluir($id, $usuarioId);
-    }
-
-    /**
-     * Busca pública de pets para adoção (sem exigir login)
-     */
-    public function buscarAdocaoPublico(
-        string $busca = '',
-        string $cidade = '',
-        int $especieId = 0,
-        int $racaId = 0,
-        string $sexo = '',
-        string $cor = '',
-        int $castrado = -1,
-        int $idadeMin = 0,
-        int $idadeMax = 0,
-        float $pesoMin = 0.0,
-        float $pesoMax = 0.0,
-        float $alturaMin = 0.0,
-        float $alturaMax = 0.0,
-        string $status = 'Para Adoção',
-        string $ordem = 'criado_em',
-        string $direcao = 'DESC',
-        int $pagina = 1,
-        int $porPagina = 0
-    ): array {
-        return $this->pet->buscarAdocaoPublico(
-            trim($busca),
-            trim($cidade),
-            $especieId,
-            $racaId,
-            trim($sexo),
-            trim($cor),
-            $castrado,
-            $idadeMin,
-            $idadeMax,
-            $pesoMin,
-            $pesoMax,
-            $alturaMin,
-            $alturaMax,
-            $status,
-            $ordem,
-            $direcao,
-            $pagina,
-            $porPagina
-        );
-    }
-
-    /**
-     * Conta quantos pets batem com os mesmos filtros de buscarAdocaoPublico()
-     * (usado para montar a paginação nas telas públicas).
-     */
-    public function contarAdocaoPublico(
-        string $busca = '',
-        string $cidade = '',
-        int $especieId = 0,
-        int $racaId = 0,
-        string $sexo = '',
-        string $cor = '',
-        int $castrado = -1,
-        int $idadeMin = 0,
-        int $idadeMax = 0,
-        float $pesoMin = 0.0,
-        float $pesoMax = 0.0,
-        float $alturaMin = 0.0,
-        float $alturaMax = 0.0,
-        string $status = 'Para Adoção'
-    ): int {
-        return $this->pet->contarAdocaoPublico(
-            trim($busca),
-            trim($cidade),
-            $especieId,
-            $racaId,
-            trim($sexo),
-            trim($cor),
-            $castrado,
-            $idadeMin,
-            $idadeMax,
-            $pesoMin,
-            $pesoMax,
-            $alturaMin,
-            $alturaMax,
-            $status
-        );
-    }
-
-    /**
-     * Busca imagens adicionais de um pet
-     */
-    public function buscarImagens(int $petId): array
-    {
-        return $this->pet->buscarImagens($petId);
-    }
-
-    public function excluirImagem(int $imagemId, int $petId): bool
-    {
-        return $this->pet->excluirImagem($imagemId, $petId);
     }
 
     /**
@@ -475,21 +260,6 @@ class PetController
         }
 
         return $this->pet->atualizarStatus($petId, $status, $usuarioId, $motivo);
-    }
-
-    public function buscarHistoricoStatus(int $petId): array
-    {
-        return $this->pet->buscarHistoricoStatus($petId);
-    }
-
-    public function registrarEventoHistorico(int $petId, string $tipo, string $descricao, ?string $detalhes = null, ?string $dataEvento = null, ?int $usuarioId = null): bool
-    {
-        return $this->pet->registrarEventoHistorico($petId, $tipo, $descricao, $detalhes, $dataEvento, $usuarioId);
-    }
-
-    public function buscarHistoricoCompleto(int $petId): array
-    {
-        return $this->pet->buscarHistoricoCompleto($petId);
     }
 
     public function transferirTutor(int $petId, int $novoTutorId): bool

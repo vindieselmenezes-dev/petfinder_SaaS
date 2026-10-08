@@ -52,7 +52,9 @@ class FavoritoProduto
 
     public function adicionar(int $usuarioId, int $produtoId): bool
     {
-        if ($this->existe($usuarioId, $produtoId)) return true;
+        if ($this->existe($usuarioId, $produtoId)) {
+            return true;
+        }
 
         $sql = "INSERT INTO produto_favoritos (usuario_id, produto_id) VALUES (:usuario_id, :produto_id)";
         $stmt = $this->pdo->prepare($sql);

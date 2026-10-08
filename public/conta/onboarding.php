@@ -66,12 +66,12 @@ $etapas = $isEmpresa
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Primeiros passos - EcoSistemPet</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 
 <body style="padding-top:38px;">
-    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="Voltar para a página anterior">← Voltar</button></div>
+    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="← Voltar para a página anterior">← Voltar</button></div>
     <main class="container py-5" style="max-width:760px">
         <h1>Primeiros passos</h1>
         <p class="lead">Vamos deixar sua experiência pronta para começar.</p>
@@ -82,12 +82,22 @@ $etapas = $isEmpresa
             <div class="progress-bar" style="width: <?= (int) (($etapaAtual / 3) * 100) ?>%"></div>
         </div>
         <ol class="list-group list-group-numbered mb-4">
-            <?php foreach ($etapas as $indice => $etapa): ?>
+            <?php foreach ($etapas as $indice => $etapa):
+                $classeEtapa = '';
+                $textoEtapa = '';
+                if ($indice < $etapaAtual) {
+                    $classeEtapa = 'list-group-item-success';
+                    $textoEtapa = 'Concluído';
+                } elseif ($indice === $etapaAtual) {
+                    $classeEtapa = 'list-group-item-primary';
+                    $textoEtapa = 'Em andamento';
+                }
+                ?>
                 <li
-                    class="list-group-item py-3 <?= $indice < $etapaAtual ? 'list-group-item-success' : ($indice === $etapaAtual ? 'list-group-item-primary' : '') ?>">
+                    class="list-group-item py-3 <?= $classeEtapa ?>">
                     <?= htmlspecialchars($etapa) ?>
                     <span
-                        class="float-end"><?= $indice < $etapaAtual ? 'Concluído' : ($indice === $etapaAtual ? 'Em andamento' : '') ?></span>
+                        class="float-end"><?= $textoEtapa ?></span>
                 </li>
             <?php endforeach; ?>
         </ol>
@@ -98,9 +108,9 @@ $etapas = $isEmpresa
             <input type="hidden" name="etapa" value="<?= $etapaAtual ?>">
             <?php if ($etapaAtual === 0): ?><a class="btn btn-outline-primary"
                     href="<?= $isEmpresa ? 'editar_empresa.php?id=' . $empresaId : 'meu_perfil.php' ?>">Completar
-                    etapa</a><?php elseif ($etapaAtual === 1): ?><a class="btn btn-outline-primary"
-                    href="<?= $isEmpresa ? 'cadastrar_produto.php?empresa_id=' . $empresaId : 'cadastrar_pet.php' ?>">Completar
-                    etapa</a><?php else: ?><a class="btn btn-outline-primary"
+                    perfil</a><?php elseif ($etapaAtual === 1): ?><a class="btn btn-outline-primary"
+                    href="<?= $isEmpresa ? 'cadastrar_produto.php?empresa_id=' . $empresaId : 'cadastrar_pet.php' ?>">Cadastrar
+                    <?= $isEmpresa ? 'produto' : 'pet' ?></a><?php else: ?><a class="btn btn-outline-primary"
                     href="<?= $isEmpresa ? 'painel_b2b.php?empresa_id=' . $empresaId : 'pets_adocao.php' ?>">Explorar</a><?php endif; ?>
             <button class="btn btn-primary"
                 type="submit"><?= $etapaAtual >= 2 ? 'Concluir onboarding' : 'Avançar etapa' ?></button>

@@ -6,6 +6,8 @@ require_once __DIR__ . '/../../config/database.php';
 
 class PedidoServico
 {
+    private const FORMATO_DATA_HORA = 'Y-m-d H:i:s';
+
     public const CATEGORIAS_SUPORTADAS = [4, 5, 6, 7];
 
     private PDO $pdo;
@@ -37,20 +39,11 @@ class PedidoServico
         }
 
         $petId = (int) ($dados['pet_id'] ?? 0) ?: null;
-        if ($petId !== null) {
-            $stmtPet = $this->pdo->prepare('SELECT id FROM pets WHERE id = :pet_id AND usuario_id = :usuario_id');
-            $stmtPet->execute([':pet_id' => $petId, ':usuario_id' => $usuarioId]);
-            if (!$stmtPet->fetchColumn()) {
-                return false;
-            }
+        if ($petId !== null && !$this->petPertenceAoUsuario($petId, $usuarioId)) {
+            return false;
         }
 
-        $destacadas = array_values(array_filter($empresas, static fn(array $empresa): bool => (bool) $empresa['destaque']));
-        $primeiraRodada = $destacadas !== [] ? $destacadas : $empresas;
-        $idsPrimeiraRodada = array_fill_keys(array_map(static fn(array $empresa): int => (int) $empresa['id'], $primeiraRodada), true);
-        $temSegundaRodada = $destacadas !== [] && count($destacadas) < count($empresas);
-        $statusInicial = $destacadas !== [] ? 'aguardando_destaques' : 'aguardando_demais';
-        $ampliarEm = $temSegundaRodada ? date('Y-m-d H:i:s', time() + 1800) : null;
+        [$primeiraRodada, $idsPrimeiraRodada, $statusInicial, $ampliarEm] = $this->planejarRodadas($empresas);
 
         try {
             $this->pdo->beginTransaction();
@@ -74,24 +67,7 @@ class PedidoServico
             ]);
             $pedidoId = (int) $this->pdo->lastInsertId();
 
-            $stmtEmpresa = $this->pdo->prepare("
-                INSERT INTO pedidos_servico_empresas
-                    (pedido_id, empresa_id, destaque, status, notificada_em)
-                VALUES
-                    (:pedido_id, :empresa_id, :destaque, :status, :notificada_em)
-            ");
-
-            foreach ($empresas as $empresa) {
-                $empresaId = (int) $empresa['id'];
-                $notificada = isset($idsPrimeiraRodada[$empresaId]);
-                $stmtEmpresa->execute([
-                    ':pedido_id' => $pedidoId,
-                    ':empresa_id' => $empresaId,
-                    ':destaque' => (int) $empresa['destaque'],
-                    ':status' => $notificada ? 'notificada' : 'aguardando',
-                    ':notificada_em' => $notificada ? date('Y-m-d H:i:s') : null,
-                ]);
-            }
+            $this->vincularEmpresasAoPedido($pedidoId, $empresas, $idsPrimeiraRodada);
 
             $this->pdo->commit();
         } catch (PDOException $e) {
@@ -106,6 +82,54 @@ class PedidoServico
             'id' => $pedidoId,
             'empresas_notificadas' => $primeiraRodada,
         ];
+    }
+
+    private function petPertenceAoUsuario(int $petId, int $usuarioId): bool
+    {
+        $stmtPet = $this->pdo->prepare('SELECT id FROM pets WHERE id = :pet_id AND usuario_id = :usuario_id');
+        $stmtPet->execute([':pet_id' => $petId, ':usuario_id' => $usuarioId]);
+
+        return (bool) $stmtPet->fetchColumn();
+    }
+
+    /**
+     * Define quem é notificado primeiro (empresas em destaque, se houver),
+     * o status inicial do pedido e quando ampliar para as demais.
+     *
+     * @return array{0: array, 1: array<int, bool>, 2: string, 3: ?string}
+     */
+    private function planejarRodadas(array $empresas): array
+    {
+        $destacadas = array_values(array_filter($empresas, static fn(array $empresa): bool => (bool) $empresa['destaque']));
+        $primeiraRodada = $destacadas !== [] ? $destacadas : $empresas;
+        $idsPrimeiraRodada = array_fill_keys(array_map(static fn(array $empresa): int => (int) $empresa['id'], $primeiraRodada), true);
+        $temSegundaRodada = $destacadas !== [] && count($destacadas) < count($empresas);
+        $statusInicial = $destacadas !== [] ? 'aguardando_destaques' : 'aguardando_demais';
+        $ampliarEm = $temSegundaRodada ? date(self::FORMATO_DATA_HORA, time() + 1800) : null;
+
+        return [$primeiraRodada, $idsPrimeiraRodada, $statusInicial, $ampliarEm];
+    }
+
+    private function vincularEmpresasAoPedido(int $pedidoId, array $empresas, array $idsPrimeiraRodada): void
+    {
+        $stmtEmpresa = $this->pdo->prepare("
+            INSERT INTO pedidos_servico_empresas
+                (pedido_id, empresa_id, destaque, status, notificada_em)
+            VALUES
+                (:pedido_id, :empresa_id, :destaque, :status, :notificada_em)
+        ");
+
+        foreach ($empresas as $empresa) {
+            $empresaId = (int) $empresa['id'];
+            $notificada = isset($idsPrimeiraRodada[$empresaId]);
+            $stmtEmpresa->execute([
+                ':pedido_id' => $pedidoId,
+                ':empresa_id' => $empresaId,
+                ':destaque' => (int) $empresa['destaque'],
+                ':status' => $notificada ? 'notificada' : 'aguardando',
+                ':notificada_em' => $notificada ? date(self::FORMATO_DATA_HORA) : null,
+            ]);
+        }
     }
 
     public function listarParaEmpresa(int $empresaId): array
@@ -167,7 +191,7 @@ class PedidoServico
         $dataHoraProposta = trim((string) ($dados['data_hora_proposta'] ?? ''));
         if ($dataHoraProposta !== '') {
             $dataHora = DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $dataHoraProposta);
-            if (!$dataHora || $dataHora->format('Y-m-d H:i:s') !== $dataHoraProposta || $dataHoraProposta < date('Y-m-d H:i:s')) {
+            if (!$dataHora || $dataHora->format(self::FORMATO_DATA_HORA) !== $dataHoraProposta || $dataHoraProposta < date(self::FORMATO_DATA_HORA)) {
                 return false;
             }
         }

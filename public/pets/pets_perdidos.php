@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/bootstrap.php';
- 
 
-require_once "../../app/Controllers/PetController.php"; 
-require_once "../../app/Models/Favorito.php"; 
 
-$controller = new PetController(); 
-$favoritoModel = new Favorito(); 
+require_once "../../app/Controllers/PetController.php";
+require_once "../../app/Models/Favorito.php";
+
+$controller = new PetController();
+$favoritoModel = new Favorito();
 
 $porPagina = 24;
 $pagina = max(1, (int) ($_GET['pagina'] ?? 1));
@@ -15,36 +15,36 @@ $pets = $controller->listarPorStatus("Perdido", $pagina, $porPagina);
 $totalPets = $controller->contarPorStatus("Perdido");
 $totalPaginas = (int) ceil($totalPets / $porPagina);
 
-require_once "../../app/Includes/header.php"; 
+require_once "../../app/Includes/header.php";
 if (isset($_SESSION['usuario_id'])) {
-    require_once "../../app/Includes/menu.php"; 
+    require_once "../../app/Includes/menu.php";
 }
 ?> 
 
 <!-- AJUSTE ESTRUTURAL MACRO -->
-<main class="container<?= isset($_SESSION['usuario_id']) ? '' : ' sem-sidebar' ?>" style="margin-top: 100px !important; padding: 20px !important; display: block !important;"> 
-    
-    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 40px auto 0 auto !important; position: relative !important; display: block !important;"> 
-        
-        <h1 style="color: #2c3e50; margin-bottom: 5px; font-family: sans-serif; font-weight: bold;">🔍 Pets Perdidos</h1> 
-        <p style="color: #7f8c8d; margin-bottom: 30px; font-family: sans-serif;">Mural comunitário de animais reportados como desaparecidos. Reconheceu algum? Entre em contato imediato.</p> 
+<main class="container<?= isset($_SESSION['usuario_id']) ? '' : ' sem-sidebar' ?>" style="margin-top: 100px !important; padding: 20px !important; display: block !important;">
 
-        <table class="tabela-pets tabela-cartao-mobile" style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); font-family: sans-serif;"> 
-            <thead> 
-                <tr style="background: #34495e; color: white; text-align: left;"> 
-                    <th style="padding: 15px; text-align: center; width: 100px;">Foto</th> 
-                    <th style="padding: 15px;">Nome</th> 
-                    <th style="padding: 15px;">Espécie / Raça</th> 
-                    <th style="padding: 15px;">Cidade</th> 
-                    <th style="padding: 15px; text-align: center;">Ações</th> 
-                </tr> 
-            </thead> 
-            <tbody> 
-                <?php if (count($pets) > 0): ?> 
+    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 40px auto 0 auto !important; position: relative !important; display: block !important;">
+
+        <h1 style="color: #2c3e50; margin-bottom: 5px; font-family: sans-serif; font-weight: bold;">🔍 Pets Perdidos</h1>
+        <p style="color: #7f8c8d; margin-bottom: 30px; font-family: sans-serif;">Mural comunitário de animais reportados como desaparecidos. Reconheceu algum? Entre em contato imediato.</p>
+
+        <table class="tabela-pets tabela-cartao-mobile" style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); font-family: sans-serif;">
+            <thead>
+                <tr style="background: #34495e; color: white; text-align: left;">
+                    <th style="padding: 15px; text-align: center; width: 100px;">Foto</th>
+                    <th style="padding: 15px;">Nome</th>
+                    <th style="padding: 15px;">Espécie / Raça</th>
+                    <th style="padding: 15px;">Cidade</th>
+                    <th style="padding: 15px; text-align: center;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($pets)): ?> 
                     <?php foreach ($pets as $pet): ?> 
-                        <tr style="border-bottom: 1px solid #eaeaea;"> 
-                            <td data-col="foto" style="padding: 15px; text-align: center;"> 
-                                <?php 
+                        <tr style="border-bottom: 1px solid #eaeaea;">
+                            <td data-col="foto" style="padding: 15px; text-align: center;">
+                                <?php
                                 // Se a imagem existir, mostra a foto; senão, mostra o emoji 🐾
                                 if (Foto::existe($pet['foto'], 'pets')) {
                                     $caminhoFoto = Foto::url($pet['foto'], 'pets');
@@ -53,40 +53,40 @@ if (isset($_SESSION['usuario_id'])) {
                                     echo '<div style="width: 55px; height: 55px; background: #e2e8f0; border-radius: 50%; border: 2px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 20px; font-weight: bold;">🐾</div>';
                                 }
                                 ?> 
-                            </td> 
-                            <td data-col="nome" style="padding: 15px; font-weight: bold; color: #333;"> 
+                            </td>
+                            <td data-col="nome" style="padding: 15px; font-weight: bold; color: #333;">
                                 <?= htmlspecialchars($pet["nome"] ?? 'Sem Nome'); ?> 
-                            </td> 
-                            <td data-col="especie" data-th="Espécie / Raça" style="padding: 15px; color: #555;"> 
+                            </td>
+                            <td data-col="especie" data-th="Espécie / Raça" style="padding: 15px; color: #555;">
                                 <?= htmlspecialchars($pet["especie_nome"] ?? 'Não informada'); ?> 
-                                <br><small style="color: #999;"><?= htmlspecialchars($pet["raca_nome"] ?? 'Mestiço / Vira-lata'); ?></small> 
-                            </td> 
-                            <td data-col="cidade" data-th="Cidade" style="padding: 15px; color: #777;"> 
+                                <br><small style="color: #999;"><?= htmlspecialchars($pet["raca_nome"] ?? 'Mestiço / Vira-lata'); ?></small>
+                            </td>
+                            <td data-col="cidade" data-th="Cidade" style="padding: 15px; color: #777;">
                                 📍 <?= htmlspecialchars($pet["cidade"] ?? 'Não informada'); ?> 
-                            </td> 
-                            <td data-col="acoes" style="padding: 15px; text-align: center; white-space: nowrap;"> 
+                            </td>
+                            <td data-col="acoes" style="padding: 15px; text-align: center; white-space: nowrap;">
                                 <a href="pet.php?id=<?= (int) $pet['id']; ?>" style="display: inline-block; background: #3498db; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-bottom: 4px;">👁️ Ver Perfil</a>
                                 <?php if (isset($_SESSION['usuario_id'])): ?>
                                     <?php if ($favoritoModel->existe((int) $_SESSION['usuario_id'], (int) $pet['id'])): ?> 
-                                        <a href="favoritar.php?pet_id=<?= (int) $pet['id']; ?>&acao=remover" style="display: inline-block; background: #e74c3c; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">⭐ Remover</a> 
+                                        <a href="favoritar.php?pet_id=<?= (int) $pet['id']; ?>&acao=remover" style="display: inline-block; background: #e74c3c; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">⭐ Remover</a>
                                     <?php else: ?> 
-                                        <a href="favoritar.php?pet_id=<?= (int) $pet['id']; ?>&acao=adicionar" style="display: inline-block; background: #f39c12; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">☆ Favoritar</a> 
+                                        <a href="favoritar.php?pet_id=<?= (int) $pet['id']; ?>&acao=adicionar" style="display: inline-block; background: #f39c12; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">☆ Favoritar</a>
                                     <?php endif; ?>
                                 <?php else: ?>
                                     <a href="<?= Url::pagina('login.php') ?>" style="display: inline-block; background: #7f8c8d; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">Entrar pra favoritar</a>
                                 <?php endif; ?>
-                            </td> 
-                        </tr> 
+                            </td>
+                        </tr>
                     <?php endforeach; ?> 
                 <?php else: ?> 
-                    <tr> 
-                        <td colspan="5" style="padding: 30px; text-align: center; color: #95a5a6; font-style: italic;">Nenhum pet perdido reportado no momento. 🎉</td> 
-                    </tr> 
+                    <tr>
+                        <td colspan="5" style="padding: 30px; text-align: center; color: #95a5a6; font-style: italic;">Nenhum pet perdido reportado no momento. 🎉</td>
+                    </tr>
                 <?php endif; ?> 
-            </tbody> 
+            </tbody>
         </table>
         <?= Paginador::renderizar($pagina, $totalPaginas) ?>
-    </div> 
-</main> 
+    </div>
+</main>
 
 <?php require_once "../../app/Includes/footer.php"; ?>

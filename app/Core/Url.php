@@ -150,8 +150,18 @@ final class Url
         'vitrine.php' => 'loja',
     ];
 
+    /**
+     * Envia o cabeçalho de redirecionamento (HTTP Location).
+     * Quem chama continua responsável por encerrar o script (exit).
+     */
+    public static function redirecionar(string $destino): void
+    {
+        header('Location: ' . $destino);
+    }
+
     private function __construct()
     {
+        // Classe utilitária (apenas métodos estáticos): não deve ser instanciada.
     }
 
     /**

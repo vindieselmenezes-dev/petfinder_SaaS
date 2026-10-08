@@ -10,6 +10,7 @@ require_once '../../app/Controllers/PetController.php';
 require_once '../../app/Models/Favorito.php';
 
 $controller = new PetController();
+$buscaController = new PetBuscaController();
 $favoritoModel = new Favorito();
 
 // ==========================================================
@@ -24,21 +25,21 @@ $status = 'Para Adoção';
 $porPagina = 24;
 $pagina = max(1, (int) ($_GET['pagina'] ?? 1));
 
-$pets = $controller->buscarAdocaoPublico(
-    cidade: $cidade,
-    especieId: $especieId,
-    racaId: $racaId,
-    status: $status,
-    pagina: $pagina,
-    porPagina: $porPagina
-);
+$pets = $buscaController->buscarAdocaoPublico([
+    'cidade' => $cidade,
+    'especieId' => $especieId,
+    'racaId' => $racaId,
+    'status' => $status,
+    'pagina' => $pagina,
+    'porPagina' => $porPagina,
+]);
 
-$totalPets = $controller->contarAdocaoPublico(
-    cidade: $cidade,
-    especieId: $especieId,
-    racaId: $racaId,
-    status: $status
-);
+$totalPets = $buscaController->contarAdocaoPublico([
+    'cidade' => $cidade,
+    'especieId' => $especieId,
+    'racaId' => $racaId,
+    'status' => $status,
+]);
 $totalPaginas = (int) ceil($totalPets / $porPagina);
 
 $especies = $controller->listarEspecies();
@@ -118,7 +119,7 @@ if (isset($_SESSION['usuario_id'])) {
         <p style="color:#7f8c8d;"><?= $totalPets; ?> pet(s) encontrado(s)</p>
 
         <!-- RESULTADOS -->
-        <?php if (count($pets) > 0): ?>
+        <?php if (!empty($pets)): ?>
             <table class="tabela-pets">
                 <thead>
                     <tr>
@@ -136,6 +137,7 @@ if (isset($_SESSION['usuario_id'])) {
                             <td>
                                 <?php if (Foto::existe($pet['foto'], 'pets')): ?>
                                     <img src="<?= htmlspecialchars(Foto::url($pet['foto'], 'pets')) ?>" width="45" height="45"
+                                        alt="Foto de <?= htmlspecialchars((string) $pet['nome']) ?>"
                                         style="border-radius:50%; object-fit:cover;">
                                 <?php else: ?>
                                     <div

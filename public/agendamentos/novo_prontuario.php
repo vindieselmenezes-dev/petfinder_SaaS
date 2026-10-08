@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/bootstrap.php';
- 
-require_once __DIR__ . '/../../app/Models/Usuario.php'; 
+
+require_once __DIR__ . '/../../app/Models/Usuario.php';
 require_once __DIR__ . '/../../app/Models/Veterinario.php';
 require_once __DIR__ . '/../../app/Controllers/ConsultaController.php';
 require_once __DIR__ . '/../../app/Helpers/EmpresaAcesso.php';
 require_once __DIR__ . '/../../app/Helpers/Csrf.php';
-$pdo = Database::conectar(); 
+$pdo = Database::conectar();
 
 
-if (!isset($_SESSION['usuario_id']) || !isset($_GET['empresa_id'])) { 
-    header('Location: ' . Url::pagina('login.php')); 
-    exit(); 
-} 
+if (!isset($_SESSION['usuario_id']) || !isset($_GET['empresa_id'])) {
+    header('Location: ' . Url::pagina('login.php'));
+    exit();
+}
 
 $empresaId = (int)$_GET['empresa_id'];
 $usuarioId = (int)$_SESSION['usuario_id'];
@@ -70,8 +70,8 @@ if ($consultaVinculada && !empty($consultaVinculada['pet_id'])) {
 }
 $pets = $stmtPets->fetchAll();
 
-include __DIR__ . '/../../app/Includes/header.php'; 
-include __DIR__ . '/../../app/Includes/menu.php';
+include_once __DIR__ . '/../../app/Includes/header.php';
+include_once __DIR__ . '/../../app/Includes/menu.php';
 ?>
 
 <main class="conteudo">
@@ -177,6 +177,6 @@ include __DIR__ . '/../../app/Includes/menu.php';
 </div>
 </main>
 
-<?php 
-include __DIR__ . '/../../app/Includes/footer.php'; 
+<?php
+include_once __DIR__ . '/../../app/Includes/footer.php';
 ?>

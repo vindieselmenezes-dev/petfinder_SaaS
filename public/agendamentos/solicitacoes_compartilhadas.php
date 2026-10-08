@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../app/bootstrap.php';
 
 if (!Auth::check()) {
-    header('Location: ' . Url::pagina('login.php'));
+    Url::redirecionar(Url::pagina('login.php'));
     exit;
 }
 
@@ -17,7 +17,7 @@ require_once __DIR__ . '/../../app/Helpers/Csrf.php';
 $empresaId = (int) ($_GET['empresa_id'] ?? $_POST['empresa_id'] ?? 0);
 $pdo = Database::conectar();
 if (!EmpresaAcesso::temAcesso($pdo, $empresaId, Auth::id(), ['proprietario', 'administrador', 'atendente'])) {
-    header('Location: ' . Url::pagina('dashboard.php'));
+    Url::redirecionar(Url::pagina('dashboard.php'));
     exit;
 }
 
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($sucesso) {
             Flash::sucesso('Orçamento enviado ao tutor.');
-            header('Location: ' . Url::pagina('solicitacoes_compartilhadas.php') . '?empresa_id=' . $empresaId);
+            Url::redirecionar(Url::pagina('solicitacoes_compartilhadas.php') . '?empresa_id=' . $empresaId);
             exit;
         }
         $mensagem = 'Não foi possível enviar o orçamento. Informe um valor válido e tente novamente.';

@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 
 
 if (!isset($_SESSION['usuario_id'])) {
-    header('Location: ' . Url::pagina('login.php'));
+    Url::redirecionar(Url::pagina('login.php'));
     exit;
 }
 
@@ -23,7 +23,7 @@ $petId = (int) ($_GET['pet_id'] ?? 0);
 $pet = $petController->buscarPorId($petId);
 
 if (!$pet) {
-    header('Location: ' . Url::pagina('pets_adocao.php'));
+    Url::redirecionar(Url::pagina('pets_adocao.php'));
     exit;
 }
 
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $resultado = $solicitacaoController->solicitar($petId, $usuarioId, $_POST['mensagem'] ?? '');
 
         if ($resultado['sucesso']) {
-            header('Location: ' . Url::pagina('minhas_solicitacoes.php') . '?enviado=1');
+            Url::redirecionar(Url::pagina('minhas_solicitacoes.php') . '?enviado=1');
             exit;
         }
 
@@ -67,7 +67,7 @@ require_once '../../app/Includes/menu.php';
     <div class="formulario-cadastro">
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:15px;">
             <?php if (Foto::existe($pet['foto'], 'pets')): ?>
-                <img src="<?= htmlspecialchars(Foto::url($pet['foto'], 'pets')) ?>" width="60" height="60" style="border-radius:50%; object-fit:cover;">
+                <img src="<?= htmlspecialchars(Foto::url($pet['foto'], 'pets')) ?>" width="60" height="60" alt="Foto de <?= htmlspecialchars((string) $pet['nome']) ?>" style="border-radius:50%; object-fit:cover;">
             <?php else: ?>
                 <div style="width:60px; height:60px; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:26px;">🐶</div>
             <?php endif; ?>

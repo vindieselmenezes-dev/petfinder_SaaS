@@ -13,19 +13,13 @@ require_once __DIR__ . '/../Models/Produto.php';
 
 class ProdutoController
 {
-    private const TAMANHO_MAX_IMAGEM = 5 * 1024 * 1024;
-
-    private const MIME_PERMITIDOS = [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-    ];
-
     private Produto $produto;
+    private ProdutoEstoque $estoque;
 
     public function __construct()
     {
         $this->produto = new Produto();
+        $this->estoque = new ProdutoEstoque();
     }
 
     public function listarSubcategorias(): array
@@ -39,86 +33,11 @@ class ProdutoController
     }
 
     /**
-     * Verifica se um arquivo enviado é realmente uma imagem válida
-     */
-    private function arquivoEhImagemValida(string $caminhoTemporario, int $tamanho): bool
-    {
-        if ($tamanho <= 0 || $tamanho > self::TAMANHO_MAX_IMAGEM) {
-            return false;
-        }
-
-        $infoImagem = @getimagesize($caminhoTemporario);
-
-        if ($infoImagem === false) {
-            return false;
-        }
-
-        return in_array($infoImagem['mime'] ?? '', self::MIME_PERMITIDOS, true);
-    }
-
-    /**
-     * Processa upload de múltiplas imagens de produto
-     */
-    public function processarImagens(array $arquivos): array
-    {
-        $permitidas = ["jpg", "jpeg", "png", "webp"];
-        $imagensSalvas = [];
-
-        if (empty($arquivos['name']) || !is_array($arquivos['name'])) {
-            return [];
-        }
-
-        $diretorio = dirname(__DIR__, 2) . "/uploads/produtos";
-
-        if (!is_dir($diretorio)) {
-            mkdir($diretorio, 0777, true);
-        }
-
-        foreach ($arquivos['name'] as $index => $nomeArquivo) {
-
-            if (($arquivos['error'][$index] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
-                continue;
-            }
-
-            $extensao = strtolower(pathinfo($nomeArquivo, PATHINFO_EXTENSION));
-
-            if (!in_array($extensao, $permitidas, true)) {
-                continue;
-            }
-
-            $tmpName = $arquivos['tmp_name'][$index] ?? '';
-            $tamanho = (int) ($arquivos['size'][$index] ?? 0);
-
-            if (!$this->arquivoEhImagemValida($tmpName, $tamanho)) {
-                continue;
-            }
-
-            $novoNome = uniqid("produto_", true) . "." . $extensao;
-            $destino = $diretorio . "/" . $novoNome;
-
-            if (ImagemUpload::salvar($tmpName, $destino)) {
-                $imagensSalvas[] = $novoNome;
-            }
-
-        }
-
-        return $imagensSalvas;
-    }
-
-    /**
      * Cadastra um novo produto
      */
     public function cadastrar(array $dados): int|false
     {
-        if (empty($dados['empresa_id'])) {
-            return false;
-        }
-
-        if (empty($dados['nome'])) {
-            return false;
-        }
-
-        if (empty($dados['preco_venda']) || (float) $dados['preco_venda'] <= 0) {
+        if (!$this->dadosBasicosValidos($dados)) {
             return false;
         }
 
@@ -127,6 +46,29 @@ class ProdutoController
         }
 
         $dados['categoria_id'] = 9; // Marketplace (fixa)
+        $dados = $this->normalizarCampos($dados);
+        $dados['ativo'] = 1;
+
+        return $this->produto->cadastrar($dados);
+    }
+
+    /**
+     * Campos obrigatórios comuns ao cadastro e à atualização.
+     */
+    private function dadosBasicosValidos(array $dados): bool
+    {
+        if (empty($dados['empresa_id']) || empty($dados['nome'])) {
+            return false;
+        }
+
+        return !empty($dados['preco_venda']) && (float) $dados['preco_venda'] > 0;
+    }
+
+    /**
+     * Normaliza os campos opcionais (vazio vira null) do produto.
+     */
+    private function normalizarCampos(array $dados): array
+    {
         $dados['subcategoria_id'] = !empty($dados['subcategoria_id']) ? (int) $dados['subcategoria_id'] : null;
         $dados['marca_id'] = !empty($dados['marca_id']) ? (int) $dados['marca_id'] : null;
         $dados['descricao'] = $dados['descricao'] ?? '';
@@ -139,9 +81,8 @@ class ProdutoController
         $dados['preco_custo'] = ($dados['preco_custo'] ?? '') !== '' ? $dados['preco_custo'] : null;
         $dados['preco_promocional'] = !empty($dados['preco_promocional']) ? $dados['preco_promocional'] : null;
         $dados['destaque'] = !empty($dados['destaque']) ? 1 : 0;
-        $dados['ativo'] = 1;
 
-        return $this->produto->cadastrar($dados);
+        return $dados;
     }
 
     public function buscarPorId(int $id): ?array
@@ -159,30 +100,11 @@ class ProdutoController
      */
     public function atualizar(int $id, array $dados): bool
     {
-        if (empty($dados['empresa_id'])) {
+        if (!$this->dadosBasicosValidos($dados)) {
             return false;
         }
 
-        if (empty($dados['nome'])) {
-            return false;
-        }
-
-        if (empty($dados['preco_venda']) || (float) $dados['preco_venda'] <= 0) {
-            return false;
-        }
-
-        $dados['subcategoria_id'] = !empty($dados['subcategoria_id']) ? (int) $dados['subcategoria_id'] : null;
-        $dados['marca_id'] = !empty($dados['marca_id']) ? (int) $dados['marca_id'] : null;
-        $dados['descricao'] = $dados['descricao'] ?? '';
-        $dados['sku'] = !empty($dados['sku']) ? $dados['sku'] : null;
-        $dados['codigo_barras'] = !empty($dados['codigo_barras']) ? $dados['codigo_barras'] : null;
-        $dados['peso'] = ($dados['peso'] ?? '') !== '' ? $dados['peso'] : null;
-        $dados['altura'] = ($dados['altura'] ?? '') !== '' ? $dados['altura'] : null;
-        $dados['largura'] = ($dados['largura'] ?? '') !== '' ? $dados['largura'] : null;
-        $dados['comprimento'] = ($dados['comprimento'] ?? '') !== '' ? $dados['comprimento'] : null;
-        $dados['preco_custo'] = ($dados['preco_custo'] ?? '') !== '' ? $dados['preco_custo'] : null;
-        $dados['preco_promocional'] = !empty($dados['preco_promocional']) ? $dados['preco_promocional'] : null;
-        $dados['destaque'] = !empty($dados['destaque']) ? 1 : 0;
+        $dados = $this->normalizarCampos($dados);
         $dados['ativo'] = !empty($dados['ativo']) ? 1 : 0;
 
         return $this->produto->atualizar($id, $dados);
@@ -193,34 +115,19 @@ class ProdutoController
         return $this->produto->excluir($id, $empresaId);
     }
 
-    public function listarAtivos(
-        string $busca = '',
-        int $subcategoriaId = 0,
-        int $marcaId = 0,
-        float $precoMin = 0.0,
-        float $precoMax = 0.0,
-        string $ordem = 'recente',
-        string $cidade = '',
-        int $categoriaId = 0,
-        string $empresa = '',
-        bool $apenasPromocao = false,
-        array $subcategoriasSelecionadas = [],
-        float $avaliacaoMinima = 0.0
-    ): array {
-        return $this->produto->listarAtivos(
-            trim($busca),
-            $subcategoriaId,
-            $marcaId,
-            $precoMin,
-            $precoMax,
-            $ordem,
-            trim($cidade),
-            $categoriaId,
-            trim($empresa),
-            $apenasPromocao,
-            $subcategoriasSelecionadas,
-            $avaliacaoMinima
-        );
+    /**
+     * Lista produtos ativos do marketplace. Aceita as mesmas chaves de
+     * Produto::listarAtivos(); busca, cidade e empresa são aparadas.
+     */
+    public function listarAtivos(array $criterios = []): array
+    {
+        foreach (['busca', 'cidade', 'empresa'] as $chave) {
+            if (isset($criterios[$chave])) {
+                $criterios[$chave] = trim((string) $criterios[$chave]);
+            }
+        }
+
+        return $this->produto->listarAtivos($criterios);
     }
 
     public function listarDestaques(int $limite = 4): array
@@ -260,26 +167,11 @@ class ProdutoController
 
     public function buscarEstoque(int $produtoId): ?array
     {
-        return $this->produto->buscarEstoque($produtoId);
+        return $this->estoque->buscarEstoque($produtoId);
     }
 
     public function atualizarEstoque(int $produtoId, int $quantidade, int $min = 0, int $max = 0): bool
     {
-        return $this->produto->atualizarEstoque($produtoId, $quantidade, $min, $max);
-    }
-
-    public function salvarImagens(int $produtoId, array $imagens): bool
-    {
-        return $this->produto->salvarImagens($produtoId, $imagens);
-    }
-
-    public function buscarImagens(int $produtoId): array
-    {
-        return $this->produto->buscarImagens($produtoId);
-    }
-
-    public function excluirImagem(int $imagemId, int $produtoId): bool
-    {
-        return $this->produto->excluirImagem($imagemId, $produtoId);
+        return $this->estoque->atualizarEstoque($produtoId, $quantidade, $min, $max);
     }
 }

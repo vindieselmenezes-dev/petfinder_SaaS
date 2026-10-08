@@ -18,8 +18,11 @@ declare(strict_types=1);
  */
 final class Paginador
 {
+    private const ATTR_STYLE = '" style="';
+
     private function __construct()
     {
+        // Classe utilitária (apenas métodos estáticos): não deve ser instanciada.
     }
 
     /**
@@ -80,7 +83,7 @@ final class Paginador
 
         // Botão "Anterior"
         if ($paginaAtual > 1) {
-            $html .= '<a href="' . htmlspecialchars(self::url($paginaAtual - 1, $parametro)) . '" style="' . $estiloLink . '">&laquo; Anterior</a>';
+            $html .= '<a href="' . htmlspecialchars(self::url($paginaAtual - 1, $parametro)) . self::ATTR_STYLE . $estiloLink . '">&laquo; Anterior</a>';
         } else {
             $html .= '<span style="' . $estiloInativo . '">&laquo; Anterior</span>';
         }
@@ -90,7 +93,7 @@ final class Paginador
         $fim = min($totalPaginas, $paginaAtual + $janela);
 
         if ($inicio > 1) {
-            $html .= '<a href="' . htmlspecialchars(self::url(1, $parametro)) . '" style="' . $estiloLink . '">1</a>';
+            $html .= '<a href="' . htmlspecialchars(self::url(1, $parametro)) . self::ATTR_STYLE . $estiloLink . '">1</a>';
             if ($inicio > 2) {
                 $html .= '<span style="' . $estiloBase . ' color:#bbb;">&hellip;</span>';
             }
@@ -100,7 +103,7 @@ final class Paginador
             if ($numero === $paginaAtual) {
                 $html .= '<span style="' . $estiloAtual . '">' . $numero . '</span>';
             } else {
-                $html .= '<a href="' . htmlspecialchars(self::url($numero, $parametro)) . '" style="' . $estiloLink . '">' . $numero . '</a>';
+                $html .= '<a href="' . htmlspecialchars(self::url($numero, $parametro)) . self::ATTR_STYLE . $estiloLink . '">' . $numero . '</a>';
             }
         }
 
@@ -108,12 +111,12 @@ final class Paginador
             if ($fim < $totalPaginas - 1) {
                 $html .= '<span style="' . $estiloBase . ' color:#bbb;">&hellip;</span>';
             }
-            $html .= '<a href="' . htmlspecialchars(self::url($totalPaginas, $parametro)) . '" style="' . $estiloLink . '">' . $totalPaginas . '</a>';
+            $html .= '<a href="' . htmlspecialchars(self::url($totalPaginas, $parametro)) . self::ATTR_STYLE . $estiloLink . '">' . $totalPaginas . '</a>';
         }
 
         // Botão "Próxima"
         if ($paginaAtual < $totalPaginas) {
-            $html .= '<a href="' . htmlspecialchars(self::url($paginaAtual + 1, $parametro)) . '" style="' . $estiloLink . '">Próxima &raquo;</a>';
+            $html .= '<a href="' . htmlspecialchars(self::url($paginaAtual + 1, $parametro)) . self::ATTR_STYLE . $estiloLink . '">Próxima &raquo;</a>';
         } else {
             $html .= '<span style="' . $estiloInativo . '">Próxima &raquo;</span>';
         }

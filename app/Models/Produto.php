@@ -271,22 +271,28 @@ class Produto
     }
 
     /**
-     * Lista produtos ativos para o marketplace público, com filtros
+     * Lista produtos ativos para o marketplace público, com filtros.
+     *
+     * Chaves aceitas em $criterios (todas opcionais):
+     *   busca, subcategoria_id, marca_id, preco_min, preco_max, ordem
+     *   ('recente', 'menor_preco', 'maior_preco' ou 'nome'), cidade,
+     *   categoria_id, empresa, apenas_promocao, subcategorias (lista de ids)
+     *   e avaliacao_minima.
      */
-    public function listarAtivos(
-        string $busca = '',
-        int $subcategoriaId = 0,
-        int $marcaId = 0,
-        float $precoMin = 0.0,
-        float $precoMax = 0.0,
-        string $ordem = 'recente',
-        string $cidade = '',
-        int $categoriaId = 0,
-        string $empresa = '',
-        bool $apenasPromocao = false,
-        array $subcategoriasSelecionadas = [],
-        float $avaliacaoMinima = 0.0
-    ): array {
+    public function listarAtivos(array $criterios = []): array
+    {
+        $busca = (string) ($criterios['busca'] ?? '');
+        $subcategoriaId = (int) ($criterios['subcategoria_id'] ?? 0);
+        $marcaId = (int) ($criterios['marca_id'] ?? 0);
+        $precoMin = (float) ($criterios['preco_min'] ?? 0.0);
+        $precoMax = (float) ($criterios['preco_max'] ?? 0.0);
+        $ordem = (string) ($criterios['ordem'] ?? 'recente');
+        $cidade = (string) ($criterios['cidade'] ?? '');
+        $categoriaId = (int) ($criterios['categoria_id'] ?? 0);
+        $empresa = (string) ($criterios['empresa'] ?? '');
+        $apenasPromocao = (bool) ($criterios['apenas_promocao'] ?? false);
+        $subcategoriasSelecionadas = (array) ($criterios['subcategorias'] ?? []);
+        $avaliacaoMinima = (float) ($criterios['avaliacao_minima'] ?? 0.0);
 
         $sql = "
             SELECT
@@ -316,105 +322,89 @@ class Produto
               AND e.ativo = 1
         ";
 
-        $params = [];
+        $termoBusca = "%{$busca}%";
+        [$sqlSubcategorias, $paramsSubcategorias] = $this->filtroSubcategorias($subcategoriasSelecionadas);
 
-        if ($busca !== '') {
-            $sql .= " AND (
+        // Cada filtro: [está ativo?, trecho do SQL, parâmetros]
+        $filtros = [
+            [$busca !== '', " AND (
                 p.nome LIKE :busca_nome
                 OR s.nome LIKE :busca_subcategoria
                 OR m.nome LIKE :busca_marca
                 OR e.nome_fantasia LIKE :busca_empresa
-            ) ";
-            $termoBusca = "%{$busca}%";
-            $params[':busca_nome'] = $termoBusca;
-            $params[':busca_subcategoria'] = $termoBusca;
-            $params[':busca_marca'] = $termoBusca;
-            $params[':busca_empresa'] = $termoBusca;
-        }
+            ) ", [
+                ':busca_nome' => $termoBusca,
+                ':busca_subcategoria' => $termoBusca,
+                ':busca_marca' => $termoBusca,
+                ':busca_empresa' => $termoBusca,
+            ]],
+            [$subcategoriaId > 0, " AND p.subcategoria_id = :subcategoria_id ", [':subcategoria_id' => $subcategoriaId]],
+            [$marcaId > 0, " AND p.marca_id = :marca_id ", [':marca_id' => $marcaId]],
+            [$precoMin > 0, " AND COALESCE(p.preco_promocional, p.preco_venda) >= :preco_min ", [':preco_min' => $precoMin]],
+            [$precoMax > 0, " AND COALESCE(p.preco_promocional, p.preco_venda) <= :preco_max ", [':preco_max' => $precoMax]],
+            [$cidade !== '', " AND (e.cidade LIKE :cidade OR e.estado LIKE :estado) ", [
+                ':cidade' => "%{$cidade}%",
+                ':estado' => "%{$cidade}%",
+            ]],
+            [$empresa !== '', " AND e.nome_fantasia LIKE :empresa ", [':empresa' => "%{$empresa}%"]],
+            [$apenasPromocao, " AND p.preco_promocional IS NOT NULL AND p.preco_promocional > 0 AND p.preco_promocional < p.preco_venda ", []],
+            [$avaliacaoMinima > 0, " AND e.avaliacao >= :avaliacao_minima ", [':avaliacao_minima' => $avaliacaoMinima]],
+            [$sqlSubcategorias !== '', $sqlSubcategorias, $paramsSubcategorias],
+            [$categoriaId > 0, " AND p.categoria_id = :categoria_id ", [':categoria_id' => $categoriaId]],
+        ];
 
-        if ($subcategoriaId > 0) {
-            $sql .= " AND p.subcategoria_id = :subcategoria_id ";
-            $params[':subcategoria_id'] = $subcategoriaId;
-        }
+        $params = [];
 
-        if ($marcaId > 0) {
-            $sql .= " AND p.marca_id = :marca_id ";
-            $params[':marca_id'] = $marcaId;
-        }
-
-        if ($precoMin > 0) {
-            $sql .= " AND COALESCE(p.preco_promocional, p.preco_venda) >= :preco_min ";
-            $params[':preco_min'] = $precoMin;
-        }
-
-        if ($precoMax > 0) {
-            $sql .= " AND COALESCE(p.preco_promocional, p.preco_venda) <= :preco_max ";
-            $params[':preco_max'] = $precoMax;
-        }
-
-        if ($cidade !== '') {
-            $sql .= " AND (e.cidade LIKE :cidade OR e.estado LIKE :estado) ";
-            $params[':cidade'] = "%{$cidade}%";
-            $params[':estado'] = "%{$cidade}%";
-        }
-
-        if ($empresa !== '') {
-            $sql .= " AND e.nome_fantasia LIKE :empresa ";
-            $params[':empresa'] = "%{$empresa}%";
-        }
-
-        if ($apenasPromocao) {
-            $sql .= " AND p.preco_promocional IS NOT NULL AND p.preco_promocional > 0 AND p.preco_promocional < p.preco_venda ";
-        }
-
-        if ($avaliacaoMinima > 0) {
-            $sql .= " AND e.avaliacao >= :avaliacao_minima ";
-            $params[':avaliacao_minima'] = $avaliacaoMinima;
-        }
-
-        if (!empty($subcategoriasSelecionadas)) {
-            $subcatIds = [];
-            foreach ($subcategoriasSelecionadas as $item) {
-                $valor = (int) $item;
-                if ($valor > 0) {
-                    $subcatIds[] = $valor;
-                }
-            }
-
-            if (!empty($subcatIds)) {
-                $idsUnicos = array_values(array_unique($subcatIds));
-                $placeholders = [];
-                foreach ($idsUnicos as $index => $valor) {
-                    $placeholders[] = ':subcategoria_' . $index;
-                    $params[':subcategoria_' . $index] = $valor;
-                }
-                $sql .= " AND p.subcategoria_id IN (" . implode(', ', $placeholders) . ") ";
+        foreach ($filtros as [$ativo, $trechoSql, $parametros]) {
+            if ($ativo) {
+                $sql .= $trechoSql;
+                $params += $parametros;
             }
         }
 
-        if ($categoriaId > 0) {
-            $sql .= " AND p.categoria_id = :categoria_id ";
-            $params[':categoria_id'] = $categoriaId;
-        }
-
-        switch ($ordem) {
-            case 'menor_preco':
-                $sql .= " ORDER BY COALESCE(p.preco_promocional, p.preco_venda) ASC ";
-                break;
-            case 'maior_preco':
-                $sql .= " ORDER BY COALESCE(p.preco_promocional, p.preco_venda) DESC ";
-                break;
-            case 'nome':
-                $sql .= " ORDER BY p.nome ASC ";
-                break;
-            default:
-                $sql .= " ORDER BY p.destaque DESC, p.criado_em DESC, p.id DESC ";
-        }
+        $sql .= $this->clausulaOrdenacao($ordem);
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
 
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Monta o filtro "subcategoria IN (...)" a partir da seleção do usuário,
+     * ignorando valores inválidos e repetidos.
+     *
+     * @return array{0: string, 1: array<string, int>}
+     */
+    private function filtroSubcategorias(array $selecionadas): array
+    {
+        $ids = array_values(array_unique(array_filter(
+            array_map('intval', $selecionadas),
+            static fn(int $valor): bool => $valor > 0
+        )));
+
+        if ($ids === []) {
+            return ['', []];
+        }
+
+        $placeholders = [];
+        $params = [];
+        foreach ($ids as $index => $valor) {
+            $placeholders[] = ':subcategoria_' . $index;
+            $params[':subcategoria_' . $index] = $valor;
+        }
+
+        return [" AND p.subcategoria_id IN (" . implode(', ', $placeholders) . ") ", $params];
+    }
+
+    private function clausulaOrdenacao(string $ordem): string
+    {
+        return match ($ordem) {
+            'menor_preco' => " ORDER BY COALESCE(p.preco_promocional, p.preco_venda) ASC ",
+            'maior_preco' => " ORDER BY COALESCE(p.preco_promocional, p.preco_venda) DESC ",
+            'nome' => " ORDER BY p.nome ASC ",
+            default => " ORDER BY p.destaque DESC, p.criado_em DESC, p.id DESC ",
+        };
     }
 
     public function listarDestaques(int $limite = 4): array
@@ -544,133 +534,5 @@ class Produto
         }
 
         return $this->contarProdutosPorEmpresa($empresaId) >= (int) $linha['limite_produtos'];
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | ESTOQUE
-    |--------------------------------------------------------------------------
-    */
-
-    public function buscarEstoque(int $produtoId): ?array
-    {
-        $sql = "
-            SELECT id, produto_id, quantidade, estoque_minimo, estoque_maximo, ultima_atualizacao
-            FROM estoque
-            WHERE produto_id = :produto_id
-            LIMIT 1
-        ";
-
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':produto_id' => $produtoId]);
-
-        $resultado = $stmt->fetch();
-
-        return $resultado ?: null;
-    }
-
-    public function atualizarEstoque(int $produtoId, int $quantidade, int $min, int $max): bool
-    {
-        $existente = $this->buscarEstoque($produtoId);
-
-        if ($existente) {
-
-            $sql = "
-                UPDATE estoque
-                SET quantidade = :quantidade,
-                    estoque_minimo = :minimo,
-                    estoque_maximo = :maximo
-                WHERE produto_id = :produto_id
-            ";
-
-        } else {
-
-            $sql = "
-                INSERT INTO estoque (produto_id, quantidade, estoque_minimo, estoque_maximo)
-                VALUES (:produto_id, :quantidade, :minimo, :maximo)
-            ";
-
-        }
-
-        $stmt = $this->pdo->prepare($sql);
-
-        return $stmt->execute([
-            ':produto_id' => $produtoId,
-            ':quantidade' => $quantidade,
-            ':minimo' => $min,
-            ':maximo' => $max
-        ]);
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | IMAGENS
-    |--------------------------------------------------------------------------
-    */
-
-    public function salvarImagens(int $produtoId, array $imagens): bool
-    {
-        if (empty($imagens)) {
-            return true;
-        }
-
-        // Verifica se já existe alguma imagem principal
-        $sqlVerifica = "SELECT COUNT(*) FROM produto_imagens WHERE produto_id = :produto_id AND principal = 1";
-        $stmt = $this->pdo->prepare($sqlVerifica);
-        $stmt->execute([':produto_id' => $produtoId]);
-        $jaTemPrincipal = ((int) $stmt->fetchColumn()) > 0;
-
-        $sql = "
-            INSERT INTO produto_imagens (produto_id, imagem, principal, ordem)
-            VALUES (:produto_id, :imagem, :principal, :ordem)
-        ";
-
-        $stmt = $this->pdo->prepare($sql);
-
-        foreach ($imagens as $ordem => $imagem) {
-
-            $ehPrincipal = (!$jaTemPrincipal && $ordem === 0) ? 1 : 0;
-
-            $stmt->execute([
-                ':produto_id' => $produtoId,
-                ':imagem' => $imagem,
-                ':principal' => $ehPrincipal,
-                ':ordem' => $ordem + 1
-            ]);
-
-        }
-
-        return true;
-    }
-
-    public function buscarImagens(int $produtoId): array
-    {
-        $sql = "
-            SELECT id, imagem, principal, ordem
-            FROM produto_imagens
-            WHERE produto_id = :produto_id
-            ORDER BY principal DESC, ordem ASC
-        ";
-
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':produto_id' => $produtoId]);
-
-        return $stmt->fetchAll();
-    }
-
-    public function excluirImagem(int $imagemId, int $produtoId): bool
-    {
-        $sql = "
-            DELETE FROM produto_imagens
-            WHERE id = :id
-              AND produto_id = :produto_id
-        ";
-
-        $stmt = $this->pdo->prepare($sql);
-
-        return $stmt->execute([
-            ':id' => $imagemId,
-            ':produto_id' => $produtoId
-        ]);
     }
 }

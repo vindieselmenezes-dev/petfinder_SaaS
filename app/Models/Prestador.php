@@ -81,14 +81,14 @@ class Prestador
     }
 
     /**
-     * Cadastra um novo prestador. Retorna o ID gerado, ou false em caso de erro.
+     * Resolve o plano inicial do prestador (Grátis, se nenhum for informado)
+     * e quantos dias de teste ele tem.
+     *
+     * @return array{0: ?int, 1: int}
      */
-    public function cadastrar(array $dados): int|false
+    private function resolverPlanoInicial(mixed $planoInformado): array
     {
-        // Todo prestador (Passeador/Pet Sitter/Táxi Pet) começa no plano
-        // Grátis com prazo -- mesma regra das empresas, ninguém fica de
-        // graça pra sempre.
-        $planoId = $dados['plano_id'] ?? null;
+        $planoId = $planoInformado;
 
         if (empty($planoId)) {
             $stmtPlano = $this->pdo->query("SELECT id FROM planos WHERE slug = 'gratis' LIMIT 1");
@@ -102,6 +102,31 @@ class Prestador
             $stmtDias->execute([':id' => $planoId]);
             $diasTrial = (int) $stmtDias->fetchColumn();
         }
+
+        return [$planoId, $diasTrial];
+    }
+
+    /** Texto do formulário: vazio vira null. */
+    private function textoOuNulo(array $dados, string $campo): mixed
+    {
+        return ($dados[$campo] ?? '') ?: null;
+    }
+
+    /** Valor numérico do formulário: só a string vazia vira null (0 é válido). */
+    private function numeroOuNulo(array $dados, string $campo): mixed
+    {
+        return ($dados[$campo] ?? '') !== '' ? $dados[$campo] : null;
+    }
+
+    /**
+     * Cadastra um novo prestador. Retorna o ID gerado, ou false em caso de erro.
+     */
+    public function cadastrar(array $dados): int|false
+    {
+        // Todo prestador (Passeador/Pet Sitter/Táxi Pet) começa no plano
+        // Grátis com prazo -- mesma regra das empresas, ninguém fica de
+        // graça pra sempre.
+        [$planoId, $diasTrial] = $this->resolverPlanoInicial($dados['plano_id'] ?? null);
 
         $sql = "
             INSERT INTO prestadores_servico
@@ -133,31 +158,31 @@ class Prestador
             ':tipo' => $dados['tipo'],
             ':plano_id' => $planoId,
             ':dias_trial' => $diasTrial,
-            ':cpf' => ($dados['cpf'] ?? '') ?: null,
+            ':cpf' => $this->textoOuNulo($dados, 'cpf'),
             ':genero' => ($dados['genero'] ?? '') ?: 'nao-informar',
-            ':data_nascimento' => ($dados['data_nascimento'] ?? '') ?: null,
-            ':telefone' => ($dados['telefone'] ?? '') ?: null,
-            ':whatsapp' => ($dados['whatsapp'] ?? '') ?: null,
-            ':email' => ($dados['email'] ?? '') ?: null,
-            ':cep' => ($dados['cep'] ?? '') ?: null,
-            ':endereco' => ($dados['endereco'] ?? '') ?: null,
-            ':numero' => ($dados['numero'] ?? '') ?: null,
-            ':complemento' => ($dados['complemento'] ?? '') ?: null,
-            ':bairro' => ($dados['bairro'] ?? '') ?: null,
-            ':cidade' => ($dados['cidade'] ?? '') ?: null,
-            ':estado' => ($dados['estado'] ?? '') ?: null,
-            ':foto' => ($dados['foto'] ?? '') ?: null,
-            ':tempo_experiencia' => ($dados['tempo_experiencia'] ?? '') ?: null,
-            ':formacao' => ($dados['formacao'] ?? '') ?: null,
-            ':experiencia' => ($dados['experiencia'] ?? '') ?: null,
-            ':apresentacao' => ($dados['apresentacao'] ?? '') ?: null,
-            ':diferencial' => ($dados['diferencial'] ?? '') ?: null,
-            ':valor_hora' => ($dados['valor_hora'] ?? '') !== '' ? $dados['valor_hora'] : null,
-            ':valor_diaria' => ($dados['valor_diaria'] ?? '') !== '' ? $dados['valor_diaria'] : null,
-            ':forma_pagamento' => ($dados['forma_pagamento'] ?? '') ?: null,
-            ':area_atendimento' => ($dados['area_atendimento'] ?? '') ?: null,
-            ':instagram' => ($dados['instagram'] ?? '') ?: null,
-            ':facebook' => ($dados['facebook'] ?? '') ?: null,
+            ':data_nascimento' => $this->textoOuNulo($dados, 'data_nascimento'),
+            ':telefone' => $this->textoOuNulo($dados, 'telefone'),
+            ':whatsapp' => $this->textoOuNulo($dados, 'whatsapp'),
+            ':email' => $this->textoOuNulo($dados, 'email'),
+            ':cep' => $this->textoOuNulo($dados, 'cep'),
+            ':endereco' => $this->textoOuNulo($dados, 'endereco'),
+            ':numero' => $this->textoOuNulo($dados, 'numero'),
+            ':complemento' => $this->textoOuNulo($dados, 'complemento'),
+            ':bairro' => $this->textoOuNulo($dados, 'bairro'),
+            ':cidade' => $this->textoOuNulo($dados, 'cidade'),
+            ':estado' => $this->textoOuNulo($dados, 'estado'),
+            ':foto' => $this->textoOuNulo($dados, 'foto'),
+            ':tempo_experiencia' => $this->textoOuNulo($dados, 'tempo_experiencia'),
+            ':formacao' => $this->textoOuNulo($dados, 'formacao'),
+            ':experiencia' => $this->textoOuNulo($dados, 'experiencia'),
+            ':apresentacao' => $this->textoOuNulo($dados, 'apresentacao'),
+            ':diferencial' => $this->textoOuNulo($dados, 'diferencial'),
+            ':valor_hora' => $this->numeroOuNulo($dados, 'valor_hora'),
+            ':valor_diaria' => $this->numeroOuNulo($dados, 'valor_diaria'),
+            ':forma_pagamento' => $this->textoOuNulo($dados, 'forma_pagamento'),
+            ':area_atendimento' => $this->textoOuNulo($dados, 'area_atendimento'),
+            ':instagram' => $this->textoOuNulo($dados, 'instagram'),
+            ':facebook' => $this->textoOuNulo($dados, 'facebook'),
         ]);
 
         if (!$sucesso) {
@@ -389,9 +414,9 @@ class Prestador
         return $stmt->execute([
             ':prestador_id' => $prestadorId,
             ':tipo_veiculo' => ($dados['tipo_veiculo'] ?? '') ?: 'Carro',
-            ':modelo' => ($dados['modelo'] ?? '') ?: null,
-            ':placa' => ($dados['placa'] ?? '') ?: null,
-            ':ano' => ($dados['ano'] ?? '') ?: null,
+            ':modelo' => $this->textoOuNulo($dados, 'modelo'),
+            ':placa' => $this->textoOuNulo($dados, 'placa'),
+            ':ano' => $this->textoOuNulo($dados, 'ano'),
             ':capacidade_pets' => (int) (($dados['capacidade_pets'] ?? '') ?: 1),
             ':ar_condicionado' => !empty($dados['ar_condicionado']) ? 1 : 0,
             ':caixa_transporte' => !empty($dados['caixa_transporte']) ? 1 : 0,
@@ -465,174 +490,4 @@ class Prestador
         return strtotime($expiraEm) < strtotime(date('Y-m-d'));
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | AVALIAÇÕES
-    |--------------------------------------------------------------------------
-    */
-
-    public function avaliar(int $prestadorId, int $usuarioId, int $nota, string $comentario = ''): bool
-    {
-        if ($prestadorId <= 0 || $usuarioId <= 0 || $nota < 1 || $nota > 5) {
-            return false;
-        }
-
-        $stmt = $this->pdo->prepare(
-            'SELECT id FROM prestador_avaliacoes WHERE prestador_id = :prestador_id AND usuario_id = :usuario_id LIMIT 1'
-        );
-        $stmt->execute([':prestador_id' => $prestadorId, ':usuario_id' => $usuarioId]);
-
-        if ($stmt->fetch()) {
-            return false;
-        }
-
-        $this->pdo->beginTransaction();
-
-        try {
-            $stmt = $this->pdo->prepare(
-                'INSERT INTO prestador_avaliacoes (prestador_id, usuario_id, nota, comentario)
-                 VALUES (:prestador_id, :usuario_id, :nota, :comentario)'
-            );
-            $stmt->execute([
-                ':prestador_id' => $prestadorId,
-                ':usuario_id' => $usuarioId,
-                ':nota' => $nota,
-                ':comentario' => $comentario ?: null
-            ]);
-
-            $stmt = $this->pdo->prepare(
-                'UPDATE prestadores_servico
-                 SET avaliacao = (SELECT ROUND(AVG(nota), 1) FROM prestador_avaliacoes WHERE prestador_id = :p1),
-                     total_avaliacoes = (SELECT COUNT(*) FROM prestador_avaliacoes WHERE prestador_id = :p2)
-                 WHERE id = :p3'
-            );
-            $stmt->execute([':p1' => $prestadorId, ':p2' => $prestadorId, ':p3' => $prestadorId]);
-
-            $this->pdo->commit();
-            return true;
-        } catch (Throwable $e) {
-            $this->pdo->rollBack();
-            return false;
-        }
-    }
-
-    public function listarAvaliacoes(int $prestadorId, int $limite = 10): array
-    {
-        $stmt = $this->pdo->prepare(
-            'SELECT a.nota, a.comentario, a.criado_em, u.nome AS usuario_nome
-             FROM prestador_avaliacoes a JOIN usuarios u ON u.id = a.usuario_id
-             WHERE a.prestador_id = :prestador_id ORDER BY a.criado_em DESC LIMIT :limite'
-        );
-        $stmt->bindValue(':prestador_id', $prestadorId, PDO::PARAM_INT);
-        $stmt->bindValue(':limite', max(1, min($limite, 50)), PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $stmt->fetchAll();
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | SOLICITAÇÕES (pedido de passeio / diária de pet sitter)
-    |--------------------------------------------------------------------------
-    */
-
-    public function criarSolicitacao(array $dados): int|false
-    {
-        $stmt = $this->pdo->prepare("
-            INSERT INTO prestador_solicitacoes
-            (prestador_id, usuario_id, pet_id, data_desejada, periodo, mensagem)
-            VALUES
-            (:prestador_id, :usuario_id, :pet_id, :data_desejada, :periodo, :mensagem)
-        ");
-
-        $sucesso = $stmt->execute([
-            ':prestador_id' => $dados['prestador_id'],
-            ':usuario_id' => $dados['usuario_id'],
-            ':pet_id' => ($dados['pet_id'] ?? '') ?: null,
-            ':data_desejada' => ($dados['data_desejada'] ?? '') ?: null,
-            ':periodo' => ($dados['periodo'] ?? '') ?: null,
-            ':mensagem' => ($dados['mensagem'] ?? '') ?: null,
-        ]);
-
-        return $sucesso ? (int) $this->pdo->lastInsertId() : false;
-    }
-
-    public function listarSolicitacoesRecebidas(int $prestadorId): array
-    {
-        $stmt = $this->pdo->prepare("
-            SELECT
-                s.id, s.prestador_id, s.usuario_id, s.pet_id, s.data_desejada,
-                s.periodo, s.mensagem, s.status, s.criado_em, s.atualizado_em,
-                u.nome AS tutor_nome, u.telefone AS tutor_telefone, p.nome AS pet_nome
-            FROM prestador_solicitacoes s
-            INNER JOIN usuarios u ON u.id = s.usuario_id
-            LEFT JOIN pets p ON p.id = s.pet_id
-            WHERE s.prestador_id = :prestador_id
-            ORDER BY s.criado_em DESC
-        ");
-        $stmt->execute([':prestador_id' => $prestadorId]);
-
-        return $stmt->fetchAll();
-    }
-
-    /**
-     * Busca uma solicitação com dados do tutor, do prestador (usuario_id
-     * dono do perfil) e do pet -- usado pra montar as notificações.
-     */
-    public function buscarSolicitacaoPorId(int $id): ?array
-    {
-        $stmt = $this->pdo->prepare("
-            SELECT
-                s.id, s.prestador_id, s.usuario_id, s.pet_id, s.data_desejada,
-                s.periodo, s.mensagem, s.status, s.criado_em, s.atualizado_em,
-                pr.usuario_id AS prestador_usuario_id,
-                pr.tipo AS prestador_tipo,
-                u.nome AS tutor_nome,
-                p.nome AS pet_nome
-            FROM prestador_solicitacoes s
-            INNER JOIN prestadores_servico pr ON pr.id = s.prestador_id
-            INNER JOIN usuarios u ON u.id = s.usuario_id
-            LEFT JOIN pets p ON p.id = s.pet_id
-            WHERE s.id = :id
-            LIMIT 1
-        ");
-        $stmt->execute([':id' => $id]);
-
-        $resultado = $stmt->fetch();
-
-        return $resultado ?: null;
-    }
-
-    public function listarSolicitacoesFeitas(int $usuarioId): array
-    {
-        $stmt = $this->pdo->prepare("
-            SELECT
-                s.id, s.prestador_id, s.usuario_id, s.pet_id, s.data_desejada,
-                s.periodo, s.mensagem, s.status, s.criado_em, s.atualizado_em,
-                pr.tipo, u.nome AS prestador_nome
-            FROM prestador_solicitacoes s
-            INNER JOIN prestadores_servico pr ON pr.id = s.prestador_id
-            INNER JOIN usuarios u ON u.id = pr.usuario_id
-            WHERE s.usuario_id = :usuario_id
-            ORDER BY s.criado_em DESC
-        ");
-        $stmt->execute([':usuario_id' => $usuarioId]);
-
-        return $stmt->fetchAll();
-    }
-
-    public function atualizarStatusSolicitacao(int $solicitacaoId, int $prestadorId, string $status): bool
-    {
-        $stmt = $this->pdo->prepare("
-            UPDATE prestador_solicitacoes
-            SET status = :status
-            WHERE id = :id AND prestador_id = :prestador_id
-        ");
-
-        return $stmt->execute([
-            ':status' => $status,
-            ':id' => $solicitacaoId,
-            ':prestador_id' => $prestadorId
-        ]);
-    }
 }

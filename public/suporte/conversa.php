@@ -46,35 +46,42 @@ require_once '../../app/Includes/menu.php';
 ?>
 
 <main class="conteudo">
-<div class="container" style="max-width:650px; margin:0 auto;">
+    <div class="container" style="max-width:650px; margin:0 auto;">
 
-    <p><a href="conversas.php" style="color:#7f8c8d; text-decoration:none;">⬅ Voltar pras Mensagens</a></p>
+        <p><a href="conversas.php" style="color:#7f8c8d; text-decoration:none;">⬅ Voltar pras Mensagens</a></p>
 
-    <div class="formulario-cadastro">
-        <h2 style="margin-top:0;">💬 <?= htmlspecialchars($outroNome); ?></h2>
-        <p style="color:#7f8c8d; font-size:13px; margin-top:-10px;">Assunto: <?= htmlspecialchars($conversaInfo['assunto'] ?? ''); ?></p>
+        <div class="formulario-cadastro">
+            <h2 style="margin-top:0;">💬 <?= htmlspecialchars($outroNome); ?></h2>
+            <p style="color:#7f8c8d; font-size:13px; margin-top:-10px;">Assunto:
+                <?= htmlspecialchars($conversaInfo['assunto'] ?? ''); ?></p>
 
-        <div style="max-height:400px; overflow-y:auto; margin:15px 0; padding-right:5px;">
-            <?php foreach ($mensagens as $m):
-                $souEu = (int) $m['remetente_id'] === $usuarioId;
-            ?>
-                <div style="display:flex; justify-content:<?= $souEu ? 'flex-end' : 'flex-start'; ?>; margin-bottom:10px;">
-                    <div style="max-width:75%; background:<?= $souEu ? '#3498db' : '#f1f3f5'; ?>; color:<?= $souEu ? 'white' : '#333'; ?>; padding:10px 14px; border-radius:14px; <?= $souEu ? 'border-bottom-right-radius:4px;' : 'border-bottom-left-radius:4px;'; ?>">
-                        <p style="margin:0; white-space:pre-line;"><?= htmlspecialchars($m['mensagem']); ?></p>
-                        <span style="font-size:11px; opacity:.7; display:block; margin-top:4px;"><?= date('d/m H:i', strtotime($m['enviado_em'])); ?></span>
+            <div style="max-height:400px; overflow-y:auto; margin:15px 0; padding-right:5px;">
+                <?php foreach ($mensagens as $m):
+                    $souEu = (int) $m['remetente_id'] === $usuarioId;
+                    ?>
+                    <div
+                        style="display:flex; justify-content:<?= $souEu ? 'flex-end' : 'flex-start'; ?>; margin-bottom:10px;">
+                        <div
+                            style="max-width:75%; background:<?= $souEu ? '#3498db' : '#f1f3f5'; ?>; color:<?= $souEu ? 'white' : '#333'; ?>; padding:10px 14px; border-radius:14px; <?= $souEu ? 'border-bottom-right-radius:4px;' : 'border-bottom-left-radius:4px;'; ?>">
+                            <p style="margin:0; white-space:pre-line;"><?= htmlspecialchars($m['mensagem']); ?></p>
+                            <span
+                                style="font-size:11px; opacity:.7; display:block; margin-top:4px;"><?= date('d/m H:i', strtotime($m['enviado_em'])); ?></span>
+                        </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            </div>
+
+            <form method="POST" style="display:flex; gap:8px;">
+                <?= Csrf::campoHtml(); ?>
+                <label for="mensagem-conversa" class="visually-hidden">Escreva uma mensagem</label>
+                <input id="mensagem-conversa" type="text" name="mensagem" class="form-control" autocomplete="off"
+                    required placeholder="Escreva uma mensagem..." style="flex:1;">
+                <button type="submit" class="btn-acao"
+                    style="background:#3498db; color:white; border:none; padding:0 20px; border-radius:6px; font-weight:bold; cursor:pointer;">Enviar</button>
+            </form>
         </div>
 
-        <form method="POST" style="display:flex; gap:8px;">
-            <?= Csrf::campoHtml(); ?>
-            <input type="text" name="mensagem" class="form-control" autocomplete="off" required placeholder="Escreva uma mensagem..." style="flex:1;">
-            <button type="submit" class="btn-acao" style="background:#3498db; color:white; border:none; padding:0 20px; border-radius:6px; font-weight:bold; cursor:pointer;">Enviar</button>
-        </form>
     </div>
-
-</div>
 </main>
 
 <?php require_once '../../app/Includes/footer.php'; ?>

@@ -12,17 +12,17 @@ require_once '../../app/Helpers/Mailer.php';
 require_once '../../app/Helpers/Csrf.php';
 
 $usuarioModel = new Usuario();
-$resetModel   = new ResetSenha();
+$resetModel = new ResetSenha();
 
-$mensagem     = '';
+$mensagem = '';
 $tipoMensagem = '';
-$linkDeTeste  = null; // só preenchido em modo local, ver nota abaixo
+$linkDeTeste = null; // só preenchido em modo local, ver nota abaixo
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
 
-        $mensagem     = 'Sessão expirada. Atualize a página e tente novamente.';
+        $mensagem = 'Sessão expirada. Atualize a página e tente novamente.';
         $tipoMensagem = 'erro';
 
     } else {
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($usuario) {
             $token = $resetModel->gerarToken((int) $usuario['id']);
-            $link  = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']) . '/redefinir_senha.php?token=' . $token;
+            $link = Url::absoluta(Url::pagina('redefinir_senha.php') . '?' . http_build_query(['token' => $token]));
 
             Mailer::enviar(
                 $usuario['email'],
@@ -62,39 +62,43 @@ require_once '../../app/Includes/header.php';
 ?>
 
 <main class="conteudo" style="margin-left:0 !important;">
-<div class="container" style="max-width:450px; margin:100px auto 0 auto;">
+    <div class="container" style="max-width:450px; margin:100px auto 0 auto;">
 
-    <?php if ($mensagem): ?>
-        <div class="mensagem <?= $tipoMensagem; ?>"><?= htmlspecialchars($mensagem); ?></div>
-    <?php endif; ?>
+        <?php if ($mensagem): ?>
+            <div class="mensagem <?= $tipoMensagem; ?>"><?= htmlspecialchars($mensagem); ?></div>
+        <?php endif; ?>
 
-    <?php if ($linkDeTeste): ?>
-        <div class="mensagem" style="background:#fff8e1; color:#8a6d00; border-color:#ffe082;">
-            🧪 <strong>Modo teste local</strong> — o envio de e-mail real ainda não foi configurado.
-            Por enquanto, use este link diretamente:<br>
-            <a href="<?= htmlspecialchars($linkDeTeste); ?>"><?= htmlspecialchars($linkDeTeste); ?></a>
-        </div>
-    <?php endif; ?>
-
-    <div class="formulario-cadastro">
-        <h1 style="text-align:center;">🔑 Esqueci Minha Senha</h1>
-        <p style="color:#7f8c8d; text-align:center; font-size:14px; margin-bottom:20px;">Digite seu e-mail cadastrado pra receber o link de redefinição.</p>
-
-        <form method="POST">
-            <?= Csrf::campoHtml(); ?>
-            <div class="grupo-form">
-                <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" class="form-control" autocomplete="off" required>
+        <?php if ($linkDeTeste): ?>
+            <div class="mensagem" style="background:#fff8e1; color:#8a6d00; border-color:#ffe082;">
+                🧪 <strong>Modo teste local</strong> — o envio de e-mail real ainda não foi configurado.
+                Por enquanto, use este link diretamente:<br>
+                <a href="<?= htmlspecialchars($linkDeTeste); ?>"><?= htmlspecialchars($linkDeTeste); ?></a>
             </div>
-            <button type="submit" class="btn-acao" style="background:#3498db; color:white; width:100%; padding:12px; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Enviar Link de Redefinição</button>
-        </form>
+        <?php endif; ?>
 
-        <p style="text-align:center; margin-top:15px; font-size:14px;">
-            <a href="<?= Url::pagina('login.php') ?>" style="color:#7f8c8d; text-decoration:none;">⬅ Voltar pro login</a>
-        </p>
+        <div class="formulario-cadastro">
+            <h1 style="text-align:center;">🔑 Esqueci Minha Senha</h1>
+            <p style="color:#7f8c8d; text-align:center; font-size:14px; margin-bottom:20px;">Digite seu e-mail
+                cadastrado pra receber o link de redefinição.</p>
+
+            <form method="POST">
+                <?= Csrf::campoHtml(); ?>
+                <div class="grupo-form">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" class="form-control" autocomplete="off" required>
+                </div>
+                <button type="submit" class="btn-acao"
+                    style="background:#3498db; color:white; width:100%; padding:12px; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Enviar
+                    Link de Redefinição</button>
+            </form>
+
+            <p style="text-align:center; margin-top:15px; font-size:14px;">
+                <a href="<?= Url::pagina('login.php') ?>" style="color:#7f8c8d; text-decoration:none;">⬅ Voltar pro
+                    login</a>
+            </p>
+        </div>
+
     </div>
-
-</div>
 </main>
 
 <?php require_once '../../app/Includes/footer.php'; ?>

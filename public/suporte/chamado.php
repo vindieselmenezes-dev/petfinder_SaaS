@@ -136,7 +136,7 @@ $corStatus = [
 
         <h3 style="margin-top:25px; margin-bottom:12px;">Histórico de respostas</h3>
 
-        <?php if (count($respostas) > 0): ?>
+        <?php if (!empty($respostas)): ?>
             <?php foreach ($respostas as $resp):
                 $ehRespostaAdmin = ($resp['tipo_usuario'] ?? '') === 'administrador';
             ?>

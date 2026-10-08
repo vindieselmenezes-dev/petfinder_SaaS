@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../app/Helpers/Mailer.php';
 
 $usuarioId = (int) ($_SESSION['2fa_pendente_usuario_id'] ?? 0);
 if ($usuarioId <= 0) {
-    header('Location: ' . Url::pagina('login.php'));
+    Url::redirecionar(Url::pagina('login.php'));
     exit;
 }
 
@@ -20,7 +20,7 @@ $stmt->execute([':id' => $usuarioId]);
 $usuario = $stmt->fetch();
 if (!$usuario || empty($usuario['dois_fatores_ativo'])) {
     unset($_SESSION['2fa_pendente_usuario_id']);
-    header('Location: ' . Url::pagina('login.php'));
+    Url::redirecionar(Url::pagina('login.php'));
     exit;
 }
 
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->prepare('UPDATE usuarios SET dois_fatores_codigo = NULL, dois_fatores_codigo_expira = NULL, ultimo_login = NOW() WHERE id = :id')->execute([':id' => $usuarioId]);
             $destino = $_SESSION['2fa_voltar'] ?? Url::pagina('onboarding.php');
             unset($_SESSION['2fa_voltar']);
-            header('Location: ' . $destino);
+            Url::redirecionar($destino);
             exit;
         }
         $erro = 'Código inválido ou expirado.';
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Verificação em duas etapas</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
 </head>
 
 <body style="padding-top:38px;">
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="button"
             onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}"
             style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;"
-            aria-label="Voltar para a página anterior">← Voltar</button></div>
+            aria-label="← Voltar para a página anterior">← Voltar</button></div>
     <main class="container py-5" style="max-width:480px">
         <h1>Verificação em duas etapas</h1>
         <p>Digite o código enviado ao seu e-mail.</p><?php if ($mensagem): ?>

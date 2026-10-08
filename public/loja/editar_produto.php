@@ -19,6 +19,7 @@ require_once "../../app/Models/Usuario.php";
 
 $empresaController = new EmpresaController();
 $produtoController  = new ProdutoController();
+$imagemController = new ProdutoImagemController();
 $pdo = Database::conectar();
 
 $usuarioId = (int) $_SESSION["usuario_id"];
@@ -44,7 +45,7 @@ $empresaId = (int) $produto["empresa_id"];
 $subcategorias = $produtoController->listarSubcategorias();
 $marcas        = $produtoController->listarMarcas();
 $estoqueAtual  = $produtoController->buscarEstoque($produtoId) ?? ['quantidade' => 0, 'estoque_minimo' => 0, 'estoque_maximo' => 0];
-$imagensAtuais = $produtoController->buscarImagens($produtoId);
+$imagensAtuais = $imagemController->buscarImagens($produtoId);
 
 $mensagem     = "";
 $tipoMensagem = "";
@@ -86,8 +87,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $produtoController->atualizarEstoque($produtoId, $quantidade, $minimo, $maximo);
 
             if (!empty($_FILES["imagens"]["name"][0])) {
-                $novasImagens = $produtoController->processarImagens($_FILES["imagens"]);
-                $produtoController->salvarImagens($produtoId, $novasImagens);
+                $novasImagens = $imagemController->processarImagens($_FILES["imagens"]);
+                $imagemController->salvarImagens($produtoId, $novasImagens);
             }
 
             Flash::sucesso("Produto atualizado com sucesso!");

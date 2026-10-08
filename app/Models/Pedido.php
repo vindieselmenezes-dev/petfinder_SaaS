@@ -46,61 +46,12 @@ class Pedido
 
         // Reconstrói cada item a partir do banco (nunca confia em preço
         // vindo do formulário) e confere estoque disponível.
-        $itensValidados = [];
-        $valorProdutos = 0.0;
-        $taxaComissao = $this->taxaComissaoPercentual();
-
-        foreach ($itens as $item) {
-            $produtoId = (int) $item['produto_id'];
-            $quantidade = max(1, (int) $item['quantidade']);
-
-            $stmtProduto = $this->pdo->prepare("
-                SELECT id, nome, preco_venda, preco_promocional, ativo, empresa_id
-                FROM produtos
-                WHERE id = :id
-            ");
-            $stmtProduto->execute([':id' => $produtoId]);
-            $produto = $stmtProduto->fetch();
-
-            if (!$produto || !$produto['ativo']) {
-                $nomeProduto = $produto['nome'] ?? ('produto #' . $produtoId);
-                return ['sucesso' => false, 'erro' => "O produto \"{$nomeProduto}\" não está mais disponível."];
-            }
-
-            $stmtEstoque = $this->pdo->prepare("SELECT quantidade FROM estoque WHERE produto_id = :id");
-            $stmtEstoque->execute([':id' => $produtoId]);
-            $estoque = $stmtEstoque->fetch();
-            $disponivel = $estoque ? (int) $estoque['quantidade'] : 0;
-
-            if ($disponivel < $quantidade) {
-                return [
-                    'sucesso' => false,
-                    'erro' => "Estoque insuficiente para \"{$produto['nome']}\" (disponível: {$disponivel}).",
-                ];
-            }
-
-            $preco = !empty($produto['preco_promocional'])
-                ? (float) $produto['preco_promocional']
-                : (float) $produto['preco_venda'];
-
-            $subtotal = $preco * $quantidade;
-            $valorProdutos += $subtotal;
-
-            $valorComissaoItem = round($subtotal * ($taxaComissao / 100), 2);
-            $valorRepasseItem = round($subtotal - $valorComissaoItem, 2);
-
-            $itensValidados[] = [
-                'produto_id' => $produtoId,
-                'quantidade' => $quantidade,
-                'preco_unitario' => $preco,
-                'subtotal' => $subtotal,
-                'valor_comissao' => $valorComissaoItem,
-                'valor_repasse' => $valorRepasseItem,
-                // Guardado aqui pra não precisar consultar de novo lá embaixo
-                // (evita 1 query extra por item só pra pegar o empresa_id).
-                'empresa_id' => (int) $produto['empresa_id'],
-            ];
+        $validacao = $this->validarItens($itens);
+        if (isset($validacao['erro'])) {
+            return ['sucesso' => false, 'erro' => $validacao['erro']];
         }
+        $itensValidados = $validacao['itens'];
+        $valorProdutos = $validacao['valor_produtos'];
 
         // Cupom (opcional)
         $valorDesconto = 0.0;
@@ -111,10 +62,7 @@ class Pedido
                 return ['sucesso' => false, 'erro' => 'Cupom inválido, expirado ou o valor mínimo da compra não foi atingido.'];
             }
             if ($cupom !== null) {
-                $valorDesconto = $cupom['tipo'] === 'Percentual'
-                    ? round($valorProdutos * ((float) $cupom['valor'] / 100), 2)
-                    : (float) $cupom['valor'];
-                $valorDesconto = min($valorDesconto, $valorProdutos);
+                $valorDesconto = $this->calcularDesconto($cupom, $valorProdutos);
             }
         }
 
@@ -146,34 +94,8 @@ class Pedido
             ]);
             $pedidoId = (int) $this->pdo->lastInsertId();
 
-            try {
-                $stmtStatus = $this->pdo->prepare(
-                    'INSERT INTO pedido_status_historico (pedido_id, status, observacao) VALUES (:pedido_id, :status, :observacao)'
-                );
-                $stmtStatus->execute([
-                    ':pedido_id' => $pedidoId,
-                    ':status' => 'Pago',
-                    ':observacao' => 'Pagamento aprovado.',
-                ]);
-            } catch (Throwable $exception) {
-                // Permite concluir compras durante a janela de aplicação da migration.
-            }
-
-            $stmtItem = $this->pdo->prepare("
-                INSERT INTO pedido_itens (pedido_id, produto_id, quantidade, preco_unitario, subtotal, valor_comissao, valor_repasse)
-                VALUES (:pedido_id, :produto_id, :quantidade, :preco_unitario, :subtotal, :valor_comissao, :valor_repasse)
-            ");
-            foreach ($itensValidados as $item) {
-                $stmtItem->execute([
-                    ':pedido_id' => $pedidoId,
-                    ':produto_id' => $item['produto_id'],
-                    ':quantidade' => $item['quantidade'],
-                    ':preco_unitario' => $item['preco_unitario'],
-                    ':subtotal' => $item['subtotal'],
-                    ':valor_comissao' => $item['valor_comissao'],
-                    ':valor_repasse' => $item['valor_repasse'],
-                ]);
-            }
+            $this->registrarHistoricoPago($pedidoId);
+            $this->inserirItensPedido($pedidoId, $itensValidados);
 
             // Pagamento: não existe gateway real integrado ainda, então o
             // pagamento é simulado como aprovado na hora — dá pra trocar
@@ -191,33 +113,12 @@ class Pedido
             ]);
 
             if ($cupom !== null) {
-                $stmtCupomUso = $this->pdo->prepare("
-                    INSERT INTO cupons_utilizados (cupom_id, pedido_id, usuario_id)
-                    VALUES (:cupom_id, :pedido_id, :usuario_id)
-                ");
-                $stmtCupomUso->execute([
-                    ':cupom_id' => $cupom['id'],
-                    ':pedido_id' => $pedidoId,
-                    ':usuario_id' => $usuarioId,
-                ]);
-
-                $stmtCupomDecrementa = $this->pdo->prepare("
-                    UPDATE cupons SET quantidade = GREATEST(0, quantidade - 1) WHERE id = :id
-                ");
-                $stmtCupomDecrementa->execute([':id' => $cupom['id']]);
+                $this->registrarUsoCupom($cupom, $pedidoId, $usuarioId);
             }
 
             $this->pdo->commit();
 
-            // Antes disso rodava 1 SELECT por item só pra descobrir o
-            // empresa_id (N+1) — agora reaproveita o valor que já foi
-            // buscado junto com o produto lá em cima, na validação.
-            $metricaEmpresa = new MetricaEmpresa();
-            foreach ($itensValidados as $item) {
-                if ($item['empresa_id'] > 0) {
-                    $metricaEmpresa->registrar($item['empresa_id'], 'conversao', 'checkout', $item['produto_id'], $usuarioId);
-                }
-            }
+            $this->registrarMetricasCheckout($itensValidados, $usuarioId);
 
             return [
                 'sucesso' => true,
@@ -227,6 +128,144 @@ class Pedido
         } catch (Exception $e) {
             $this->pdo->rollBack();
             return ['sucesso' => false, 'erro' => 'Não foi possível concluir a compra. Tente novamente.'];
+        }
+    }
+
+    /**
+     * Confere cada item no banco (preço e estoque) e calcula comissão/repasse.
+     * Retorna ['erro' => string] ou ['itens' => array, 'valor_produtos' => float].
+     */
+    private function validarItens(array $itens): array
+    {
+        $itensValidados = [];
+        $valorProdutos = 0.0;
+        $taxaComissao = $this->taxaComissaoPercentual();
+
+        foreach ($itens as $item) {
+            $produtoId = (int) $item['produto_id'];
+            $quantidade = max(1, (int) $item['quantidade']);
+
+            $stmtProduto = $this->pdo->prepare("
+                SELECT id, nome, preco_venda, preco_promocional, ativo, empresa_id
+                FROM produtos
+                WHERE id = :id
+            ");
+            $stmtProduto->execute([':id' => $produtoId]);
+            $produto = $stmtProduto->fetch();
+
+            if (!$produto || !$produto['ativo']) {
+                $nomeProduto = $produto['nome'] ?? ('produto #' . $produtoId);
+                return ['erro' => "O produto \"{$nomeProduto}\" não está mais disponível."];
+            }
+
+            $stmtEstoque = $this->pdo->prepare("SELECT quantidade FROM estoque WHERE produto_id = :id");
+            $stmtEstoque->execute([':id' => $produtoId]);
+            $estoque = $stmtEstoque->fetch();
+            $disponivel = $estoque ? (int) $estoque['quantidade'] : 0;
+
+            if ($disponivel < $quantidade) {
+                return ['erro' => "Estoque insuficiente para \"{$produto['nome']}\" (disponível: {$disponivel})."];
+            }
+
+            $preco = !empty($produto['preco_promocional'])
+                ? (float) $produto['preco_promocional']
+                : (float) $produto['preco_venda'];
+
+            $subtotal = $preco * $quantidade;
+            $valorProdutos += $subtotal;
+
+            $valorComissaoItem = round($subtotal * ($taxaComissao / 100), 2);
+            $valorRepasseItem = round($subtotal - $valorComissaoItem, 2);
+
+            $itensValidados[] = [
+                'produto_id' => $produtoId,
+                'quantidade' => $quantidade,
+                'preco_unitario' => $preco,
+                'subtotal' => $subtotal,
+                'valor_comissao' => $valorComissaoItem,
+                'valor_repasse' => $valorRepasseItem,
+                // Guardado aqui pra não precisar consultar de novo lá embaixo
+                // (evita 1 query extra por item só pra pegar o empresa_id).
+                'empresa_id' => (int) $produto['empresa_id'],
+            ];
+        }
+
+        return ['itens' => $itensValidados, 'valor_produtos' => $valorProdutos];
+    }
+
+    private function calcularDesconto(array $cupom, float $valorProdutos): float
+    {
+        $valorDesconto = $cupom['tipo'] === 'Percentual'
+            ? round($valorProdutos * ((float) $cupom['valor'] / 100), 2)
+            : (float) $cupom['valor'];
+
+        return min($valorDesconto, $valorProdutos);
+    }
+
+    private function registrarHistoricoPago(int $pedidoId): void
+    {
+        try {
+            $stmtStatus = $this->pdo->prepare(
+                'INSERT INTO pedido_status_historico (pedido_id, status, observacao) VALUES (:pedido_id, :status, :observacao)'
+            );
+            $stmtStatus->execute([
+                ':pedido_id' => $pedidoId,
+                ':status' => 'Pago',
+                ':observacao' => 'Pagamento aprovado.',
+            ]);
+        } catch (Throwable $exception) {
+            // Permite concluir compras durante a janela de aplicação da migration.
+        }
+    }
+
+    private function inserirItensPedido(int $pedidoId, array $itensValidados): void
+    {
+        $stmtItem = $this->pdo->prepare("
+            INSERT INTO pedido_itens (pedido_id, produto_id, quantidade, preco_unitario, subtotal, valor_comissao, valor_repasse)
+            VALUES (:pedido_id, :produto_id, :quantidade, :preco_unitario, :subtotal, :valor_comissao, :valor_repasse)
+        ");
+        foreach ($itensValidados as $item) {
+            $stmtItem->execute([
+                ':pedido_id' => $pedidoId,
+                ':produto_id' => $item['produto_id'],
+                ':quantidade' => $item['quantidade'],
+                ':preco_unitario' => $item['preco_unitario'],
+                ':subtotal' => $item['subtotal'],
+                ':valor_comissao' => $item['valor_comissao'],
+                ':valor_repasse' => $item['valor_repasse'],
+            ]);
+        }
+    }
+
+    private function registrarUsoCupom(array $cupom, int $pedidoId, int $usuarioId): void
+    {
+        $stmtCupomUso = $this->pdo->prepare("
+            INSERT INTO cupons_utilizados (cupom_id, pedido_id, usuario_id)
+            VALUES (:cupom_id, :pedido_id, :usuario_id)
+        ");
+        $stmtCupomUso->execute([
+            ':cupom_id' => $cupom['id'],
+            ':pedido_id' => $pedidoId,
+            ':usuario_id' => $usuarioId,
+        ]);
+
+        $stmtCupomDecrementa = $this->pdo->prepare("
+            UPDATE cupons SET quantidade = GREATEST(0, quantidade - 1) WHERE id = :id
+        ");
+        $stmtCupomDecrementa->execute([':id' => $cupom['id']]);
+    }
+
+    /**
+     * Antes rodava 1 SELECT por item só pra descobrir o empresa_id (N+1);
+     * reaproveita o valor já buscado na validação.
+     */
+    private function registrarMetricasCheckout(array $itensValidados, int $usuarioId): void
+    {
+        $metricaEmpresa = new MetricaEmpresa();
+        foreach ($itensValidados as $item) {
+            if ($item['empresa_id'] > 0) {
+                $metricaEmpresa->registrar($item['empresa_id'], 'conversao', 'checkout', $item['produto_id'], $usuarioId);
+            }
         }
     }
 
@@ -426,13 +465,15 @@ class Pedido
     public function atualizarStatus(int $pedidoId, string $status, string $observacao = ''): bool
     {
         $validos = ['Aguardando Pagamento', 'Pago', 'Separação', 'Enviado', 'Entregue', 'Cancelado'];
-        if (!in_array($status, $validos, true))
+        if (!in_array($status, $validos, true)) {
             return false;
+        }
         $stmt = $this->pdo->prepare('SELECT usuario_id, status FROM pedidos WHERE id = :id');
         $stmt->execute([':id' => $pedidoId]);
         $pedido = $stmt->fetch();
-        if (!$pedido || $pedido['status'] === $status)
+        if (!$pedido || $pedido['status'] === $status) {
             return false;
+        }
 
         $this->pdo->beginTransaction();
         try {

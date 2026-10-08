@@ -27,7 +27,7 @@ class ValidacaoSenha
             return "A senha deve ter pelo menos 1 letra maiúscula.";
         }
 
-        if (!preg_match('/[0-9]/', $senha)) {
+        if (!preg_match('/\d/', $senha)) {
             return "A senha deve ter pelo menos 1 número.";
         }
 
