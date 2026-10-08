@@ -47,7 +47,7 @@ class Newsletter
             return [
                 'sucesso'    => true,
                 'jaInscrito' => true,
-                'mensagem'   => 'Esse e-mail já está inscrito. Obrigado por acompanhar o PetFinder!',
+                'mensagem'   => 'Esse e-mail já está inscrito. Obrigado por acompanhar o EcoSistemPet!',
             ];
         }
 

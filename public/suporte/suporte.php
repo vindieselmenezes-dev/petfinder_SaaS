@@ -32,7 +32,7 @@ require_once "../../app/Includes/menu.php";
 
     <a href="novo_chamado.php" class="btn-acao" style="background:#3498db; color:white; display:inline-block; margin-bottom:20px;">➕ Abrir novo chamado</a>
 
-    <?php if (count($chamados) > 0): ?>
+    <?php if (!empty($chamados)): ?>
         <table class="tabela-pets">
             <thead>
                 <tr>

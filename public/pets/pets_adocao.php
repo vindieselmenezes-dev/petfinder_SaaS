@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/bootstrap.php';
+$naoInformado = 'Não informado';
 
 
 require_once "../../app/Controllers/PetController.php";
@@ -43,7 +44,7 @@ if (isset($_SESSION['usuario_id'])) {
                 </tr>
             </thead>
             <tbody>
-                <?php if (count($pets) > 0): ?>
+                <?php if (!empty($pets)): ?>
                     <?php foreach ($pets as $pet): ?>
                         <tr style="border-bottom: 1px solid #eaeaea;">
                             <td data-col="foto" style="padding: 15px; text-align: center;">
@@ -67,13 +68,13 @@ if (isset($_SESSION['usuario_id'])) {
                                 📍 <?= htmlspecialchars($pet["cidade"] ?? 'Não informada'); ?>
                             </td>
                             <td data-col="tutor" data-th="Tutor" style="padding: 15px; color: #333;">
-                                <?= htmlspecialchars($pet["tutor_nome"] ?? 'Não informado'); ?>
+                                <?= htmlspecialchars($pet["tutor_nome"] ?? $naoInformado); ?>
                             </td>
                             <td data-col="contato" data-th="Contato" style="padding: 15px; color: #555;">
-                                📞 <?= htmlspecialchars($pet["tutor_telefone"] ?? 'Não informado'); ?>
+                                📞 <?= htmlspecialchars($pet["tutor_telefone"] ?? $naoInformado); ?>
                             </td>
                             <td data-col="data" data-th="Data" style="padding: 15px; color: #777;">
-                                <?= !empty($pet["criado_em"]) ? date("d/m/Y", strtotime($pet["criado_em"])) : 'Não informado'; ?>
+                                <?= !empty($pet["criado_em"]) ? date("d/m/Y", strtotime($pet["criado_em"])) : $naoInformado; ?>
                             </td>
                             <td data-col="acoes" style="padding: 15px; text-align: center; white-space: nowrap;">
                                 <a href="pet.php?id=<?= (int) $pet['id']; ?>" style="display: inline-block; background: #3498db; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-bottom: 4px;">👁️ Ver Perfil</a>

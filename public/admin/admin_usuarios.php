@@ -1,80 +1,93 @@
 <?php declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/bootstrap.php';
- 
 
-if (!isset($_SESSION['usuario_id']) || ($_SESSION['perfil_tipo'] ?? '') !== 'administrador') { 
-    header('Location: ' . Url::pagina('login.php')); 
-    exit; 
-} 
 
-require_once '../../app/Models/Usuario.php'; 
-$pdo = Database::conectar(); 
+if (!isset($_SESSION['usuario_id']) || ($_SESSION['perfil_tipo'] ?? '') !== 'administrador') {
+    header('Location: ' . Url::pagina('login.php'));
+    exit;
+}
 
-$usuarioModel = new Usuario(); 
-$usuarios = $usuarioModel->listarTodos(); 
+require_once '../../app/Models/Usuario.php';
+require_once '../../app/Helpers/Csrf.php';
+$pdo = Database::conectar();
 
-if (isset($_GET['delete_id'])) { 
-    $deleteId = (int) $_GET['delete_id']; 
-    if ($deleteId > 0 && $deleteId !== (int)$_SESSION['usuario_id']) { 
-        if ($usuarioModel->deletar($deleteId)) { 
-            session_write_close();
-            header('Location: ' . Url::pagina('admin_usuarios.php'));
-            exit;
-        } 
-    } 
-} 
+$usuarioModel = new Usuario();
+$usuarios = $usuarioModel->listarTodos();
+
+// Exclusão agora exige POST + token CSRF (antes era um link GET
+// "?delete_id=", explorável via CSRF sem precisar de JS: bastava
+// um <img src="...?delete_id=X"> em outro site pra apagar um
+// usuário com a sessão do admin logado).
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
+        http_response_code(419);
+        echo '<h1>Sessão expirada</h1><p>Recarregue a página e tente novamente.</p>';
+        exit;
+    }
+
+    $deleteId = (int) $_POST['delete_id'];
+    if ($deleteId > 0 && $deleteId !== (int)$_SESSION['usuario_id'] && $usuarioModel->deletar($deleteId)) {
+        session_write_close();
+        header('Location: ' . Url::pagina('admin_usuarios.php'));
+        exit;
+    }
+}
 
 $tituloPagina = "Gestão de Usuários";
 
-require_once '../../app/Includes/header.php'; 
-require_once '../../app/Includes/menu.php'; 
+require_once '../../app/Includes/header.php';
+require_once '../../app/Includes/menu.php';
 ?> 
 
 <main class="conteudo">
 <div class="container">
 
-    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 0 auto;"> 
-        
-        <h1 style="color: #2c3e50; margin-bottom: 5px;">👥 Gestão de Usuários</h1> 
-        <p style="color: #7f8c8d; margin-bottom: 30px;">Veja o perfil completo de cada tutor: dados da conta, pets, empresas e permissões.</p> 
+    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 0 auto;">
 
-        <table class="tabela-pets"> 
-            <thead> 
-                <tr> 
-                    <th>Nome</th> 
-                    <th>Email</th> 
-                    <th>Perfil</th> 
-                    <th style="text-align: center;">Ações</th> 
-                </tr> 
-            </thead> 
-            <tbody> 
-                <?php if (count($usuarios) > 0): ?> 
+        <h1 style="color: #2c3e50; margin-bottom: 5px;">👥 Gestão de Usuários</h1>
+        <p style="color: #7f8c8d; margin-bottom: 30px;">Veja o perfil completo de cada tutor: dados da conta, pets, empresas e permissões.</p>
+
+        <table class="tabela-pets">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Perfil</th>
+                    <th style="text-align: center;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($usuarios)): ?> 
                     <?php foreach ($usuarios as $usuario): ?> 
-                        <tr> 
-                            <td style="font-weight: bold;"><?= htmlspecialchars(($usuario['nome'] ?? '') . ' ' . ($usuario['sobrenome'] ?? '')); ?></td> 
-                            <td><?= htmlspecialchars($usuario['email'] ?? ''); ?></td> 
-                            <td><span style="background: #e1f5fe; color: #0288d1; padding: 3px 8px; border-radius: 4px; font-size: 13px; font-weight: bold;"><?= htmlspecialchars($usuario['perfil'] ?? 'cliente'); ?></span></td> 
+                        <tr>
+                            <td style="font-weight: bold;"><?= htmlspecialchars(($usuario['nome'] ?? '') . ' ' . ($usuario['sobrenome'] ?? '')); ?></td>
+                            <td><?= htmlspecialchars($usuario['email'] ?? ''); ?></td>
+                            <td><span style="background: #e1f5fe; color: #0288d1; padding: 3px 8px; border-radius: 4px; font-size: 13px; font-weight: bold;"><?= htmlspecialchars($usuario['perfil'] ?? 'cliente'); ?></span></td>
 
-                            <td style="text-align: center; white-space:nowrap;"> 
+                            <td style="text-align: center; white-space:nowrap;">
                                 <a href="admin_usuario_detalhe.php?id=<?= $usuario['id']; ?>" class="btn-acao" style="background:#2563eb; color:white;">👁️ Ver Perfil</a>
                                 <?php if ($usuario['id'] !== $_SESSION['usuario_id']): ?> 
-                                    <a href="admin_usuarios.php?delete_id=<?= $usuario['id']; ?>" onclick="return confirm('Deseja remover este usuário?');" class="btn-acao" style="background:#e74c3c; color:white;">🗑 Excluir</a> 
+                                    <form method="POST" style="display:inline" onsubmit="return confirm('Deseja remover este usuário?');">
+                                        <?= Csrf::campoHtml() ?>
+                                        <input type="hidden" name="delete_id" value="<?= $usuario['id']; ?>">
+                                        <button type="submit" class="btn-acao" style="background:#e74c3c; color:white; border:none; cursor:pointer;">🗑 Excluir</button>
+                                    </form>
                                 <?php else: ?> 
-                                    <span style="background: #2ecc71; color: white; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: bold;">Você (Ativo)</span> 
+                                    <span style="background: #2ecc71; color: white; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: bold;">Você (Ativo)</span>
                                 <?php endif; ?> 
-                            </td> 
-                        </tr> 
+                            </td>
+                        </tr>
                     <?php endforeach; ?> 
                 <?php else: ?> 
-                    <tr> 
-                        <td colspan="4" style="padding: 20px; text-align: center; color: #95a5a6; font-style: italic;">Nenhum usuário encontrado.</td> 
-                    </tr> 
+                    <tr>
+                        <td colspan="4" style="padding: 20px; text-align: center; color: #95a5a6; font-style: italic;">Nenhum usuário encontrado.</td>
+                    </tr>
                 <?php endif; ?> 
-            </tbody> 
-        </table> 
+            </tbody>
+        </table>
     </div>
 </div>
-</main> 
+</main>
 
 <?php require_once '../../app/Includes/footer.php'; ?>

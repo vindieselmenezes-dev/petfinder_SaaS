@@ -29,7 +29,7 @@ require_once '../../app/Includes/menu.php';
 
     <h1>💬 Mensagens</h1>
 
-    <?php if (count($conversas) > 0): ?>
+    <?php if (!empty($conversas)): ?>
         <?php foreach ($conversas as $c): ?>
             <a href="conversa.php?id=<?= (int) $c['id']; ?>" style="text-decoration:none; color:inherit;">
                 <div class="notificacao-item <?= (int) ($c['nao_lidas'] ?? 0) > 0 ? '' : 'lida'; ?>" style="display:flex; justify-content:space-between; align-items:center;">

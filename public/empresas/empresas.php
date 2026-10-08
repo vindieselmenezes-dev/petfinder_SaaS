@@ -26,29 +26,34 @@ $empresas = $controller->listarAtivas($categoriaId, $cidade, $busca);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Empresas - PetFinder Brasil</title>
+    <title>Empresas - EcoSistemPet</title>
 
     <!-- BOOTSTRAP -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
 
     <!-- BOOTSTRAP ICONS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
 
     <link rel="stylesheet" href="../../assets/css/style.css">
 
 </head>
 
 <body style="padding-top:38px;">
-    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="Voltar para a página anterior">← Voltar</button></div>
+    <div
+        style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;">
+        <button type="button"
+            onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}"
+            style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;"
+            aria-label="← Voltar para a página anterior">← Voltar</button></div>
 
     <header class="border-bottom py-3 mb-4">
 
         <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
 
             <a href="../../index.html" class="d-flex align-items-center text-decoration-none">
-                <img src="../../assets/img/logo.png" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="../../assets/img/logo.png" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -72,8 +77,8 @@ $empresas = $controller->listarAtivas($categoriaId, $cidade, $busca);
         <form method="GET" class="row g-2 mb-4 align-items-end bg-light p-3 rounded-3">
 
             <div class="col-md-5">
-                <label class="form-label small">Categoria</label>
-                <select name="categoria_id" class="form-select">
+                <label for="filtro-categoria" class="form-label small">Categoria</label>
+                <select id="filtro-categoria" name="categoria_id" class="form-select">
                     <option value="">Todas as categorias</option>
                     <?php foreach ($categorias as $categoria): ?>
                         <option value="<?= $categoria["id"] ?>" <?= $categoriaId === (int) $categoria["id"] ? "selected" : "" ?>>
@@ -84,9 +89,9 @@ $empresas = $controller->listarAtivas($categoriaId, $cidade, $busca);
             </div>
 
             <div class="col-md-5">
-                <label class="form-label small">Cidade</label>
-                <input type="text" name="cidade" class="form-control" placeholder="Ex: Ouro Branco"
-                    value="<?= htmlspecialchars($cidade) ?>">
+                <label for="filtro-cidade-empresa" class="form-label small">Cidade</label>
+                <input id="filtro-cidade-empresa" type="text" name="cidade" class="form-control"
+                    placeholder="Ex: Ouro Branco" value="<?= htmlspecialchars($cidade) ?>">
             </div>
 
             <div class="col-md-2">
@@ -118,7 +123,8 @@ $empresas = $controller->listarAtivas($categoriaId, $cidade, $busca);
 
                     <div class="col-lg-4 col-md-6">
 
-                        <div class="card empresa-card h-100 shadow-sm <?= !empty($empresa['plano_destaque']) ? 'border-warning border-2' : '' ?>">
+                        <div
+                            class="card empresa-card h-100 shadow-sm <?= !empty($empresa['plano_destaque']) ? 'border-warning border-2' : '' ?>">
 
                             <a href="empresa.php?id=<?= (int) $empresa['id'] ?>" class="position-relative">
                                 <img src="<?= htmlspecialchars($capa) ?>" class="card-img-top"
@@ -189,10 +195,10 @@ $empresas = $controller->listarAtivas($categoriaId, $cidade, $busca);
     </main>
 
     <footer class="border-top py-4 text-center text-muted">
-        © <?= date("Y") ?> PetFinder Brasil
+        © <?= date("Y") ?> EcoSistemPet
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
 </body>
 

@@ -20,7 +20,7 @@ Middleware::exigirLogin();
 $destino = Url::pagina('painel_parceiro.php');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ' . $destino);
+    Url::redirecionar($destino);
     exit;
 }
 
@@ -35,7 +35,7 @@ $campanha = $campanhaId > 0 ? $campanhaModel->buscarPorId($campanhaId, false) : 
 
 if ($campanha === null) {
     Flash::erro('Publicação não encontrada.');
-    header('Location: ' . $destino);
+    Url::redirecionar($destino);
     exit;
 }
 
@@ -44,7 +44,7 @@ $parceiroId = (int) $campanha['parceiro_id'];
 if (!$parceiroModel->podeAdministrar($parceiroId, (int) Auth::id(), Auth::ehAdministrador())) {
     http_response_code(403);
     Flash::erro('Você não tem permissão para alterar esta publicação.');
-    header('Location: ' . $destino);
+    Url::redirecionar($destino);
     exit;
 }
 
@@ -78,5 +78,5 @@ switch ($_POST['acao'] ?? '') {
         Flash::erro('Ação desconhecida.');
 }
 
-header('Location: ' . $destino);
+Url::redirecionar($destino);
 exit;

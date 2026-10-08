@@ -38,8 +38,7 @@ require_once __DIR__ . '/../app/Includes/header.php';
 require_once __DIR__ . '/../app/Includes/menu.php';
 ?>
 
-<main class="container"
-    style="margin-top: 100px !important; padding: 20px !important; display: block !important;">
+<main class="container" style="margin-top: 100px !important; display: block !important;">
 
     <div
         style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 40px auto 0 auto !important; position: relative !important; top: 0 !important; float: none !important; clear: both !important; display: block !important;">
@@ -59,7 +58,7 @@ require_once __DIR__ . '/../app/Includes/menu.php';
             <h1 style="color: #2c3e50; margin-bottom: 5px; font-family: sans-serif; font-weight: bold;">📊 Dashboard -
                 Administrador Global</h1>
             <p style="color: #7f8c8d; margin-bottom: 30px; font-family: sans-serif;">Painel de controle macro do ecossistema
-                PetFinder Brasil.</p>
+                EcoSistemPet.</p>
 
             <div class="cards">
                 <a href="<?= Url::pagina('admin_usuarios.php') ?>?status=Todos" class="card">
@@ -131,7 +130,7 @@ require_once __DIR__ . '/../app/Includes/menu.php';
                 <?= htmlspecialchars(Auth::nome()); ?>!
             </h1>
             <p style="color: #7f8c8d; margin-bottom: 30px; font-family: sans-serif;">Aqui está um resumo da sua conta no
-                PetFinder Brasil.</p>
+                EcoSistemPet.</p>
 
             <div class="cards">
                 <a href="<?= Url::pagina('meus_pets.php') ?>" class="card">
@@ -170,7 +169,7 @@ require_once __DIR__ . '/../app/Includes/menu.php';
                     <div class="numero"><?= $resumoParceiros['campanhas']; ?></div>
                 </a>
 
-                <?php if (count($minhasParcerias) > 0): ?>
+                <?php if (!empty($minhasParcerias)): ?>
                     <a href="<?= Url::pagina('painel_parceiro.php') ?>" class="card">
                         <div class="icone">🤝</div>
                         <h3>Painel do Parceiro</h3>

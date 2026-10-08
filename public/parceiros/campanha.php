@@ -82,15 +82,16 @@ $imagem = $campanha
     ? Foto::url($campanha['imagem'] ?? null, 'campanhas', 'img/parceiros/parceiro03.jpg')
     : '';
 
+$metaValor = ($campanha && $campanha['meta_valor'] !== null) ? (float) $campanha['meta_valor'] : null;
 $percentual = $campanha
-    ? Campanha::percentualMeta(
-        $campanha['meta_valor'] !== null ? (float) $campanha['meta_valor'] : null,
-        (float) $campanha['valor_arrecadado']
-    )
+    ? CampanhaApresentacao::percentualMeta($metaValor, (float) $campanha['valor_arrecadado'])
     : null;
 
 // Chave PIX da campanha, com a do parceiro como reserva.
-$pix = $campanha ? ($campanha['chave_pix'] ?: $campanha['parceiro_pix']) : null;
+$pix = null;
+if ($campanha) {
+    $pix = $campanha['chave_pix'] ?: $campanha['parceiro_pix'];
+}
 
 // URL completa (com domínio) para compartilhar nas redes — precisa ser
 // absoluta, senão o link não abre certo fora do próprio site.
@@ -107,14 +108,14 @@ $urlCampanha = $campanha
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= htmlspecialchars($campanha['titulo'] ?? 'Campanha não encontrada') ?> - PetFinder Brasil</title>
+    <title><?= htmlspecialchars($campanha['titulo'] ?? 'Campanha não encontrada') ?> - EcoSistemPet</title>
 
     <?php if ($campanha !== null && !empty($campanha['resumo'])): ?>
         <meta name="description" content="<?= htmlspecialchars($campanha['resumo']) ?>">
     <?php endif; ?>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
     <link rel="stylesheet" href="<?= Url::asset('css/style.css') ?>">
 
 </head>
@@ -126,7 +127,7 @@ $urlCampanha = $campanha
         <button type="button"
             onclick="if(window.history.length>1){history.back();}else{window.location.href='<?= Url::pagina('parceiros.php') ?>';}"
             style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;"
-            aria-label="Voltar para a página anterior">← Voltar</button>
+            aria-label="← Voltar para a página anterior">← Voltar</button>
     </div>
 
     <main class="container my-4">
@@ -167,8 +168,8 @@ $urlCampanha = $campanha
                         alt="<?= htmlspecialchars($campanha['titulo']) ?>">
 
                     <span class="badge bg-dark mb-2">
-                        <?= Campanha::iconeTipo($campanha['tipo']) ?>
-                        <?= htmlspecialchars(Campanha::rotuloTipo($campanha['tipo'])) ?>
+                        <?= CampanhaApresentacao::iconeTipo($campanha['tipo']) ?>
+                        <?= htmlspecialchars(CampanhaApresentacao::rotuloTipo($campanha['tipo'])) ?>
                     </span>
 
                     <h1 class="fw-bold"><?= htmlspecialchars($campanha['titulo']) ?></h1>
@@ -271,7 +272,8 @@ $urlCampanha = $campanha
                                 <p class="small text-muted mb-1">Chave PIX do parceiro</p>
 
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" id="chavePix" readonly
+                                    <label for="chave-pix-campanha" class="visually-hidden">Chave PIX do parceiro</label>
+                                    <input type="text" class="form-control" id="chave-pix-campanha" readonly
                                         value="<?= htmlspecialchars($pix) ?>">
                                     <button class="btn btn-outline-secondary" type="button" id="copiarPix">
                                         <i class="bi bi-clipboard"></i>
@@ -292,7 +294,7 @@ $urlCampanha = $campanha
                             <?php endif; ?>
 
                             <p class="small text-muted mb-0">
-                                O valor vai direto para o parceiro — o PetFinder não recebe nem
+                                O valor vai direto para o parceiro — o EcoSistemPet não recebe nem
                                 intermedia doações.
                             </p>
 
@@ -374,12 +376,12 @@ $urlCampanha = $campanha
 
     <footer class="bg-dark text-light py-4">
         <div class="container text-center">
-            © <?= date('Y') ?> PetFinder Brasil ·
+            © <?= date('Y') ?> EcoSistemPet ·
             <a href="<?= Url::pagina('parceiros.php') ?>" class="text-light">Ver todas as campanhas</a>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     <script src="<?= Url::asset('js/compartilhamento.js') ?>"></script>
 
     <script>

@@ -61,6 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!empty($user['dois_fatores_ativo'])) {
                 $_SESSION['2fa_pendente_usuario_id'] = (int) $user['id'];
                 $_SESSION['2fa_pendente_perfil'] = $user['perfil_tipo'] ?? $user['tipo_usuario'] ?? 'cliente';
+                if ($voltar !== null) {
+                    $_SESSION['2fa_voltar'] = $voltar;
+                } else {
+                    unset($_SESSION['2fa_voltar']);
+                }
                 header('Location: ' . Url::pagina('2fa.php'));
                 exit();
             }
@@ -92,15 +97,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #1a1f2c !important;
+            background-color: #FFF8E1 !important;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('<?= Url::asset('img/logo.png') ?>');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: min(90vw, 900px);
+            opacity: ;
+            z-index: 0;
+            pointer-events: none;
         }
 
         .card {
+            position: relative;
+            z-index: 1;
             background: white;
             padding: 30px;
             border-radius: 12px;
@@ -174,7 +198,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body style="padding-top:38px;">
-    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="Voltar para a página anterior">← Voltar</button></div>
+    <div
+        style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;">
+        <button type="button"
+            onclick="if(window.history.length>1){history.back();}else{window.location.href='../index.html';}"
+            style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;"
+            aria-label="← Voltar para a página anterior">← Voltar</button></div>
     <div class="card">
         <h2>🐾 Acessar Conta</h2>
 
@@ -197,7 +226,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="btn">Entrar no Ecossistema</button>
             <p style="text-align:center; margin-top:12px; font-size:14px;">
-                <a href="<?= Url::pagina('esqueci_senha.php') ?>" style="color:#7f8c8d; text-decoration:none;">Esqueci minha senha</a>
+                <a href="<?= Url::pagina('esqueci_senha.php') ?>" style="color:#7f8c8d; text-decoration:none;">Esqueci
+                    minha senha</a>
             </p>
         </form>
     </div>

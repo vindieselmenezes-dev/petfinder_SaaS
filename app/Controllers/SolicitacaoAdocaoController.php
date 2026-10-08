@@ -10,7 +10,7 @@ require_once __DIR__ . '/NotificacaoController.php';
 
 class SolicitacaoAdocaoController
 {
-    private const STATUS_VALIDOS = ['Pendente', 'Aprovada', 'Rejeitada', 'Cancelada'];
+    private const ERRO_NAO_ENCONTRADA = 'Solicitação não encontrada.';
 
     private SolicitacaoAdocao $solicitacao;
     private Conversa $conversa;
@@ -100,7 +100,7 @@ class SolicitacaoAdocaoController
         $solicitacao = $this->solicitacao->buscarPorId($solicitacaoId);
 
         if (!$solicitacao) {
-            return ['sucesso' => false, 'erro' => 'Solicitação não encontrada.'];
+            return ['sucesso' => false, 'erro' => self::ERRO_NAO_ENCONTRADA];
         }
 
         if ((int) $solicitacao['pet_dono_id'] !== $usuarioDonoId) {
@@ -137,7 +137,7 @@ class SolicitacaoAdocaoController
         $solicitacao = $this->solicitacao->buscarPorId($solicitacaoId);
 
         if (!$solicitacao) {
-            return ['sucesso' => false, 'erro' => 'Solicitação não encontrada.'];
+            return ['sucesso' => false, 'erro' => self::ERRO_NAO_ENCONTRADA];
         }
 
         if ((int) $solicitacao['pet_dono_id'] !== $usuarioDonoId) {
@@ -166,7 +166,7 @@ class SolicitacaoAdocaoController
         $solicitacao = $this->solicitacao->buscarPorId($solicitacaoId);
 
         if (!$solicitacao || (int) $solicitacao['usuario_solicitante_id'] !== $usuarioSolicitanteId) {
-            return ['sucesso' => false, 'erro' => 'Solicitação não encontrada.'];
+            return ['sucesso' => false, 'erro' => self::ERRO_NAO_ENCONTRADA];
         }
 
         if ($solicitacao['status'] !== 'Pendente') {

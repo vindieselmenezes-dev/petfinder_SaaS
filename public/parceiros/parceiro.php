@@ -36,10 +36,10 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= htmlspecialchars($parceiro['nome'] ?? 'Parceiro não encontrado') ?> - PetFinder Brasil</title>
+    <title><?= htmlspecialchars($parceiro['nome'] ?? 'Parceiro não encontrado') ?> - EcoSistemPet</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
     <link rel="stylesheet" href="<?= Url::asset('css/style.css') ?>">
 
 </head>
@@ -51,7 +51,7 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
         <button type="button"
             onclick="if(window.history.length>1){history.back();}else{window.location.href='<?= Url::pagina('parceiros.php') ?>';}"
             style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;"
-            aria-label="Voltar para a página anterior">← Voltar</button>
+            aria-label="← Voltar para a página anterior">← Voltar</button>
     </div>
 
     <main class="container my-4">
@@ -113,14 +113,14 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
                             <?php if (!empty($parceiro['cidade'])): ?>
                                 <p class="text-muted mb-2">
                                     <i class="bi bi-geo-alt"></i>
-                                    <?= htmlspecialchars($parceiro['cidade']) ?><?= !empty($parceiro['estado']) ? '/' . htmlspecialchars($parceiro['estado']) : '' ?>
+                                    <?= htmlspecialchars($parceiro['cidade']) ?>        <?= !empty($parceiro['estado']) ? '/' . htmlspecialchars($parceiro['estado']) : '' ?>
                                 </p>
                             <?php endif; ?>
 
                             <?php if (!empty($parceiro['como_ajuda'])): ?>
                                 <p class="mb-0">
                                     <i class="bi bi-hand-thumbs-up text-success"></i>
-                                    <strong>Como apoia o PetFinder:</strong>
+                                    <strong>Como apoia o EcoSistemPet:</strong>
                                     <?= htmlspecialchars($parceiro['como_ajuda']) ?>
                                 </p>
                             <?php endif; ?>
@@ -198,7 +198,7 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
 
                                 <?php
                                 $imagem = Foto::url($campanha['imagem'] ?? null, 'campanhas', 'img/parceiros/parceiro02.jpg');
-                                $percentual = Campanha::percentualMeta(
+                                $percentual = CampanhaApresentacao::percentualMeta(
                                     $campanha['meta_valor'] !== null ? (float) $campanha['meta_valor'] : null,
                                     (float) $campanha['valor_arrecadado']
                                 );
@@ -215,8 +215,8 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
                                         <div class="card-body d-flex flex-column">
 
                                             <span class="badge bg-dark align-self-start mb-2">
-                                                <?= Campanha::iconeTipo($campanha['tipo']) ?>
-                                                <?= htmlspecialchars(Campanha::rotuloTipo($campanha['tipo'])) ?>
+                                                <?= CampanhaApresentacao::iconeTipo($campanha['tipo']) ?>
+                                                <?= htmlspecialchars(CampanhaApresentacao::rotuloTipo($campanha['tipo'])) ?>
                                             </span>
 
                                             <h3 class="h6 fw-bold"><?= htmlspecialchars($campanha['titulo']) ?></h3>
@@ -228,8 +228,8 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
                                             <?php if ($percentual !== null): ?>
                                                 <div class="progress mb-2" style="height:8px;">
                                                     <div class="progress-bar bg-success" style="width: <?= $percentual ?>%;"
-                                                        role="progressbar" aria-valuenow="<?= $percentual ?>"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                                        role="progressbar" aria-valuenow="<?= $percentual ?>" aria-valuemin="0"
+                                                        aria-valuemax="100"></div>
                                                 </div>
                                                 <small class="text-muted mb-2">
                                                     <?= $percentual ?>% da meta de
@@ -273,7 +273,8 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
                                 <p class="small text-muted mb-1">Chave PIX</p>
 
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" id="chavePix" readonly
+                                    <label for="chave-pix-parceiro" class="visually-hidden">Chave PIX</label>
+                                    <input type="text" class="form-control" id="chave-pix-parceiro" readonly
                                         value="<?= htmlspecialchars($parceiro['chave_pix']) ?>">
                                     <button class="btn btn-outline-secondary" type="button" id="copiarPix">
                                         <i class="bi bi-clipboard"></i>
@@ -299,7 +300,7 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
                             <hr>
 
                             <p class="small mb-0">
-                                O PetFinder <strong>não recebe nem intermedia</strong> esses valores:
+                                O EcoSistemPet <strong>não recebe nem intermedia</strong> esses valores:
                                 a doação vai direto para o parceiro. Confira os dados antes de transferir.
                             </p>
 
@@ -326,12 +327,12 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
 
     <footer class="bg-dark text-light py-4">
         <div class="container text-center">
-            © <?= date('Y') ?> PetFinder Brasil ·
+            © <?= date('Y') ?> EcoSistemPet ·
             <a href="<?= Url::pagina('parceiros.php') ?>" class="text-light">Todos os parceiros</a>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
     <script>
         // Copiar a chave PIX sem sair da página (com aviso visual no botão).

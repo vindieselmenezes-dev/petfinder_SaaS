@@ -41,7 +41,7 @@ if (isset($_SESSION['usuario_id'])) {
                 </tr>
             </thead>
             <tbody>
-                <?php if (count($pets) > 0): ?>
+                <?php if (!empty($pets)): ?>
                     <?php foreach ($pets as $pet): ?>
                         <tr style="border-bottom: 1px solid #eaeaea;">
                             <td data-col="foto" style="padding: 15px; text-align: center;">

@@ -17,6 +17,7 @@ final class Env
 
     private function __construct()
     {
+        // Classe utilitária (apenas métodos estáticos): não deve ser instanciada.
     }
 
     public static function carregar(string $caminhoArquivo): void

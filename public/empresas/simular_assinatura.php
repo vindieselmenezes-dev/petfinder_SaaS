@@ -66,7 +66,7 @@ if ($empresaId > 0) {
         $sucesso = (new EmpresaController())->atualizarPlano($empresaId, $planoId);
 
         if (!$sucesso) {
-            throw new Exception("Não foi possível atualizar o plano.");
+            throw new AtualizacaoPlanoException("Não foi possível atualizar o plano.");
         }
 
         $payloadFinanceiro = json_encode([
@@ -124,7 +124,7 @@ try {
     $sucesso = $prestadorController->atualizarPlano($prestadorId, $planoId);
 
     if (!$sucesso) {
-        throw new Exception("Não foi possível atualizar o plano.");
+        throw new AtualizacaoPlanoException("Não foi possível atualizar o plano.");
     }
 
     $payloadFinanceiro = json_encode([

@@ -15,6 +15,23 @@ class Mailer
 {
     public static function enviar(string $destinatario, string $assunto, string $corpoHtml): bool
     {
+        self::registrarLog($destinatario, $assunto, $corpoHtml);
+
+        if (getenv('EMAIL_NOTIFICACOES') !== '1') {
+            return true;
+        }
+
+        $autoload = __DIR__ . '/../../vendor/autoload.php';
+        if (is_file($autoload) && class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
+            require_once $autoload;
+            return self::enviarViaSmtp($destinatario, $assunto, $corpoHtml);
+        }
+
+        return self::enviarViaMail($destinatario, $assunto, $corpoHtml);
+    }
+
+    private static function registrarLog(string $destinatario, string $assunto, string $corpoHtml): void
+    {
         $diretorioLogs = __DIR__ . '/../../logs';
 
         if (!is_dir($diretorioLogs)) {
@@ -31,39 +48,37 @@ class Mailer
         );
 
         file_put_contents($diretorioLogs . '/emails.log', $linha, FILE_APPEND);
+    }
 
-        if (getenv('EMAIL_NOTIFICACOES') !== '1') {
-            return true;
+    private static function enviarViaSmtp(string $destinatario, string $assunto, string $corpoHtml): bool
+    {
+        $mailer = new PHPMailer\PHPMailer\PHPMailer(true);
+        try {
+            $mailer->isSMTP();
+            $mailer->Host = getenv('SMTP_HOST') ?: 'localhost';
+            $mailer->Port = (int) (getenv('SMTP_PORT') ?: 587);
+            $mailer->SMTPAuth = getenv('SMTP_AUTH') === '1';
+            $mailer->Username = getenv('SMTP_USERNAME') ?: '';
+            $mailer->Password = getenv('SMTP_PASSWORD') ?: '';
+            $mailer->SMTPSecure = getenv('SMTP_ENCRYPTION') ?: PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mailer->CharSet = 'UTF-8';
+            $mailer->setFrom(getenv('EMAIL_REMETENTE') ?: 'no-reply@petfinder.local', 'EcoSistemPet');
+            $mailer->addAddress($destinatario);
+            $mailer->isHTML(true);
+            $mailer->Subject = $assunto;
+            $mailer->Body = $corpoHtml;
+            return $mailer->send();
+        } catch (Throwable $exception) {
+            error_log('Falha SMTP EcoSistemPet: ' . $exception->getMessage());
+            return false;
         }
+    }
 
-        $autoload = __DIR__ . '/../../vendor/autoload.php';
-        if (is_file($autoload) && class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
-            require_once $autoload;
-            $mailer = new PHPMailer\PHPMailer\PHPMailer(true);
-            try {
-                $mailer->isSMTP();
-                $mailer->Host = getenv('SMTP_HOST') ?: 'localhost';
-                $mailer->Port = (int) (getenv('SMTP_PORT') ?: 587);
-                $mailer->SMTPAuth = getenv('SMTP_AUTH') === '1';
-                $mailer->Username = getenv('SMTP_USERNAME') ?: '';
-                $mailer->Password = getenv('SMTP_PASSWORD') ?: '';
-                $mailer->SMTPSecure = getenv('SMTP_ENCRYPTION') ?: PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-                $mailer->CharSet = 'UTF-8';
-                $mailer->setFrom(getenv('EMAIL_REMETENTE') ?: 'no-reply@petfinder.local', 'PetFinder Brasil');
-                $mailer->addAddress($destinatario);
-                $mailer->isHTML(true);
-                $mailer->Subject = $assunto;
-                $mailer->Body = $corpoHtml;
-                return $mailer->send();
-            } catch (Throwable $exception) {
-                error_log('Falha SMTP PetFinder: ' . $exception->getMessage());
-                return false;
-            }
-        }
-
+    private static function enviarViaMail(string $destinatario, string $assunto, string $corpoHtml): bool
+    {
         $remetente = getenv('EMAIL_REMETENTE') ?: 'no-reply@petfinder.local';
         $cabecalhos = [
-            'From: PetFinder Brasil <' . $remetente . '>',
+            'From: EcoSistemPet <' . $remetente . '>',
             'MIME-Version: 1.0',
             'Content-Type: text/html; charset=UTF-8',
         ];

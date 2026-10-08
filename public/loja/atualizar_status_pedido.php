@@ -14,5 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_SESSION['usuario_id']) || !
 }
 
 $ok = (new Pedido())->atualizarStatus((int) ($_POST['pedido_id'] ?? 0), (string) ($_POST['status'] ?? ''), trim((string) ($_POST['observacao'] ?? '')));
-header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? 'meus_pedidos.php') . ($ok ? '' : (str_contains($_SERVER['HTTP_REFERER'] ?? '', '?') ? '&' : '?') . 'erro_status=1'));
+$destino = $_SERVER['HTTP_REFERER'] ?? 'meus_pedidos.php';
+if (!$ok) {
+    $destino .= (str_contains($destino, '?') ? '&' : '?') . 'erro_status=1';
+}
+header('Location: ' . $destino);
 exit;

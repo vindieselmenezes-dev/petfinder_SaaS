@@ -13,12 +13,13 @@ require_once "../../app/Helpers/Seo.php";
 require_once "../../app/Models/MetricaEmpresa.php";
 
 $controller = new ProdutoController();
+$imagemController = new ProdutoImagemController();
 $favoritoModel = new FavoritoProduto();
 
 $id = isset($_GET["id"]) ? (int) $_GET["id"] : 0;
 
 $produto = $controller->buscarPorId($id);
-$imagens = $produto ? $controller->buscarImagens($id) : [];
+$imagens = $produto ? $imagemController->buscarImagens($id) : [];
 $estoque = $produto ? $controller->buscarEstoque($id) : null;
 
 $jaFavoritado = ($produto && isset($_SESSION['usuario_id']))
@@ -26,17 +27,21 @@ $jaFavoritado = ($produto && isset($_SESSION['usuario_id']))
     : false;
 
 $temPromocao = $produto && !empty($produto["preco_promocional"]);
-$precoFinal = $produto ? ($temPromocao ? $produto["preco_promocional"] : $produto["preco_venda"]) : 0;
+$precoFinal = 0;
+if ($produto) {
+    $precoFinal = $temPromocao ? $produto["preco_promocional"] : $produto["preco_venda"];
+}
 
 $mensagemCarrinho = $_SESSION['carrinho_flash'] ?? null;
 unset($_SESSION['carrinho_flash']);
 if ($produto && !empty($produto['empresa_id'])) {
     (new MetricaEmpresa())->registrar((int) $produto['empresa_id'], 'visualizacao', 'produto', $id, $_SESSION['usuario_id'] ?? null);
 }
-$seoTitulo = $produto ? $produto["nome"] . " - PetFinder Brasil" : "Produto não encontrado - PetFinder Brasil";
-$seoDescricao = $produto
-    ? (trim((string) ($produto["descricao"] ?? "")) ?: "Confira este produto no PetFinder Brasil.")
-    : "Produto não encontrado no PetFinder Brasil.";
+$seoTitulo = $produto ? $produto["nome"] . " - EcoSistemPet" : "Produto não encontrado - EcoSistemPet";
+$seoDescricao = "Produto não encontrado no EcoSistemPet.";
+if ($produto) {
+    $seoDescricao = trim((string) ($produto["descricao"] ?? "")) ?: "Confira este produto no EcoSistemPet.";
+}
 $seoImagem = Foto::url($imagens[0]["imagem"] ?? null, 'produtos');
 
 ?>
@@ -49,26 +54,26 @@ $seoImagem = Foto::url($imagens[0]["imagem"] ?? null, 'produtos');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= $produto ? htmlspecialchars($produto["nome"]) . " - " : "" ?>PetFinder Brasil</title>
+    <title><?= $produto ? htmlspecialchars($produto["nome"]) . " - " : "" ?>EcoSistemPet</title>
     <?= Seo::tags($seoTitulo, $seoDescricao, Url::pagina('produto.php') . '?id=' . $id, $seoImagem, "product") ?>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
     <link rel="stylesheet" href="../../assets/css/style.css">
 
 </head>
 
 <body style="padding-top:38px;">
-    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="Voltar para a página anterior">← Voltar</button></div>
+    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="← Voltar para a página anterior">← Voltar</button></div>
 
     <header class="border-bottom py-3 mb-4">
 
         <div class="container d-flex align-items-center justify-content-between">
 
             <a href="../../index.html" class="d-flex align-items-center text-decoration-none">
-                <img src="../../assets/img/logo.png" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="../../assets/img/logo.png" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -120,10 +125,12 @@ $seoImagem = Foto::url($imagens[0]["imagem"] ?? null, 'produtos');
                     <?php if (count($imagens) > 1): ?>
                         <div class="d-flex flex-wrap gap-2">
                             <?php foreach ($imagens as $imagem): ?>
-                                <img src="<?= htmlspecialchars(Foto::url($imagem["imagem"], 'produtos')) ?>" width="70" height="70"
-                                    class="rounded-3 miniatura-produto"
-                                    style="object-fit:cover; cursor:pointer; border:2px solid transparent;"
-                                    onclick="document.getElementById('imagemPrincipal').src=this.src;" alt="Miniatura">
+                                <button type="button" class="p-0 border-0 bg-transparent" aria-label="Ver esta imagem do produto"
+                                    onclick="document.getElementById('imagemPrincipal').src=this.querySelector('img').src;">
+                                    <img src="<?= htmlspecialchars(Foto::url($imagem["imagem"], 'produtos')) ?>" width="70" height="70"
+                                        class="rounded-3 miniatura-produto"
+                                        style="object-fit:cover; cursor:pointer; border:2px solid transparent;" alt="">
+                                </button>
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
@@ -305,10 +312,10 @@ $seoImagem = Foto::url($imagens[0]["imagem"] ?? null, 'produtos');
     </main>
 
     <footer class="border-top py-4 text-center text-muted">
-        © <?= date("Y") ?> PetFinder Brasil
+        © <?= date("Y") ?> EcoSistemPet
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     <script src="../../assets/js/metricas.js" data-endpoint="<?= Url::ajax('registrar_metrica.php') ?>"></script>
 
 </body>

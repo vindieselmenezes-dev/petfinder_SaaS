@@ -21,13 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $partesNome = preg_split('/\s+/', $nomeCompleto, 2);
     $nome = $partesNome[0] ?? '';
     $sobrenome = $partesNome[1] ?? '';
-    $email = trim($_POST['email'] ?? ''); 
-    $password = $_POST['password'] ?? ''; 
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
     $perfil = $_POST['perfil'] ?? 'tutor'; // administrador, empresa, tutor
 
-    if (empty($nomeCompleto) || empty($email) || empty($password)) { 
-        $mensagem = "Por favor, preencha todos os campos."; 
-        $tipoMensagem = "erro"; 
+    if (empty($nomeCompleto) || empty($email) || empty($password)) {
+        $mensagem = "Por favor, preencha todos os campos.";
+        $tipoMensagem = "erro";
     } elseif (strlen($password) < 6) {
         $mensagem = "A senha deve ter no mínimo 6 caracteres.";
         $tipoMensagem = "erro";
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verifica duplicidade na tabela de destino padronizada
         $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = ?");
         $stmt->execute([$email]);
-        
+
         if ($stmt->fetch()) {
             $mensagem = "Este e-mail já está cadastrado no sistema.";
             $tipoMensagem = "erro";
@@ -59,7 +59,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     $stmtVinculo = $pdo->prepare("INSERT IGNORE INTO organization_user_role (organization_id, user_id, role_id) VALUES (NULL, ?, ?)");
                     $stmtVinculo->execute([$userId, (int)$roleId]);
-                } catch (Exception $eMail) {}
+                } catch (Exception $eVinculo) {
+                    // O vínculo de perfil é complementar: não bloqueia o cadastro, mas fica registrado.
+                    error_log('Falha ao criar vínculo de perfil: ' . $eVinculo->getMessage());
+                }
 
                 $pdo->commit();
 
@@ -83,8 +86,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Conta - Ecossistema Pet</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        body { font-family: Arial, sans-serif; background-color: #FFF8E1 !important; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; position: relative; }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('<?= Url::asset('img/logo.png') ?>');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: min(90vw, 900px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .card { position: relative; z-index: 1; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
         h2 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; color: #34495e; font-weight: bold; }
@@ -97,10 +114,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body style="padding-top:38px;">
-    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="Voltar para a página anterior">← Voltar</button></div>
+    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="← Voltar para a página anterior">← Voltar</button></div>
     <div class="card">
         <h2>🐾 Criar Conta Única</h2>
-        
+
         <?php if ($mensagem): ?>
             <div class="mensagem <?= $tipoMensagem; ?>"><?= htmlspecialchars($mensagem); ?></div>
         <?php endif; ?>
@@ -119,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="password">Senha (Mínimo 6 caracteres)</label>
                 <input type="password" id="password" name="password" required placeholder="Crie uma senha segura">
             </div>
-            
+
             <div class="form-group">
                 <label for="perfil">Tipo de Conta (Perfil)</label>
                 <select id="perfil" name="perfil" required>

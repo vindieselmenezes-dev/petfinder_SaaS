@@ -208,9 +208,9 @@ class Usuario
      */
     public function listarTodos(): array
     {
-            $sql = "SELECT u.id, u.nome, u.sobrenome, u.email, u.telefone, COALESCE(p.tipo, 'cliente') AS perfil 
-            FROM usuarios u 
-            LEFT JOIN perfis p ON p.usuario_id = u.id 
+            $sql = "SELECT u.id, u.nome, u.sobrenome, u.email, u.telefone, COALESCE(p.tipo, 'cliente') AS perfil
+            FROM usuarios u
+            LEFT JOIN perfis p ON p.usuario_id = u.id
             GROUP BY u.id
             ORDER BY u.nome";
 

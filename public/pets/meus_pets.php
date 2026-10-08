@@ -40,13 +40,13 @@ function especieIcone(?string $especie): string {
 }
 ?> 
 
-<main class="container" style="margin-top: 100px !important; padding: 20px !important; display: block !important;"> 
-    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 40px auto 0 auto !important; position: relative !important; display: block !important;"> 
-        
+<main class="container" style="margin-top: 100px !important; padding: 20px !important; display: block !important;">
+    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 1200px; margin: 40px auto 0 auto !important; position: relative !important; display: block !important;">
+
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; margin-bottom: 30px;">
             <div>
-                <h1 style="color: #2c3e50; margin-bottom: 5px; font-family: sans-serif; font-weight: bold;">🐶 Meus Pets</h1> 
-                <p style="color: #7f8c8d; margin: 0; font-family: sans-serif;">Aqui estão os pets que você cadastrou na plataforma.</p> 
+                <h1 style="color: #2c3e50; margin-bottom: 5px; font-family: sans-serif; font-weight: bold;">🐶 Meus Pets</h1>
+                <p style="color: #7f8c8d; margin: 0; font-family: sans-serif;">Aqui estão os pets que você cadastrou na plataforma.</p>
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">
                 <span style="background: #eef2f7; color: #34495e; padding: 8px 16px; border-radius: 20px; font-family: sans-serif; font-weight: bold; font-size: 14px;">
@@ -65,24 +65,24 @@ function especieIcone(?string $especie): string {
             .btn-acao:hover { opacity: 0.85; transform: translateY(-1px); }
         </style>
 
-        <table class="tabela-pets tabela-cartao-mobile" style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); font-family: sans-serif;"> 
-            <thead> 
-                <tr style="background: #34495e; color: white; text-align: left;"> 
-                    <th style="padding: 15px; text-align: center; width: 100px;">Foto</th> 
-                    <th style="padding: 15px;">Nome</th> 
-                    <th style="padding: 15px;">Espécie / Raça</th> 
-                    <th style="padding: 15px;">Cidade</th> 
-                    <th style="padding: 15px;">Status</th> 
-                    <th style="padding: 15px;">Cadastro</th> 
-                    <th style="padding: 15px; text-align: center;">Ações</th> 
-                </tr> 
-            </thead> 
-            <tbody> 
-                <?php if (count($pets) > 0): ?> 
+        <table class="tabela-pets tabela-cartao-mobile" style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); font-family: sans-serif;">
+            <thead>
+                <tr style="background: #34495e; color: white; text-align: left;">
+                    <th style="padding: 15px; text-align: center; width: 100px;">Foto</th>
+                    <th style="padding: 15px;">Nome</th>
+                    <th style="padding: 15px;">Espécie / Raça</th>
+                    <th style="padding: 15px;">Cidade</th>
+                    <th style="padding: 15px;">Status</th>
+                    <th style="padding: 15px;">Cadastro</th>
+                    <th style="padding: 15px; text-align: center;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($pets)): ?> 
                     <?php foreach ($pets as $pet): ?> 
-                        <tr style="border-bottom: 1px solid #eaeaea;"> 
-                            <td data-col="foto" style="padding: 15px; text-align: center;"> 
-                                <?php 
+                        <tr style="border-bottom: 1px solid #eaeaea;">
+                            <td data-col="foto" style="padding: 15px; text-align: center;">
+                                <?php
                                 // Se a imagem existir, mostra a foto; senão, mostra o ícone da espécie
                                 if (Foto::existe($pet['foto'], 'pets')) {
                                     $caminhoFoto = Foto::url($pet['foto'], 'pets');
@@ -93,48 +93,48 @@ function especieIcone(?string $especie): string {
                                         . '</div>';
                                 }
                                 ?> 
-                            </td> 
-                            <td data-col="nome" style="padding: 15px; font-weight: bold; color: #333;"> 
+                            </td>
+                            <td data-col="nome" style="padding: 15px; font-weight: bold; color: #333;">
                                 <?= htmlspecialchars($pet["nome"] ?? 'Sem Nome'); ?> 
-                            </td> 
-                            <td data-col="especie" data-th="Espécie / Raça" style="padding: 15px; color: #555;"> 
+                            </td>
+                            <td data-col="especie" data-th="Espécie / Raça" style="padding: 15px; color: #555;">
                                 <?= especieIcone($pet['especie_nome'] ?? null); ?> <?= htmlspecialchars($pet["especie_nome"] ?? 'Não informada'); ?> 
-                                <br><small style="color: #999;"><?= htmlspecialchars($pet["raca_nome"] ?? 'Mestiço / Vira-lata'); ?></small> 
-                            </td> 
-                            <td data-col="cidade" data-th="Cidade" style="padding: 15px; color: #777;"> 
+                                <br><small style="color: #999;"><?= htmlspecialchars($pet["raca_nome"] ?? 'Mestiço / Vira-lata'); ?></small>
+                            </td>
+                            <td data-col="cidade" data-th="Cidade" style="padding: 15px; color: #777;">
                                 📍 <?= htmlspecialchars($pet["cidade"] ?? 'Não informada'); ?> 
-                            </td> 
-                            <td data-col="status" data-th="Status" style="padding: 15px;"> 
+                            </td>
+                            <td data-col="status" data-th="Status" style="padding: 15px;">
                                 <?= statusBadge($pet["status"] ?? 'Não informado'); ?> 
-                            </td> 
-                            <td data-col="cadastro" data-th="Cadastro" style="padding: 15px; color: #777;"> 
+                            </td>
+                            <td data-col="cadastro" data-th="Cadastro" style="padding: 15px; color: #777;">
                                 <?= !empty($pet["criado_em"]) ? date("d/m/Y", strtotime($pet["criado_em"])) : 'Não informado'; ?> 
-                            </td> 
-                            <td data-col="acoes" style="padding: 15px; text-align: center; white-space: nowrap;"> 
-                                <a href="editar_pet.php?id=<?= (int) $pet['id']; ?>" class="btn-acao" style="display: inline-block; background: #3498db; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">✏️ Editar</a> 
+                            </td>
+                            <td data-col="acoes" style="padding: 15px; text-align: center; white-space: nowrap;">
+                                <a href="editar_pet.php?id=<?= (int) $pet['id']; ?>" class="btn-acao" style="display: inline-block; background: #3498db; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif;">✏️ Editar</a>
                                 <a href="historico_pet.php?id=<?= (int) $pet['id']; ?>" class="btn-acao" style="display: inline-block; background: #9b59b6; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">🕒 Histórico</a>
-                                <a href="identidade_pet.php?token=<?= urlencode($controller->garantirTokenIdentidade((int) $pet['id'])); ?>" target="_blank" class="btn-acao" style="display: inline-block; background: #015C1E; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">🪪 Identidade</a> 
+                                <a href="identidade_pet.php?token=<?= urlencode($controller->garantirTokenIdentidade((int) $pet['id'])); ?>" target="_blank" class="btn-acao" style="display: inline-block; background: #015C1E; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">🪪 Identidade</a>
                                 <?php if (($pet['status'] ?? '') !== 'Perdido'): ?>
                                     <a href="alerta_perdido.php?pet_id=<?= (int) $pet['id']; ?>" class="btn-acao" style="display: inline-block; background: #e67e22; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">🚨 Perdido</a>
                                 <?php else: ?>
                                     <a href="marcar_pet_recuperado.php?id=<?= (int) $pet['id']; ?>" class="btn-acao" onclick="return confirm('Confirma que <?= htmlspecialchars(addslashes($pet['nome'] ?? 'o pet')); ?> foi recuperado?');" style="display: inline-block; background: #27ae60; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">✅ Recuperado</a>
                                 <?php endif; ?>
-                                <a href="excluir_pet.php?id=<?= (int) $pet['id']; ?>" class="btn-acao" onclick="return confirm('Tem certeza que deseja excluir este pet?');" style="display: inline-block; background: #e74c3c; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">❌ Excluir</a> 
-                            </td> 
-                        </tr> 
+                                <a href="excluir_pet.php?id=<?= (int) $pet['id']; ?>" class="btn-acao" onclick="return confirm('Tem certeza que deseja excluir este pet?');" style="display: inline-block; background: #e74c3c; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">❌ Excluir</a>
+                            </td>
+                        </tr>
                     <?php endforeach; ?> 
                 <?php else: ?> 
-                    <tr> 
-                        <td colspan="7" style="padding: 60px 30px; text-align: center;"> 
+                    <tr>
+                        <td colspan="7" style="padding: 60px 30px; text-align: center;">
                             <div style="font-size: 48px; margin-bottom: 10px;">🐾</div>
                             <p style="color: #7f8c8d; font-size: 16px; margin: 0 0 15px 0;">Você ainda não cadastrou nenhum pet.</p>
                             <a href="cadastrar_pet.php" style="display: inline-block; background: #2ecc71; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; font-size: 14px;">➕ Cadastrar meu primeiro pet</a>
-                        </td> 
-                    </tr> 
+                        </td>
+                    </tr>
                 <?php endif; ?> 
-            </tbody> 
-        </table> 
-    </div> 
-</main> 
+            </tbody>
+        </table>
+    </div>
+</main>
 
 <?php require_once "../../app/Includes/footer.php"; ?>

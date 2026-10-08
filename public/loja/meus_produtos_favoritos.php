@@ -41,7 +41,7 @@ require_once "../../app/Includes/menu.php";
                 </tr>
             </thead>
             <tbody>
-                <?php if (count($produtos) > 0): ?>
+                <?php if (!empty($produtos)): ?>
                     <?php foreach ($produtos as $produto): ?>
                         <tr>
                             <td style="text-align:center;">

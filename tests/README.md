@@ -1,4 +1,4 @@
-# Testes Automatizados — PetFinder Brasil
+# Testes Automatizados — EcoSistemPet
 
 ## O que é isso
 

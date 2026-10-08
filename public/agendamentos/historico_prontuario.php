@@ -42,7 +42,9 @@ while (!empty($cursor['retificacao_de_id'])) {
     $stmtSobe = $pdo->prepare("SELECT * FROM prontuarios WHERE id = ?");
     $stmtSobe->execute([$cursor['retificacao_de_id']]);
     $cursor = $stmtSobe->fetch(PDO::FETCH_ASSOC);
-    if (!$cursor) break;
+    if (!$cursor) {
+        break;
+    }
     $idOriginal = $cursor['id'];
 }
 
@@ -53,7 +55,9 @@ while ($idAtualBusca) {
     $stmtLinha = $pdo->prepare("SELECT * FROM prontuarios WHERE id = ?");
     $stmtLinha->execute([$idAtualBusca]);
     $linha = $stmtLinha->fetch(PDO::FETCH_ASSOC);
-    if (!$linha) break;
+    if (!$linha) {
+        break;
+    }
     $linhagem[] = $linha;
 
     $stmtFilho = $pdo->prepare("SELECT id FROM prontuarios WHERE retificacao_de_id = ?");
@@ -64,8 +68,8 @@ while ($idAtualBusca) {
 
 $tituloPagina = "Histórico do Prontuário #" . $idOriginal;
 
-include __DIR__ . '/../../app/Includes/header.php';
-include __DIR__ . '/../../app/Includes/menu.php';
+include_once __DIR__ . '/../../app/Includes/header.php';
+include_once __DIR__ . '/../../app/Includes/menu.php';
 ?>
 
 <main class="conteudo">
@@ -103,4 +107,4 @@ include __DIR__ . '/../../app/Includes/menu.php';
 </div>
 </main>
 
-<?php include __DIR__ . '/../../app/Includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../../app/Includes/footer.php'; ?>

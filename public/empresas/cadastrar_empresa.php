@@ -28,47 +28,72 @@ require_once "../../app/Controllers/PlanoController.php";
 require_once "../../app/Helpers/Csrf.php";
 
 $controller = new EmpresaController();
+$galeriaController = new EmpresaGaleriaController();
 $categorias = $controller->listarCategorias();
-$planos     = (new PlanoController())->listarAtivos();
+$planos = (new PlanoController())->listarAtivos();
 
-$mensagem     = "";
+$mensagem = "";
 $tipoMensagem = "";
 
 $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
 $estados = [
-    "AC","AL","AP","AM","BA","CE","DF","ES","GO",
-    "MA","MT","MS","MG","PA","PB","PR","PE","PI",
-    "RJ","RN","RS","RO","RR","SC","SP","SE","TO"
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MT",
+    "MS",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO"
 ];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (!Csrf::validar($_POST["csrf_token"] ?? null)) {
 
-        $mensagem     = "Sessão expirada. Atualize a página e tente novamente.";
+        $mensagem = "Sessão expirada. Atualize a página e tente novamente.";
         $tipoMensagem = "erro";
 
     } else {
 
         $dados = [
-            "usuario_id"    => $_SESSION["usuario_id"],
-            "categoria_id"  => (int) ($_POST["categoria_id"] ?? 0),
+            "usuario_id" => $_SESSION["usuario_id"],
+            "categoria_id" => (int) ($_POST["categoria_id"] ?? 0),
             "nome_fantasia" => trim($_POST["nome_fantasia"] ?? ""),
-            "razao_social"  => trim($_POST["razao_social"] ?? ""),
-            "cnpj"          => trim($_POST["cnpj"] ?? ""),
-            "descricao"     => trim($_POST["descricao"] ?? ""),
-            "telefone"      => trim($_POST["telefone"] ?? ""),
-            "whatsapp"      => trim($_POST["whatsapp"] ?? ""),
-            "email"         => trim($_POST["email"] ?? ""),
-            "site"          => trim($_POST["site"] ?? ""),
-            "endereco"      => trim($_POST["endereco"] ?? ""),
-            "numero"        => trim($_POST["numero"] ?? ""),
-            "complemento"   => trim($_POST["complemento"] ?? ""),
-            "bairro"        => trim($_POST["bairro"] ?? ""),
-            "cidade"        => trim($_POST["cidade"] ?? ""),
-            "estado"        => trim($_POST["estado"] ?? ""),
-            "cep"           => trim($_POST["cep"] ?? "")
+            "razao_social" => trim($_POST["razao_social"] ?? ""),
+            "cnpj" => trim($_POST["cnpj"] ?? ""),
+            "descricao" => trim($_POST["descricao"] ?? ""),
+            "telefone" => trim($_POST["telefone"] ?? ""),
+            "whatsapp" => trim($_POST["whatsapp"] ?? ""),
+            "email" => trim($_POST["email"] ?? ""),
+            "site" => trim($_POST["site"] ?? ""),
+            "endereco" => trim($_POST["endereco"] ?? ""),
+            "numero" => trim($_POST["numero"] ?? ""),
+            "complemento" => trim($_POST["complemento"] ?? ""),
+            "bairro" => trim($_POST["bairro"] ?? ""),
+            "cidade" => trim($_POST["cidade"] ?? ""),
+            "estado" => trim($_POST["estado"] ?? ""),
+            "cep" => trim($_POST["cep"] ?? "")
         ];
 
         // Plano escolhido no cadastro (valida contra os planos ativos; cai no Grátis se inválido/ausente)
@@ -94,11 +119,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $dados["capa"] = null;
 
         if (!empty($_FILES["logo"]["name"])) {
-            $dados["logo"] = $controller->processarImagemUnica($_FILES["logo"]);
+            $dados["logo"] = $galeriaController->processarImagemUnica($_FILES["logo"]);
         }
 
         if (!empty($_FILES["capa"]["name"])) {
-            $dados["capa"] = $controller->processarImagemUnica($_FILES["capa"]);
+            $dados["capa"] = $galeriaController->processarImagemUnica($_FILES["capa"]);
         }
 
         $novoId = $controller->cadastrar($dados);
@@ -120,8 +145,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             */
 
             if (!empty($_FILES["galeria"]["name"][0])) {
-                $imagensGaleria = $controller->processarGaleria($_FILES["galeria"]);
-                $controller->salvarGaleria($novoId, $imagensGaleria);
+                $imagensGaleria = $galeriaController->processarGaleria($_FILES["galeria"]);
+                $galeriaController->salvarGaleria($novoId, $imagensGaleria);
             }
 
             Flash::sucesso("Empresa cadastrada com sucesso!");
@@ -139,7 +164,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         }
 
-        $mensagem     = "Não foi possível cadastrar a empresa. Verifique o nome, a categoria, e se o CNPJ já não está em uso.";
+        $mensagem = "Não foi possível cadastrar a empresa. Verifique o nome, a categoria, e se o CNPJ já não está em uso.";
         $tipoMensagem = "erro";
 
     }
@@ -156,313 +181,334 @@ $tituloPagina = "Cadastrar Empresa";
 
 <main class="conteudo">
 
-<div class="container">
+    <div class="container">
 
-<h1>🏢 Cadastrar Empresa</h1>
+        <h1>🏢 Cadastrar Empresa</h1>
 
-<p>Anuncie seu pet shop, clínica, hotel ou qualquer serviço para pets na plataforma.</p>
+        <p>Anuncie seu pet shop, clínica, hotel ou qualquer serviço para pets na plataforma.</p>
 
-<?php if (!empty($mensagem)): ?>
+        <?php if (!empty($mensagem)): ?>
 
-<div class="mensagem <?= $tipoMensagem ?>">
-    <?= htmlspecialchars($mensagem) ?>
-</div>
+            <div class="mensagem <?= $tipoMensagem ?>">
+                <?= htmlspecialchars($mensagem) ?>
+            </div>
 
-<?php endif; ?>
+        <?php endif; ?>
 
-<form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data">
 
-<?= Csrf::campoHtml() ?>
+            <?= Csrf::campoHtml() ?>
 
-<h3>Dados da Empresa</h3>
+            <h3>Dados da Empresa</h3>
 
-<div class="row">
+            <div class="row">
 
-    <div class="col-md-6">
-        <div class="grupo-form">
-            <label for="nome_fantasia">Nome Fantasia *</label>
-            <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" maxlength="180" required>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="grupo-form">
-            <label for="categoria_id">Categoria *</label>
-            <select id="categoria_id" name="categoria_id" class="form-select" required>
-                <option value="">Selecione</option>
-                <?php foreach ($categorias as $categoria): ?>
-                    <option value="<?= $categoria["id"] ?>"><?= htmlspecialchars($categoria["nome"]) ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-    </div>
-
-</div>
-
-<div class="row">
-
-    <div class="col-md-6">
-        <div class="grupo-form">
-            <label for="razao_social">Razão Social</label>
-            <input type="text" id="razao_social" name="razao_social" class="form-control" maxlength="180">
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="grupo-form">
-            <label for="cnpj">CNPJ</label>
-            <input type="text" id="cnpj" name="cnpj" class="form-control" placeholder="00.000.000/0000-00" maxlength="18">
-        </div>
-    </div>
-
-</div>
-
-<div class="grupo-form">
-    <label for="descricao">Descrição</label>
-    <textarea id="descricao" name="descricao" rows="4" class="form-control" autocomplete="off" placeholder="Conte um pouco sobre a empresa, os serviços oferecidos, diferenciais..."></textarea>
-</div>
-
-<hr>
-
-<h3>Contato</h3>
-
-<div class="row">
-
-    <div class="col-md-4">
-        <div class="grupo-form">
-            <label for="telefone">Telefone</label>
-            <input type="text" id="telefone" name="telefone" class="form-control" placeholder="(31) 3333-3333">
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="grupo-form">
-            <label for="whatsapp">WhatsApp</label>
-            <input type="text" id="whatsapp" name="whatsapp" class="form-control" placeholder="(31) 99999-9999">
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="grupo-form">
-            <label for="email">E-mail</label>
-            <input type="email" id="email" name="email" class="form-control">
-        </div>
-    </div>
-
-</div>
-
-<div class="grupo-form">
-    <label for="site">Site</label>
-    <input type="text" id="site" name="site" class="form-control" placeholder="https://...">
-</div>
-
-<hr>
-
-<h3>Endereço</h3>
-
-<div class="row">
-
-    <div class="col-md-3">
-        <div class="grupo-form">
-            <label for="cep">CEP</label>
-            <input type="text" id="cep" name="cep" class="form-control" maxlength="9" placeholder="00000-000">
-        </div>
-    </div>
-
-    <div class="col-md-7">
-        <div class="grupo-form">
-            <label for="endereco">Rua / Avenida</label>
-            <input type="text" id="endereco" name="endereco" class="form-control">
-        </div>
-    </div>
-
-    <div class="col-md-2">
-        <div class="grupo-form">
-            <label for="numero">Número</label>
-            <input type="text" id="numero" name="numero" class="form-control">
-        </div>
-    </div>
-
-</div>
-
-<div class="row">
-
-    <div class="col-md-4">
-        <div class="grupo-form">
-            <label for="complemento">Complemento</label>
-            <input type="text" id="complemento" name="complemento" class="form-control">
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="grupo-form">
-            <label for="bairro">Bairro</label>
-            <input type="text" id="bairro" name="bairro" class="form-control">
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="grupo-form">
-            <label for="cidade">Cidade</label>
-            <input type="text" id="cidade" name="cidade" class="form-control">
-        </div>
-    </div>
-
-    <div class="col-md-1">
-        <div class="grupo-form">
-            <label for="estado">UF</label>
-            <select id="estado" name="estado" class="form-select">
-                <option value="">-</option>
-                <?php foreach ($estados as $uf): ?>
-                    <option value="<?= $uf ?>"><?= $uf ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-    </div>
-
-</div>
-
-<hr>
-
-<h3>Fotos</h3>
-
-<div class="row">
-
-    <div class="col-md-6">
-        <div class="grupo-form">
-            <label for="logo">Logo</label>
-            <input type="file" id="logo" name="logo" accept=".jpg,.jpeg,.png,.webp" class="form-control">
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="grupo-form">
-            <label for="capa">Imagem de Capa</label>
-            <input type="file" id="capa" name="capa" accept=".jpg,.jpeg,.png,.webp" class="form-control">
-        </div>
-    </div>
-
-</div>
-
-<div class="grupo-form">
-    <label for="galeria">Galeria de Fotos (pode escolher várias)</label>
-    <input type="file" id="galeria" name="galeria[]" accept=".jpg,.jpeg,.png,.webp" multiple class="form-control">
-</div>
-
-<hr>
-
-<h3>Horário de Funcionamento</h3>
-
-<div class="table-responsive">
-
-    <table class="table align-middle">
-
-        <thead>
-            <tr>
-                <th>Dia</th>
-                <th>Abertura</th>
-                <th>Fechamento</th>
-                <th>Fechado</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-            <?php foreach ($diasSemana as $dia): ?>
-
-                <tr>
-                    <td><?= $dia ?></td>
-                    <td>
-                        <input type="time" name="horario[<?= $dia ?>][abertura]" class="form-control">
-                    </td>
-                    <td>
-                        <input type="time" name="horario[<?= $dia ?>][fechamento]" class="form-control">
-                    </td>
-                    <td class="text-center">
-                        <input type="checkbox" name="horario[<?= $dia ?>][fechado]" value="1" class="form-check-input">
-                    </td>
-                </tr>
-
-            <?php endforeach; ?>
-
-        </tbody>
-
-    </table>
-
-</div>
-
-<hr>
-
-<h3>📈 Escolha seu Plano</h3>
-
-<p class="text-muted small">Você pode trocar de plano depois, a qualquer momento, pelo painel da empresa.</p>
-
-<div class="row g-3 mb-3">
-
-    <?php foreach ($planos as $indice => $plano): ?>
-
-        <?php
-        $destaque = (bool) $plano['destaque'];
-        $selecionadoPadrao = $plano['slug'] === 'gratis';
-        $limite = $plano['limite_produtos'] !== null ? (int) $plano['limite_produtos'] . ' produtos/serviços' : 'Produtos/serviços ilimitados';
-        ?>
-
-        <div class="col-md-4">
-            <label class="card h-100 p-3 <?= $destaque ? 'border-warning border-2' : '' ?>" style="cursor:pointer;">
-
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="radio" name="plano_id" value="<?= (int) $plano['id'] ?>"
-                        id="plano_<?= (int) $plano['id'] ?>" <?= $selecionadoPadrao ? 'checked' : '' ?>>
-                    <label class="form-check-label fw-bold" for="plano_<?= (int) $plano['id'] ?>">
-                        <?= htmlspecialchars($plano['nome']) ?>
-                        <?php if ($destaque): ?><span class="badge bg-warning text-dark">⭐ Popular</span><?php endif; ?>
-                    </label>
+                <div class="col-md-6">
+                    <div class="grupo-form">
+                        <label for="nome_fantasia">Nome Fantasia *</label>
+                        <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" maxlength="180"
+                            required>
+                    </div>
                 </div>
 
-                <div class="mb-2">
-                    <?php if ((float) $plano['preco_mensal'] > 0): ?>
-                        <span class="fs-5 fw-bold">R$ <?= number_format((float) $plano['preco_mensal'], 2, ',', '.') ?></span>
-                        <span class="text-muted small">/mês</span>
-                    <?php else: ?>
-                        <span class="fs-5 fw-bold">Grátis</span>
-                    <?php endif; ?>
+                <div class="col-md-6">
+                    <div class="grupo-form">
+                        <label for="categoria_id">Categoria *</label>
+                        <select id="categoria_id" name="categoria_id" class="form-select" required>
+                            <option value="">Selecione</option>
+                            <?php foreach ($categorias as $categoria): ?>
+                                <option value="<?= $categoria["id"] ?>"><?= htmlspecialchars($categoria["nome"]) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
 
-                <p class="small text-muted mb-1"><?= htmlspecialchars($limite) ?></p>
+            </div>
 
-                <?php if ((int) $plano['dias_trial'] > 0): ?>
-                    <p class="small text-success mb-0"><?= (int) $plano['dias_trial'] ?> dias grátis pra testar</p>
-                <?php endif; ?>
+            <div class="row">
 
-            </label>
-        </div>
+                <div class="col-md-6">
+                    <div class="grupo-form">
+                        <label for="razao_social">Razão Social</label>
+                        <input type="text" id="razao_social" name="razao_social" class="form-control" maxlength="180">
+                    </div>
+                </div>
 
-    <?php endforeach; ?>
+                <div class="col-md-6">
+                    <div class="grupo-form">
+                        <label for="cnpj">CNPJ</label>
+                        <input type="text" id="cnpj" name="cnpj" class="form-control" placeholder="00.000.000/0000-00"
+                            maxlength="18">
+                    </div>
+                </div>
 
-</div>
+            </div>
 
-<div class="alert alert-light border small">
-    💳 Pagamento automatizado em breve. Planos pagos entram em período de teste — sem cobrança agora.
-    <a href="planos.php" target="_blank">Ver detalhes dos planos</a>.
-</div>
+            <div class="grupo-form">
+                <label for="descricao">Descrição</label>
+                <textarea id="descricao" name="descricao" rows="4" class="form-control" autocomplete="off"
+                    placeholder="Conte um pouco sobre a empresa, os serviços oferecidos, diferenciais..."></textarea>
+            </div>
 
-<hr>
+            <hr>
 
-<div class="row mt-4">
+            <h3>Contato</h3>
 
-    <div class="col-md-6">
-        <a href="<?= Url::pagina('dashboard.php') ?>" class="btn btn-secondary w-100">← Cancelar</a>
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="grupo-form">
+                        <label for="telefone">Telefone</label>
+                        <input type="text" id="telefone" name="telefone" class="form-control"
+                            placeholder="(31) 3333-3333">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="grupo-form">
+                        <label for="whatsapp">WhatsApp</label>
+                        <input type="text" id="whatsapp" name="whatsapp" class="form-control"
+                            placeholder="(31) 99999-9999">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="grupo-form">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" class="form-control">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="grupo-form">
+                <label for="site">Site</label>
+                <input type="text" id="site" name="site" class="form-control" placeholder="https://...">
+            </div>
+
+            <hr>
+
+            <h3>Endereço</h3>
+
+            <div class="row">
+
+                <div class="col-md-3">
+                    <div class="grupo-form">
+                        <label for="cep">CEP</label>
+                        <input type="text" id="cep" name="cep" class="form-control" maxlength="9"
+                            placeholder="00000-000">
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="grupo-form">
+                        <label for="endereco">Rua / Avenida</label>
+                        <input type="text" id="endereco" name="endereco" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="grupo-form">
+                        <label for="numero">Número</label>
+                        <input type="text" id="numero" name="numero" class="form-control">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="grupo-form">
+                        <label for="complemento">Complemento</label>
+                        <input type="text" id="complemento" name="complemento" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="grupo-form">
+                        <label for="bairro">Bairro</label>
+                        <input type="text" id="bairro" name="bairro" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="grupo-form">
+                        <label for="cidade">Cidade</label>
+                        <input type="text" id="cidade" name="cidade" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <div class="grupo-form">
+                        <label for="estado">UF</label>
+                        <select id="estado" name="estado" class="form-select">
+                            <option value="">-</option>
+                            <?php foreach ($estados as $uf): ?>
+                                <option value="<?= $uf ?>"><?= $uf ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <hr>
+
+            <h3>Fotos</h3>
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="grupo-form">
+                        <label for="logo">Logo</label>
+                        <input type="file" id="logo" name="logo" accept=".jpg,.jpeg,.png,.webp" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="grupo-form">
+                        <label for="capa">Imagem de Capa</label>
+                        <input type="file" id="capa" name="capa" accept=".jpg,.jpeg,.png,.webp" class="form-control">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="grupo-form">
+                <label for="galeria">Galeria de Fotos (pode escolher várias)</label>
+                <input type="file" id="galeria" name="galeria[]" accept=".jpg,.jpeg,.png,.webp" multiple
+                    class="form-control">
+            </div>
+
+            <hr>
+
+            <h3>Horário de Funcionamento</h3>
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Dia</th>
+                            <th>Abertura</th>
+                            <th>Fechamento</th>
+                            <th>Fechado</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <?php foreach ($diasSemana as $indiceDia => $dia): ?>
+
+                            <tr>
+                                <td><?= $dia ?></td>
+                                <td>
+                                    <label class="visually-hidden" for="abertura-<?= $indiceDia ?>">Abertura de
+                                        <?= htmlspecialchars($dia) ?></label>
+                                    <input id="abertura-<?= $indiceDia ?>" type="time" name="horario[<?= $dia ?>][abertura]"
+                                        class="form-control">
+                                </td>
+                                <td>
+                                    <label class="visually-hidden" for="fechamento-<?= $indiceDia ?>">Fechamento de
+                                        <?= htmlspecialchars($dia) ?></label>
+                                    <input id="fechamento-<?= $indiceDia ?>" type="time"
+                                        name="horario[<?= $dia ?>][fechamento]" class="form-control">
+                                </td>
+                                <td class="text-center">
+                                    <label class="visually-hidden" for="fechado-<?= $indiceDia ?>">Fechado em
+                                        <?= htmlspecialchars($dia) ?></label>
+                                    <input id="fechado-<?= $indiceDia ?>" type="checkbox"
+                                        name="horario[<?= $dia ?>][fechado]" value="1" class="form-check-input">
+                                </td>
+                            </tr>
+
+                        <?php endforeach; ?>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <hr>
+
+            <h3>📈 Escolha seu Plano</h3>
+
+            <p class="text-muted small">Você pode trocar de plano depois, a qualquer momento, pelo painel da empresa.
+            </p>
+
+            <div class="row g-3 mb-3">
+
+                <?php foreach ($planos as $indice => $plano): ?>
+
+                    <?php
+                    $destaque = (bool) $plano['destaque'];
+                    $selecionadoPadrao = $plano['slug'] === 'gratis';
+                    $limite = $plano['limite_produtos'] !== null ? (int) $plano['limite_produtos'] . ' produtos/serviços' : 'Produtos/serviços ilimitados';
+                    ?>
+
+                    <div class="col-md-4">
+                        <label class="card h-100 p-3 <?= $destaque ? 'border-warning border-2' : '' ?>"
+                            style="cursor:pointer;">
+
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="plano_id"
+                                    value="<?= (int) $plano['id'] ?>" id="plano_<?= (int) $plano['id'] ?>"
+                                    <?= $selecionadoPadrao ? 'checked' : '' ?>>
+                                <label class="form-check-label fw-bold" for="plano_<?= (int) $plano['id'] ?>">
+                                    <?= htmlspecialchars($plano['nome']) ?>
+                                    <?php if ($destaque): ?><span class="badge bg-warning text-dark">⭐
+                                            Popular</span><?php endif; ?>
+                                </label>
+                            </div>
+
+                            <div class="mb-2">
+                                <?php if ((float) $plano['preco_mensal'] > 0): ?>
+                                    <span class="fs-5 fw-bold">R$
+                                        <?= number_format((float) $plano['preco_mensal'], 2, ',', '.') ?></span>
+                                    <span class="text-muted small">/mês</span>
+                                <?php else: ?>
+                                    <span class="fs-5 fw-bold">Grátis</span>
+                                <?php endif; ?>
+                            </div>
+
+                            <p class="small text-muted mb-1"><?= htmlspecialchars($limite) ?></p>
+
+                            <?php if ((int) $plano['dias_trial'] > 0): ?>
+                                <p class="small text-success mb-0"><?= (int) $plano['dias_trial'] ?> dias grátis pra testar</p>
+                            <?php endif; ?>
+
+                        </label>
+                    </div>
+
+                <?php endforeach; ?>
+
+            </div>
+
+            <div class="alert alert-light border small">
+                💳 Pagamento automatizado em breve. Planos pagos entram em período de teste — sem cobrança agora.
+                <a href="planos.php" target="_blank">Ver detalhes dos planos</a>.
+            </div>
+
+            <hr>
+
+            <div class="row mt-4">
+
+                <div class="col-md-6">
+                    <a href="<?= Url::pagina('dashboard.php') ?>" class="btn btn-secondary w-100">← Cancelar</a>
+                </div>
+
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-success w-100">🏢 Cadastrar Empresa</button>
+                </div>
+
+            </div>
+
+        </form>
+
     </div>
-
-    <div class="col-md-6">
-        <button type="submit" class="btn btn-success w-100">🏢 Cadastrar Empresa</button>
-    </div>
-
-</div>
-
-</form>
-
-</div>
 
 </main>
 
@@ -470,30 +516,30 @@ $tituloPagina = "Cadastrar Empresa";
 
 <script>
 
-/*
-|--------------------------------------------------------------------------
-| Máscara simples de CNPJ (só formata visualmente, servidor limpa de novo)
-|--------------------------------------------------------------------------
-*/
+    /*
+    |--------------------------------------------------------------------------
+    | Máscara simples de CNPJ (só formata visualmente, servidor limpa de novo)
+    |--------------------------------------------------------------------------
+    */
 
-const cnpjInput = document.getElementById("cnpj");
+    const cnpjInput = document.getElementById("cnpj");
 
-if (cnpjInput) {
+    if (cnpjInput) {
 
-    cnpjInput.addEventListener("input", function () {
+        cnpjInput.addEventListener("input", function () {
 
-        let valor = this.value.replace(/\D/g, "").slice(0, 14);
+            let valor = this.value.replace(/\D/g, "").slice(0, 14);
 
-        valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
-        valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-        valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
-        valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
+            valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
+            valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+            valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
+            valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
 
-        this.value = valor;
+            this.value = valor;
 
-    });
+        });
 
-}
+    }
 
 </script>
 

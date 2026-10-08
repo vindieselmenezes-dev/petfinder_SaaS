@@ -51,10 +51,10 @@ class Notificacao
                 $nome = htmlspecialchars((string) ($usuario['nome'] ?? 'usuário'), ENT_QUOTES, 'UTF-8');
                 $tituloSeguro = htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8');
                 $mensagemSegura = nl2br(htmlspecialchars($mensagem, ENT_QUOTES, 'UTF-8'));
-                $linkHtml = $link ? '<p><a href="' . htmlspecialchars($link, ENT_QUOTES, 'UTF-8') . '">Abrir no PetFinder Brasil</a></p>' : '';
+                $linkHtml = $link ? '<p><a href="' . htmlspecialchars($link, ENT_QUOTES, 'UTF-8') . '">Abrir no EcoSistemPet</a></p>' : '';
                 Mailer::enviar(
                     (string) $usuario['email'],
-                    'PetFinder Brasil: ' . $titulo,
+                    'EcoSistemPet: ' . $titulo,
                     '<p>Olá, ' . $nome . '.</p><h2>' . $tituloSeguro . '</h2><p>' . $mensagemSegura . '</p>' . $linkHtml
                 );
             }

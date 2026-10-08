@@ -3,12 +3,14 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/bootstrap.php';
+$corPadrao = '#95a5a6';
 
 
 
 require_once '../../app/Controllers/PetController.php';
 
 $controller = new PetController();
+$historicoController = new PetHistoricoController();
 
 $petId = (int) ($_GET['id'] ?? 0);
 $pet = $controller->buscarPorId($petId);
@@ -17,7 +19,7 @@ if (!$pet) {
     die("<h1 style='text-align:center; margin-top:50px; color:red;'>Pet não encontrado.</h1>");
 }
 
-$historico = $controller->buscarHistoricoCompleto($petId);
+$historico = $historicoController->buscarHistoricoCompleto($petId);
 
 $tituloPagina = "Histórico de " . $pet['nome'];
 
@@ -55,17 +57,17 @@ $corTipo = [
             sistema.</p>
 
         <!-- Status atual, sempre no topo -->
-        <div class="record-card" style="border-left:4px solid <?= $corStatus[$pet['status']] ?? '#95a5a6'; ?>;">
+        <div class="record-card" style="border-left:4px solid <?= $corStatus[$pet['status']] ?? $corPadrao; ?>;">
             <strong>Status atual:</strong>
             <span class="badge-status"
-                style="background:<?= $corStatus[$pet['status']] ?? '#95a5a6'; ?>; margin-left:6px;"><?= htmlspecialchars($pet['status']); ?></span>
+                style="background:<?= $corStatus[$pet['status']] ?? $corPadrao; ?>; margin-left:6px;"><?= htmlspecialchars($pet['status']); ?></span>
         </div>
 
-        <?php if (count($historico) > 0): ?>
+        <?php if (!empty($historico)): ?>
             <div style="margin-top:20px; position:relative; padding-left:20px; border-left:2px solid #eee;">
                 <?php foreach ($historico as $evento): ?>
                     <div style="position:relative; margin-bottom:20px;">
-                        <?php $corEvento = $corTipo[$evento['tipo']] ?? ($corStatus[$evento['status_novo'] ?? ''] ?? '#95a5a6'); ?>
+                        <?php $corEvento = $corTipo[$evento['tipo']] ?? ($corStatus[$evento['status_novo'] ?? ''] ?? $corPadrao); ?>
                         <div
                             style="position:absolute; left:-26px; top:4px; width:12px; height:12px; border-radius:50%; background:<?= $corEvento ?>; border:2px solid white; box-shadow:0 0 0 2px <?= $corEvento ?>;">
                         </div>

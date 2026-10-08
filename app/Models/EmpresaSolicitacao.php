@@ -23,7 +23,7 @@ class EmpresaSolicitacao
     public const STATUS_VALIDOS = ['pendente', 'aceita', 'recusada', 'concluida', 'cancelada'];
 
     /** Categorias que usam este fluxo genérico (as que não têm agendamento próprio) */
-    public const CATEGORIAS_SUPORTADAS = [4, 5, 6];
+    public const CATEGORIAS_SUPORTADAS = [4, 5, 6, 7];
 
     public function __construct()
     {
@@ -40,6 +40,10 @@ class EmpresaSolicitacao
         ");
 
         $buscaEmCasa = !empty($dados['busca_em_casa']) ? 1 : 0;
+        $enderecoBusca = null;
+        if ($buscaEmCasa) {
+            $enderecoBusca = ($dados['endereco_busca'] ?? '') ?: null;
+        }
 
         $sucesso = $stmt->execute([
             ':empresa_id' => $dados['empresa_id'],
@@ -50,7 +54,7 @@ class EmpresaSolicitacao
             ':periodo' => ($dados['periodo'] ?? '') ?: null,
             ':mensagem' => ($dados['mensagem'] ?? '') ?: null,
             ':busca_em_casa' => $buscaEmCasa,
-            ':endereco_busca' => $buscaEmCasa ? (($dados['endereco_busca'] ?? '') ?: null) : null,
+            ':endereco_busca' => $enderecoBusca,
         ]);
 
         return $sucesso ? (int) $this->pdo->lastInsertId() : false;

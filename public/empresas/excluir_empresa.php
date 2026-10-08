@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 
 
 if (!isset($_SESSION["usuario_id"])) {
-    header('Location: ' . Url::pagina('login.php'));
+    Url::redirecionar(Url::pagina('login.php'));
     exit;
 }
 
@@ -19,7 +19,7 @@ $usuarioId  = (int) $_SESSION["usuario_id"];
 $empresaId = (int) ($_GET["id"] ?? 0);
 
 if ($empresaId <= 0) {
-    header('Location: ' . Url::pagina('minhas_empresas.php'));
+    Url::redirecionar(Url::pagina('minhas_empresas.php'));
     exit;
 }
 
@@ -29,5 +29,5 @@ if ($controller->excluir($empresaId, $usuarioId)) {
     Flash::erro("Não foi possível excluir a empresa.");
 }
 
-header('Location: ' . Url::pagina('minhas_empresas.php'));
+Url::redirecionar(Url::pagina('minhas_empresas.php'));
 exit;

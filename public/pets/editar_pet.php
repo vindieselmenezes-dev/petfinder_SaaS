@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 Middleware::exigirLogin();
 
 $controller = new PetController();
+$imagemController = new PetImagemController();
 $usuarioId  = Auth::id();
 
 $petId = (int) ($_GET["id"] ?? 0);
@@ -90,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $imagensExtras = [];
 
     if (!empty($_FILES["foto"]["name"])) {
-        $resultadoUpload = $controller->processarImagensUpload($_FILES["foto"] ?? [], $dados["foto"]);
+        $resultadoUpload = $imagemController->processarImagensUpload($_FILES["foto"] ?? [], $dados["foto"]);
         $dados["foto"] = $resultadoUpload["foto"] ?? $dados["foto"];
         $imagensExtras = $resultadoUpload["imagens"] ?? [];
     }
@@ -147,7 +148,7 @@ $tituloPagina = "Editar Pet";
                     alt="Foto atual">
             <?php endif; ?>
 
-            <?php $imagensExistentes = $controller->buscarImagens($petId); ?>
+            <?php $imagensExistentes = $imagemController->buscarImagens($petId); ?>
             <?php if (!empty($imagensExistentes)): ?>
                 <div class="d-flex flex-wrap gap-2 mb-3">
                     <?php foreach ($imagensExistentes as $imagem): ?>

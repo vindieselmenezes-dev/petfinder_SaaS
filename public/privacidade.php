@@ -9,7 +9,7 @@ declare(strict_types=1);
  * Conteúdo-modelo, no espírito da LGPD (Lei 13.709/2018). Os trechos
  * marcados com [ ] são dados jurídicos reais (razão social, CNPJ,
  * endereço, encarregado de dados) que precisam ser preenchidos pelo
- * responsável pelo PetFinder Brasil antes da publicação — não são
+ * responsável pelo EcoSistemPet antes da publicação — não são
  * inventados aqui de propósito. O ideal é ter um advogado revisando
  * antes de publicar oficialmente.
  */
@@ -28,10 +28,10 @@ $dataAtualizacao = '15 de setembro de 2026';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Política de Privacidade - PetFinder Brasil</title>
+    <title>Política de Privacidade - EcoSistemPet</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
     <link rel="stylesheet" href="<?= Url::asset('css/style.css') ?>">
 
 </head>
@@ -43,7 +43,7 @@ $dataAtualizacao = '15 de setembro de 2026';
         <button type="button"
             onclick="if(window.history.length>1){history.back();}else{window.location.href='<?= Url::raiz('index.html') ?>';}"
             style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;"
-            aria-label="Voltar para a página anterior">← Voltar</button>
+            aria-label="← Voltar para a página anterior">← Voltar</button>
     </div>
 
     <header class="border-bottom py-3">
@@ -51,9 +51,9 @@ $dataAtualizacao = '15 de setembro de 2026';
         <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
 
             <a href="<?= Url::raiz('index.html') ?>" class="d-flex align-items-center text-decoration-none">
-                <img src="<?= Url::asset('img/logo.png') ?>" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="<?= Url::asset('img/logo.png') ?>" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -72,14 +72,14 @@ $dataAtualizacao = '15 de setembro de 2026';
                 <p class="text-muted mb-5">Última atualização: <?= $dataAtualizacao ?></p>
 
                 <p>
-                    Esta política explica como o <strong>PetFinder Brasil</strong> coleta, usa,
+                    Esta política explica como o <strong>EcoSistemPet</strong> coleta, usa,
                     armazena e protege os dados pessoais de quem usa a plataforma, em conformidade
                     com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 — LGPD).
                 </p>
 
                 <h2 class="h5 fw-bold mt-4">1. Quem somos</h2>
                 <p>
-                    O PetFinder Brasil é operado por <strong>[razão social a definir]</strong>,
+                    O EcoSistemPet é operado por <strong>[razão social a definir]</strong>,
                     inscrita no CNPJ sob o nº <strong>[CNPJ a definir]</strong>, com sede em
                     <strong>[endereço a definir]</strong>. Para qualquer assunto relacionado a
                     dados pessoais, você pode falar com nosso encarregado de dados (DPO) pelo
@@ -107,7 +107,7 @@ $dataAtualizacao = '15 de setembro de 2026';
 
                 <h2 class="h5 fw-bold mt-4">4. Com quem compartilhamos</h2>
                 <p>
-                    Empresas, ONGs, clínicas e prestadores de serviço cadastrados no PetFinder têm
+                    Empresas, ONGs, clínicas e prestadores de serviço cadastrados no EcoSistemPet têm
                     acesso apenas às informações necessárias para prestar o serviço que você
                     solicitou (por exemplo, uma clínica vê os dados do agendamento marcado com
                     ela). Não vendemos seus dados pessoais a terceiros. Podemos compartilhar dados
@@ -168,12 +168,12 @@ $dataAtualizacao = '15 de setembro de 2026';
 
     <footer class="bg-dark text-light py-4">
         <div class="container text-center">
-            © <?= date('Y') ?> PetFinder Brasil ·
+            © <?= date('Y') ?> EcoSistemPet ·
             <a href="<?= Url::raiz('index.html') ?>" class="text-light">Voltar para a home</a>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
 </body>
 

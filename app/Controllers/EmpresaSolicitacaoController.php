@@ -17,6 +17,8 @@ require_once __DIR__ . '/NotificacaoController.php';
 
 class EmpresaSolicitacaoController
 {
+    private const PREFIXO_PEDIDO = 'Seu pedido em ';
+
     private EmpresaSolicitacao $solicitacao;
     private NotificacaoController $notificacao;
 
@@ -33,40 +35,49 @@ class EmpresaSolicitacaoController
 
     public function criar(array $dados): int|false
     {
-        if (empty($dados['usuario_id']) || empty($dados['empresa_id'])) {
-            return false;
-        }
-
-        if (empty($dados['data_desejada'])) {
-            return false;
-        }
-
-        if (!empty($dados['busca_em_casa']) && empty(trim((string) ($dados['endereco_busca'] ?? '')))) {
+        if (!$this->dadosValidosParaCriar($dados)) {
             return false;
         }
 
         $novoId = $this->solicitacao->criar($dados);
 
         if ($novoId !== false) {
-            $solicitacaoCriada = $this->solicitacao->buscarPorId($novoId);
-
-            if ($solicitacaoCriada && !empty($solicitacaoCriada['empresa_usuario_id'])) {
-                $quando = $solicitacaoCriada['data_desejada']
-                    . ($solicitacaoCriada['periodo'] ? ' (' . $solicitacaoCriada['periodo'] . ')' : '');
-                $buscaTexto = !empty($solicitacaoCriada['busca_em_casa']) ? ' Pediu busca e entrega em casa.' : '';
-
-                $this->notificacao->criar(
-                    (int) $solicitacaoCriada['empresa_usuario_id'],
-                    "📥 Novo pedido de serviço!",
-                    "O tutor " . $solicitacaoCriada['tutor_nome'] . " solicitou "
-                        . ($solicitacaoCriada['servico'] ?: 'um serviço') . " para " . $quando . "." . $buscaTexto,
-                    'Sistema',
-                    'solicitacoes_empresa.php?empresa_id=' . (int) $dados['empresa_id']
-                );
-            }
+            $this->notificarNovaSolicitacao($novoId, (int) $dados['empresa_id']);
         }
 
         return $novoId;
+    }
+
+    private function dadosValidosParaCriar(array $dados): bool
+    {
+        if (empty($dados['usuario_id']) || empty($dados['empresa_id']) || empty($dados['data_desejada'])) {
+            return false;
+        }
+
+        // Pedido de busca em casa exige o endereço de busca preenchido.
+        return empty($dados['busca_em_casa']) || !empty(trim((string) ($dados['endereco_busca'] ?? '')));
+    }
+
+    private function notificarNovaSolicitacao(int $novoId, int $empresaId): void
+    {
+        $solicitacaoCriada = $this->solicitacao->buscarPorId($novoId);
+
+        if (!$solicitacaoCriada || empty($solicitacaoCriada['empresa_usuario_id'])) {
+            return;
+        }
+
+        $quando = $solicitacaoCriada['data_desejada']
+            . ($solicitacaoCriada['periodo'] ? ' (' . $solicitacaoCriada['periodo'] . ')' : '');
+        $buscaTexto = !empty($solicitacaoCriada['busca_em_casa']) ? ' Pediu busca e entrega em casa.' : '';
+
+        $this->notificacao->criar(
+            (int) $solicitacaoCriada['empresa_usuario_id'],
+            "📥 Novo pedido de serviço!",
+            "O tutor " . $solicitacaoCriada['tutor_nome'] . " solicitou "
+                . ($solicitacaoCriada['servico'] ?: 'um serviço') . " para " . $quando . "." . $buscaTexto,
+            'Sistema',
+            'solicitacoes_empresa.php?empresa_id=' . $empresaId
+        );
     }
 
     public function buscarPorId(int $id): ?array
@@ -105,10 +116,10 @@ class EmpresaSolicitacaoController
             }
 
             $mensagens = [
-                'aceita' => ['titulo' => '✅ Pedido aceito!', 'texto' => 'Seu pedido em ' . $solicitacaoAntes['empresa_nome'] . ' foi aceito.' . $detalhes],
-                'recusada' => ['titulo' => 'Pedido recusado', 'texto' => 'Seu pedido em ' . $solicitacaoAntes['empresa_nome'] . ' não pôde ser atendido dessa vez.'],
-                'concluida' => ['titulo' => '🎉 Serviço concluído', 'texto' => 'Seu pedido em ' . $solicitacaoAntes['empresa_nome'] . ' foi concluído. Que tal avaliar o atendimento?'],
-                'cancelada' => ['titulo' => 'Pedido cancelado', 'texto' => 'Seu pedido em ' . $solicitacaoAntes['empresa_nome'] . ' foi cancelado pela empresa.'],
+                'aceita' => ['titulo' => '✅ Pedido aceito!', 'texto' => self::PREFIXO_PEDIDO . $solicitacaoAntes['empresa_nome'] . ' foi aceito.' . $detalhes],
+                'recusada' => ['titulo' => 'Pedido recusado', 'texto' => self::PREFIXO_PEDIDO . $solicitacaoAntes['empresa_nome'] . ' não pôde ser atendido dessa vez.'],
+                'concluida' => ['titulo' => '🎉 Serviço concluído', 'texto' => self::PREFIXO_PEDIDO . $solicitacaoAntes['empresa_nome'] . ' foi concluído. Que tal avaliar o atendimento?'],
+                'cancelada' => ['titulo' => 'Pedido cancelado', 'texto' => self::PREFIXO_PEDIDO . $solicitacaoAntes['empresa_nome'] . ' foi cancelado pela empresa.'],
             ];
 
             if (isset($mensagens[$status])) {

@@ -19,6 +19,7 @@ require_once "../../app/Models/Usuario.php";
 
 $empresaController = new EmpresaController();
 $produtoController  = new ProdutoController();
+$imagemController = new ProdutoImagemController();
 $pdo = Database::conectar();
 
 $usuarioId = (int) $_SESSION["usuario_id"];
@@ -113,8 +114,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             */
 
             if (!empty($_FILES["imagens"]["name"][0])) {
-                $imagensSalvas = $produtoController->processarImagens($_FILES["imagens"]);
-                $produtoController->salvarImagens($novoId, $imagensSalvas);
+                $imagensSalvas = $imagemController->processarImagens($_FILES["imagens"]);
+                $imagemController->salvarImagens($novoId, $imagensSalvas);
             }
 
             Flash::sucesso("Produto cadastrado com sucesso!");

@@ -14,20 +14,17 @@ require_once __DIR__ . '/NotificacaoController.php';
 
 class PrestadorController
 {
-    private const TAMANHO_MAX_IMAGEM = 5 * 1024 * 1024;
-
-    private const MIME_PERMITIDOS = [
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-    ];
 
     private Prestador $prestador;
+    private PrestadorAvaliacao $avaliacao;
+    private PrestadorSolicitacao $solicitacao;
     private NotificacaoController $notificacao;
 
     public function __construct()
     {
         $this->prestador = new Prestador();
+        $this->avaliacao = new PrestadorAvaliacao();
+        $this->solicitacao = new PrestadorSolicitacao();
         $this->notificacao = new NotificacaoController();
     }
 
@@ -88,29 +85,29 @@ class PrestadorController
 
     public function listarAvaliacoes(int $prestadorId): array
     {
-        return $this->prestador->listarAvaliacoes($prestadorId);
+        return $this->avaliacao->listarAvaliacoes($prestadorId);
     }
 
     public function avaliar(int $prestadorId, int $usuarioId, int $nota, string $comentario = ''): bool
     {
-        return $this->prestador->avaliar($prestadorId, $usuarioId, $nota, $comentario);
+        return $this->avaliacao->avaliar($prestadorId, $usuarioId, $nota, $comentario);
     }
 
     public function listarSolicitacoesRecebidas(int $prestadorId): array
     {
-        return $this->prestador->listarSolicitacoesRecebidas($prestadorId);
+        return $this->solicitacao->listarSolicitacoesRecebidas($prestadorId);
     }
 
     public function listarSolicitacoesFeitas(int $usuarioId): array
     {
-        return $this->prestador->listarSolicitacoesFeitas($usuarioId);
+        return $this->solicitacao->listarSolicitacoesFeitas($usuarioId);
     }
 
     public function atualizarStatusSolicitacao(int $solicitacaoId, int $prestadorId, string $status): bool
     {
-        $solicitacao = $this->prestador->buscarSolicitacaoPorId($solicitacaoId);
+        $solicitacao = $this->solicitacao->buscarSolicitacaoPorId($solicitacaoId);
 
-        $sucesso = $this->prestador->atualizarStatusSolicitacao($solicitacaoId, $prestadorId, $status);
+        $sucesso = $this->solicitacao->atualizarStatusSolicitacao($solicitacaoId, $prestadorId, $status);
 
         if ($sucesso && $solicitacao) {
             $mensagens = [
@@ -142,7 +139,7 @@ class PrestadorController
             return false;
         }
 
-        $novoId = $this->prestador->criarSolicitacao($dados);
+        $novoId = $this->solicitacao->criarSolicitacao($dados);
 
         if ($novoId === false) {
             return $novoId;
@@ -191,68 +188,5 @@ class PrestadorController
         }
 
         return $novoId;
-    }
-
-    /**
-     * Verifica se um arquivo enviado é realmente uma imagem válida
-     */
-    private function arquivoEhImagemValida(string $caminhoTemporario, int $tamanho): bool
-    {
-        if ($tamanho <= 0 || $tamanho > self::TAMANHO_MAX_IMAGEM) {
-            return false;
-        }
-
-        $infoImagem = @getimagesize($caminhoTemporario);
-
-        if ($infoImagem === false) {
-            return false;
-        }
-
-        return in_array($infoImagem['mime'] ?? '', self::MIME_PERMITIDOS, true);
-    }
-
-    /**
-     * Processa o upload da foto do prestador.
-     * Retorna o nome do novo arquivo, ou null se não houver upload válido.
-     */
-    public function processarFoto(array $arquivo): ?string
-    {
-        if (empty($arquivo['name']) || ($arquivo['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
-            return null;
-        }
-
-        $permitidas = ["jpg", "jpeg", "png", "webp"];
-        $extensao = strtolower(pathinfo($arquivo['name'], PATHINFO_EXTENSION));
-
-        if (!in_array($extensao, $permitidas, true)) {
-            return null;
-        }
-
-        if (!$this->arquivoEhImagemValida($arquivo['tmp_name'], (int) ($arquivo['size'] ?? 0))) {
-            return null;
-        }
-
-        $diretorio = dirname(__DIR__, 2) . "/uploads/prestadores";
-
-        if (!is_dir($diretorio)) {
-            mkdir($diretorio, 0777, true);
-        }
-
-        $novoNome = uniqid("prestador_", true) . "." . $extensao;
-        $destino = $diretorio . "/" . $novoNome;
-
-        if (!ImagemUpload::salvar($arquivo['tmp_name'], $destino)) {
-            return null;
-        }
-
-        return $novoNome;
-    }
-
-    /**
-     * Limpa um CPF, deixando só dígitos
-     */
-    public function limparCpf(string $cpf): string
-    {
-        return preg_replace('/\D/', '', $cpf) ?? '';
     }
 }

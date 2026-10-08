@@ -32,10 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($campanha !== null) {
 
+            $prefixoPublicacao = 'Sua publicação "';
             $mensagens = [
-                'aprovada' => 'Sua publicação "' . $campanha['titulo'] . '" foi aprovada e já está visível no site.',
-                'recusada' => 'Sua publicação "' . $campanha['titulo'] . '" não foi aprovada.',
-                'pendente' => 'Sua publicação "' . $campanha['titulo'] . '" voltou para análise.',
+                'aprovada' => $prefixoPublicacao . $campanha['titulo'] . '" foi aprovada e já está visível no site.',
+                'recusada' => $prefixoPublicacao . $campanha['titulo'] . '" não foi aprovada.',
+                'pendente' => $prefixoPublicacao . $campanha['titulo'] . '" voltou para análise.',
             ];
 
             $texto = $mensagens[$status] ?? 'O status de moderação da sua publicação mudou.';
@@ -125,9 +126,10 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
                             <div class="flex-grow-1" style="min-width:260px;">
 
                                 <h2 class="h5 fw-bold mb-1">
-                                    <?= Campanha::iconeTipo($campanha['tipo']) ?>
+                                    <?= CampanhaApresentacao::iconeTipo($campanha['tipo']) ?>
                                     <?= htmlspecialchars($campanha['titulo']) ?>
-                                    <span class="badge bg-secondary"><?= htmlspecialchars($campanha['status_moderacao']) ?></span>
+                                    <span
+                                        class="badge bg-secondary"><?= htmlspecialchars($campanha['status_moderacao']) ?></span>
                                 </h2>
 
                                 <p class="small text-muted mb-1">
@@ -158,15 +160,18 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
                                     <?= Csrf::campoHtml() ?>
                                     <input type="hidden" name="campanha_id" value="<?= $campanhaId ?>">
 
-                                    <input type="text" name="observacao" class="form-control form-control-sm mb-2"
+                                    <label for="observacao-campanha-<?= $campanhaId ?>" class="visually-hidden">Observação da
+                                        moderação da campanha</label>
+                                    <input id="observacao-campanha-<?= $campanhaId ?>" type="text" name="observacao"
+                                        class="form-control form-control-sm mb-2"
                                         placeholder="Observação (aparece para o parceiro)"
                                         value="<?= htmlspecialchars($campanha['observacao_moderacao'] ?? '') ?>">
 
                                     <div class="d-flex gap-1 flex-wrap">
-                                        <button type="submit" name="status" value="aprovada"
-                                            class="btn btn-success btn-sm">✅ Aprovar</button>
-                                        <button type="submit" name="status" value="recusada"
-                                            class="btn btn-danger btn-sm">❌ Recusar</button>
+                                        <button type="submit" name="status" value="aprovada" class="btn btn-success btn-sm">✅
+                                            Aprovar</button>
+                                        <button type="submit" name="status" value="recusada" class="btn btn-danger btn-sm">❌
+                                            Recusar</button>
                                     </div>
 
                                 </form>

@@ -3,35 +3,35 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/bootstrap.php';
- 
-require_once __DIR__ . '/../../app/Models/Usuario.php'; 
+
+require_once __DIR__ . '/../../app/Models/Usuario.php';
 require_once __DIR__ . '/../../app/Models/Veterinario.php';
 require_once __DIR__ . '/../../app/Helpers/EmpresaAcesso.php';
 require_once __DIR__ . '/../../app/Helpers/Csrf.php';
-$pdo = Database::conectar(); 
+$pdo = Database::conectar();
 
 
-if (!isset($_SESSION['usuario_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') { 
-    die("Acesso não autorizado."); 
-} 
+if (!isset($_SESSION['usuario_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+    die("Acesso não autorizado.");
+}
 
-if (!Csrf::validar($_POST['csrf_token'] ?? null)) { 
-    die("Erro: token de segurança inválido ou expirado. Atualize a página e tente novamente."); 
-} 
+if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
+    die("Erro: token de segurança inválido ou expirado. Atualize a página e tente novamente.");
+}
 
 $empresaId    = (int)($_POST['empresa_id'] ?? 0);
-$petId        = (int)($_POST['pet_id'] ?? 0); 
+$petId        = (int)($_POST['pet_id'] ?? 0);
 $motivo       = trim($_POST['motivo'] ?? "Atendimento Clínico");
-$diagnostico  = trim($_POST['diagnostico'] ?? ""); 
-$tratamento   = trim($_POST['tratamento'] ?? ""); 
-$medicamentos = trim($_POST['medicamentos'] ?? ""); 
+$diagnostico  = trim($_POST['diagnostico'] ?? "");
+$tratamento   = trim($_POST['tratamento'] ?? "");
+$medicamentos = trim($_POST['medicamentos'] ?? "");
 $recomendacoes = trim($_POST['recomendacoes'] ?? "");
 $retorno      = trim($_POST['retorno'] ?? "") ?: null;
-$usuarioId    = (int)$_SESSION['usuario_id']; 
+$usuarioId    = (int)$_SESSION['usuario_id'];
 
-if ($empresaId <= 0 || $petId <= 0 || empty($diagnostico)) { 
-    die("Preencha ao menos o pet e o diagnóstico do atendimento clínico."); 
-} 
+if ($empresaId <= 0 || $petId <= 0 || empty($diagnostico)) {
+    die("Preencha ao menos o pet e o diagnóstico do atendimento clínico.");
+}
 
 // Só quem é da equipe da empresa (dono, admin ou veterinário) pode registrar
 if (!EmpresaAcesso::temAcesso($pdo, $empresaId, $usuarioId, ['proprietario', 'administrador', 'veterinario'])) {
@@ -67,8 +67,8 @@ if ($consultaExistenteId > 0) {
     }
 }
 
-try { 
-    $pdo->beginTransaction(); 
+try {
+    $pdo->beginTransaction();
 
     // 1. Busca o tutor (dono) real do pet selecionado
     $stmtDono = $pdo->prepare("SELECT usuario_id FROM pets WHERE id = ? LIMIT 1");
@@ -76,7 +76,7 @@ try {
     $petDono = $stmtDono->fetch(PDO::FETCH_ASSOC);
 
     if (!$petDono) {
-        throw new Exception("Pet não encontrado.");
+        throw new RegistroNaoEncontradoException("Pet não encontrado.");
     }
     $tutorId = (int)$petDono['usuario_id'];
 
@@ -92,7 +92,7 @@ try {
     } else {
         // 2. Cria a consulta (o prontuário sempre se liga a uma consulta)
         $stmtConsulta = $pdo->prepare("
-            INSERT INTO consultas (usuario_id, veterinario_id, empresa_id, pet_id, data_consulta, hora_consulta, status, motivo, observacoes, criado_em) 
+            INSERT INTO consultas (usuario_id, veterinario_id, empresa_id, pet_id, data_consulta, hora_consulta, status, motivo, observacoes, criado_em)
             VALUES (?, ?, ?, ?, CURRENT_DATE, CURRENT_TIME, 'Concluída', ?, ?, CURRENT_TIMESTAMP)
         ");
         $stmtConsulta->execute([$tutorId, $veterinarioId, $empresaId, $petId, $motivo, $diagnostico]);
@@ -101,29 +101,27 @@ try {
 
     // 3. Grava o prontuário, amarrado à consulta
     $stmtPront = $pdo->prepare("
-        INSERT INTO prontuarios (consulta_id, diagnostico, tratamento, medicamentos, recomendacoes, retorno, criado_em) 
+        INSERT INTO prontuarios (consulta_id, diagnostico, tratamento, medicamentos, recomendacoes, retorno, criado_em)
         VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-    "); 
-    $stmtPront->execute([$novoIdConsulta, $diagnostico, $tratamento, $medicamentos, $recomendacoes, $retorno]); 
-    $prontuarioId = $pdo->lastInsertId(); 
+    ");
+    $stmtPront->execute([$novoIdConsulta, $diagnostico, $tratamento, $medicamentos, $recomendacoes, $retorno]);
+    $prontuarioId = $pdo->lastInsertId();
 
     // 4. Trilha de auditoria
     $stmtAudit = $pdo->prepare("
-        INSERT INTO auditoria (usuario_id, tabela, acao, registro_id, detalhes) 
+        INSERT INTO auditoria (usuario_id, tabela, acao, registro_id, detalhes)
         VALUES (?, 'prontuarios', 'INSERT', ?, ?)
-    "); 
-    $stmtAudit->execute([$usuarioId, $prontuarioId, "Prontuário registrado para o pet #$petId"]); 
+    ");
+    $stmtAudit->execute([$usuarioId, $prontuarioId, "Prontuário registrado para o pet #$petId"]);
 
-    $pdo->commit(); 
+    $pdo->commit();
 
     echo "<script>
-        alert('Registro clínico salvo com sucesso!'); 
+        alert('Registro clínico salvo com sucesso!');
         window.location.href='" . Url::pagina('painel_b2b.php') . "?empresa_id=" . $empresaId . "';
-    </script>"; 
+    </script>";
 
-} catch (Exception $e) { 
-    $pdo->rollBack(); 
-    die("Erro crítico ao processar prontuário: " . $e->getMessage()); 
+} catch (Exception $e) {
+    $pdo->rollBack();
+    die("Erro crítico ao processar prontuário: " . $e->getMessage());
 }
-
-?>

@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 
 
 if (!isset($_SESSION['usuario_id'])) {
-    header('Location: ' . Url::pagina('login.php') . '?voltar=checkout.php');
+    Url::redirecionar(Url::pagina('login.php') . '?voltar=checkout.php');
     exit;
 }
 
@@ -17,14 +17,14 @@ require_once "../../app/Models/Endereco.php";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !Csrf::validar($_POST['csrf_token'] ?? null)) {
     $_SESSION['checkout_erro'] = 'Sessão expirada. Atualize a página e tente novamente.';
-    header('Location: ' . Url::pagina('checkout.php'));
+    Url::redirecionar(Url::pagina('checkout.php'));
     exit;
 }
 
 $carrinho = $_SESSION['carrinho'] ?? [];
 
 if (empty($carrinho)) {
-    header('Location: ' . Url::pagina('carrinho.php'));
+    Url::redirecionar(Url::pagina('carrinho.php'));
     exit;
 }
 
@@ -33,7 +33,7 @@ $cupom = trim($_POST['cupom'] ?? '');
 
 if ($formaPagamentoId <= 0) {
     $_SESSION['checkout_erro'] = 'Selecione uma forma de pagamento.';
-    header('Location: ' . Url::pagina('checkout.php'));
+    Url::redirecionar(Url::pagina('checkout.php'));
     exit;
 }
 
@@ -42,7 +42,7 @@ $endereco = $enderecoModel->buscarPorUsuario((int) $_SESSION['usuario_id']);
 
 if (!$endereco) {
     $_SESSION['checkout_erro'] = 'Cadastre um endereço de entrega antes de continuar.';
-    header('Location: ' . Url::pagina('checkout.php'));
+    Url::redirecionar(Url::pagina('checkout.php'));
     exit;
 }
 
@@ -62,7 +62,7 @@ $resultado = $pedidoModel->criar(
 
 if (!$resultado['sucesso']) {
     $_SESSION['checkout_erro'] = $resultado['erro'] ?? 'Não foi possível concluir a compra.';
-    header('Location: ' . Url::pagina('checkout.php'));
+    Url::redirecionar(Url::pagina('checkout.php'));
     exit;
 }
 

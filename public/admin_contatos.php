@@ -41,9 +41,9 @@ if (!in_array($filtroStatus, ['novo', 'em_andamento', 'respondido'], true)) {
 $mensagens = $mensagemModel->listar($filtroStatus);
 
 $rotulosStatus = [
-    'novo'         => ['classe' => 'bg-warning text-dark', 'rotulo' => '🆕 Novo'],
+    'novo' => ['classe' => 'bg-warning text-dark', 'rotulo' => '🆕 Novo'],
     'em_andamento' => ['classe' => 'bg-info text-dark', 'rotulo' => '🔧 Em andamento'],
-    'respondido'   => ['classe' => 'bg-success', 'rotulo' => '✅ Respondido'],
+    'respondido' => ['classe' => 'bg-success', 'rotulo' => '✅ Respondido'],
 ];
 
 $tituloPagina = 'Mensagens de contato';
@@ -107,8 +107,10 @@ require_once __DIR__ . '/../app/Includes/menu.php';
                             <form method="POST" class="d-flex gap-1">
                                 <?= Csrf::campoHtml() ?>
                                 <input type="hidden" name="id" value="<?= (int) $mensagem['id'] ?>">
-                                <select name="status" class="form-select form-select-sm" style="width:auto;"
-                                    onchange="this.form.submit()">
+                                <label for="status-mensagem-<?= (int) $mensagem['id'] ?>" class="visually-hidden">Status da
+                                    mensagem</label>
+                                <select id="status-mensagem-<?= (int) $mensagem['id'] ?>" name="status"
+                                    class="form-select form-select-sm" style="width:auto;" onchange="this.form.submit()">
                                     <option value="novo" <?= $mensagem['status'] === 'novo' ? 'selected' : '' ?>>Novo</option>
                                     <option value="em_andamento" <?= $mensagem['status'] === 'em_andamento' ? 'selected' : '' ?>>
                                         Em andamento

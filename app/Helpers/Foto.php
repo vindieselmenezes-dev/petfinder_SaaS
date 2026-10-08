@@ -29,6 +29,7 @@ final class Foto
 {
     private function __construct()
     {
+        // Classe utilitária (apenas métodos estáticos): não deve ser instanciada.
     }
 
     /**

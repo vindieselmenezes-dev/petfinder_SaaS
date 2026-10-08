@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 Middleware::exigirLogin();
 
 $controller = new PetController();
+$imagemController = new PetImagemController();
 
 /*
 |--------------------------------------------------------------------------
@@ -81,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $imagensExtras = [];
 
     if (!empty($_FILES["foto"]["name"])) {
-        $resultadoUpload = $controller->processarImagensUpload($_FILES["foto"] ?? [], $dados["foto"]);
+        $resultadoUpload = $imagemController->processarImagensUpload($_FILES["foto"] ?? [], $dados["foto"]);
         $dados["foto"] = $resultadoUpload["foto"] ?? "sem-foto.png";
         $imagensExtras = $resultadoUpload["imagens"] ?? [];
     }

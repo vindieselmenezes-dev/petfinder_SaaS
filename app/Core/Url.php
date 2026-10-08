@@ -101,6 +101,7 @@ final class Url
         'ofertas.php' => 'loja',
         'onboarding.php' => 'conta',
         'painel_b2b.php' => 'empresas',
+        'pedir_servico.php' => 'agendamentos',
         'admin_campanhas.php' => 'parceiros',
         'admin_parceiros.php' => 'parceiros',
         'apoios_campanha.php' => 'parceiros',
@@ -137,6 +138,7 @@ final class Url
         'simular_assinatura.php' => 'empresas',
         'simular_faturamento.php' => 'empresas',
         'solicitacoes_empresa.php' => 'agendamentos',
+        'solicitacoes_compartilhadas.php' => 'agendamentos',
         'solicitacoes_prestador.php' => 'agendamentos',
         'solicitacoes_recebidas.php' => 'pets',
         'solicitar_adocao.php' => 'pets',
@@ -148,8 +150,18 @@ final class Url
         'vitrine.php' => 'loja',
     ];
 
+    /**
+     * Envia o cabeçalho de redirecionamento (HTTP Location).
+     * Quem chama continua responsável por encerrar o script (exit).
+     */
+    public static function redirecionar(string $destino): void
+    {
+        header('Location: ' . $destino);
+    }
+
     private function __construct()
     {
+        // Classe utilitária (apenas métodos estáticos): não deve ser instanciada.
     }
 
     /**

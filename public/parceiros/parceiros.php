@@ -8,11 +8,12 @@ declare(strict_types=1);
  * ==========================================================
  * Substitui a antiga faixa estática "Empresas Parceiras" da home.
  * Aqui ficam as ONGs, protetores e empresas que ajudam a divulgar e
- * crescer o PetFinder — com destaque para o que realmente precisa de
+ * crescer o EcoSistemPet — com destaque para o que realmente precisa de
  * gente: campanhas, eventos e doações.
  */
 
 require_once __DIR__ . '/../../app/bootstrap.php';
+const FORMATO_DATA_BR = 'd/m/Y';
 
 $parceiroModel = new Parceiro();
 $campanhaModel = new Campanha();
@@ -30,7 +31,7 @@ if (!isset(Parceiro::TIPOS[$tipoParceiro])) {
 }
 
 $cidade = trim($_GET['cidade'] ?? '');
-$busca  = trim($_GET['q'] ?? '');
+$busca = trim($_GET['q'] ?? '');
 
 $resumo = $parceiroModel->resumo();
 
@@ -77,12 +78,12 @@ function periodoCampanha(?string $inicio, ?string $fim): string
     }
 
     if ($inicio && $fim) {
-        return date('d/m/Y', strtotime($inicio)) . ' até ' . date('d/m/Y', strtotime($fim));
+        return date(FORMATO_DATA_BR, strtotime($inicio)) . ' até ' . date(FORMATO_DATA_BR, strtotime($fim));
     }
 
     return $inicio
         ? 'A partir de ' . date('d/m/Y H:i', strtotime($inicio))
-        : 'Até ' . date('d/m/Y', strtotime($fim));
+        : 'Até ' . date(FORMATO_DATA_BR, strtotime($fim));
 }
 
 /**
@@ -108,13 +109,13 @@ function urlFiltroTipoCampanha(string $tipo): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= htmlspecialchars($tituloPagina) ?> - PetFinder Brasil</title>
+    <title><?= htmlspecialchars($tituloPagina) ?> - EcoSistemPet</title>
 
     <meta name="description"
-        content="ONGs, protetores e empresas parceiras do PetFinder Brasil. Veja campanhas, eventos e pedidos de doação e descubra como ajudar.">
+        content="ONGs, protetores e empresas parceiras do EcoSistemPet. Veja campanhas, eventos e pedidos de doação e descubra como ajudar.">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
     <link rel="stylesheet" href="<?= Url::asset('css/style.css') ?>">
 
 </head>
@@ -126,7 +127,7 @@ function urlFiltroTipoCampanha(string $tipo): string
         <button type="button"
             onclick="if(window.history.length>1){history.back();}else{window.location.href='<?= Url::raiz('index.html') ?>';}"
             style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;"
-            aria-label="Voltar para a página anterior">← Voltar</button>
+            aria-label="← Voltar para a página anterior">← Voltar</button>
     </div>
 
     <header class="border-bottom py-3">
@@ -134,9 +135,9 @@ function urlFiltroTipoCampanha(string $tipo): string
         <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
 
             <a href="<?= Url::raiz('index.html') ?>" class="d-flex align-items-center text-decoration-none">
-                <img src="<?= Url::asset('img/logo.png') ?>" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="<?= Url::asset('img/logo.png') ?>" alt="EcoSistemPet" height="40" class="me-2">
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
             </a>
@@ -162,7 +163,7 @@ function urlFiltroTipoCampanha(string $tipo): string
 
                 <div class="col-lg-7">
 
-                    <h1 class="fw-bold mb-3">🤝 Parceiros que fazem o PetFinder crescer</h1>
+                    <h1 class="fw-bold mb-3">🤝 Parceiros que fazem o EcoSistemPet crescer</h1>
 
                     <p class="lead mb-4">
                         ONGs, protetores independentes e empresas que abraçam a causa animal e ajudam
@@ -242,7 +243,7 @@ function urlFiltroTipoCampanha(string $tipo): string
                     </p>
                 </div>
 
-                <div class="btn-group" role="group" aria-label="Filtrar publicações por tipo">
+                <nav class="btn-group" aria-label="Filtrar publicações por tipo">
                     <a href="<?= htmlspecialchars(urlFiltroTipoCampanha('')) ?>"
                         class="btn btn-<?= $tipoCampanha === '' ? 'primary' : 'outline-primary' ?>">
                         Todas
@@ -250,10 +251,10 @@ function urlFiltroTipoCampanha(string $tipo): string
                     <?php foreach (Campanha::TIPOS as $chave => $config): ?>
                         <a href="<?= htmlspecialchars(urlFiltroTipoCampanha($chave)) ?>"
                             class="btn btn-<?= $tipoCampanha === $chave ? 'primary' : 'outline-primary' ?>">
-                            <?= $config['icone'] ?> <?= htmlspecialchars($config['rotulo']) ?>s
+                            <?= $config['icone'] ?>     <?= htmlspecialchars($config['rotulo']) ?>s
                         </a>
                     <?php endforeach; ?>
-                </div>
+                </nav>
 
             </div>
 
@@ -267,7 +268,8 @@ function urlFiltroTipoCampanha(string $tipo): string
                             <p class="mb-1">Nenhuma ação publicada por aqui ainda.</p>
                             <p class="mb-0">
                                 É de uma ONG ou empresa?
-                                <a href="<?= Url::pagina('cadastrar_parceiro.php') ?>">Cadastre-se e publique a primeira.</a>
+                                <a href="<?= Url::pagina('cadastrar_parceiro.php') ?>">Cadastre-se e publique a
+                                    primeira.</a>
                             </p>
                         </div>
                     </div>
@@ -282,7 +284,7 @@ function urlFiltroTipoCampanha(string $tipo): string
                             'campanhas',
                             'img/parceiros/parceiro01.jpg'
                         );
-                        $percentual = Campanha::percentualMeta(
+                        $percentual = CampanhaApresentacao::percentualMeta(
                             $campanha['meta_valor'] !== null ? (float) $campanha['meta_valor'] : null,
                             (float) $campanha['valor_arrecadado']
                         );
@@ -293,7 +295,8 @@ function urlFiltroTipoCampanha(string $tipo): string
 
                         <div class="col-lg-4 col-md-6">
 
-                            <div class="card h-100 shadow-sm <?= !empty($campanha['destaque']) ? 'border-warning border-2' : '' ?>">
+                            <div
+                                class="card h-100 shadow-sm <?= !empty($campanha['destaque']) ? 'border-warning border-2' : '' ?>">
 
                                 <a href="<?= Url::pagina('campanha.php') ?>?id=<?= (int) $campanha['id'] ?>"
                                     class="position-relative d-block">
@@ -303,8 +306,8 @@ function urlFiltroTipoCampanha(string $tipo): string
                                         alt="<?= htmlspecialchars($campanha['titulo']) ?>">
 
                                     <span class="badge bg-dark position-absolute top-0 start-0 m-2">
-                                        <?= Campanha::iconeTipo($campanha['tipo']) ?>
-                                        <?= htmlspecialchars(Campanha::rotuloTipo($campanha['tipo'])) ?>
+                                        <?= CampanhaApresentacao::iconeTipo($campanha['tipo']) ?>
+                                        <?= htmlspecialchars(CampanhaApresentacao::rotuloTipo($campanha['tipo'])) ?>
                                     </span>
 
                                     <?php if (!empty($campanha['destaque'])): ?>
@@ -321,7 +324,8 @@ function urlFiltroTipoCampanha(string $tipo): string
                                         <i class="bi bi-building"></i>
                                         <?= htmlspecialchars($campanha['parceiro_nome']) ?>
                                         <?php if (!empty($campanha['parceiro_cidade'])): ?>
-                                            · <?= htmlspecialchars($campanha['parceiro_cidade']) ?><?= !empty($campanha['parceiro_estado']) ? '/' . htmlspecialchars($campanha['parceiro_estado']) : '' ?>
+                                            ·
+                                            <?= htmlspecialchars($campanha['parceiro_cidade']) ?>            <?= !empty($campanha['parceiro_estado']) ? '/' . htmlspecialchars($campanha['parceiro_estado']) : '' ?>
                                         <?php endif; ?>
                                     </small>
 
@@ -358,9 +362,8 @@ function urlFiltroTipoCampanha(string $tipo): string
                                         <div class="mb-2">
                                             <div class="progress" style="height:8px;">
                                                 <div class="progress-bar bg-success" role="progressbar"
-                                                    style="width: <?= $percentual ?>%;"
-                                                    aria-valuenow="<?= $percentual ?>" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
+                                                    style="width: <?= $percentual ?>%;" aria-valuenow="<?= $percentual ?>"
+                                                    aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
                                             <small class="text-muted">
                                                 R$ <?= number_format((float) $campanha['valor_arrecadado'], 2, ',', '.') ?>
@@ -412,7 +415,7 @@ function urlFiltroTipoCampanha(string $tipo): string
 
             <h2 class="fw-bold mb-1">🏳️ Quem caminha com a gente</h2>
             <p class="text-muted">
-                ONGs, protetores e empresas que divulgam o PetFinder e apoiam a causa animal.
+                ONGs, protetores e empresas que divulgam o EcoSistemPet e apoiam a causa animal.
             </p>
 
             <form method="GET" class="row g-2 mb-4 align-items-end bg-light p-3 rounded-3">
@@ -420,8 +423,8 @@ function urlFiltroTipoCampanha(string $tipo): string
                 <input type="hidden" name="tipo" value="<?= htmlspecialchars($tipoCampanha) ?>">
 
                 <div class="col-md-4">
-                    <label class="form-label small">Tipo de parceiro</label>
-                    <select name="parceiro" class="form-select">
+                    <label for="filtro-parceiro" class="form-label small">Tipo de parceiro</label>
+                    <select id="filtro-parceiro" name="parceiro" class="form-select">
                         <option value="">Todos</option>
                         <?php foreach (Parceiro::TIPOS as $chave => $rotulo): ?>
                             <option value="<?= $chave ?>" <?= $tipoParceiro === $chave ? 'selected' : '' ?>>
@@ -432,15 +435,15 @@ function urlFiltroTipoCampanha(string $tipo): string
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label small">Cidade</label>
-                    <input type="text" name="cidade" class="form-control" placeholder="Ex: Belo Horizonte"
-                        value="<?= htmlspecialchars($cidade) ?>">
+                    <label for="filtro-cidade-parceiro" class="form-label small">Cidade</label>
+                    <input id="filtro-cidade-parceiro" type="text" name="cidade" class="form-control"
+                        placeholder="Ex: Belo Horizonte" value="<?= htmlspecialchars($cidade) ?>">
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label small">Buscar</label>
-                    <input type="text" name="q" class="form-control" placeholder="Nome da ONG ou empresa"
-                        value="<?= htmlspecialchars($busca) ?>">
+                    <label for="filtro-busca-parceiro" class="form-label small">Buscar</label>
+                    <input id="filtro-busca-parceiro" type="text" name="q" class="form-control"
+                        placeholder="Nome da ONG ou empresa" value="<?= htmlspecialchars($busca) ?>">
                 </div>
 
                 <div class="col-md-2">
@@ -467,14 +470,15 @@ function urlFiltroTipoCampanha(string $tipo): string
 
                         <div class="col-lg-4 col-md-6">
 
-                            <div class="card h-100 shadow-sm <?= !empty($parceiro['destaque']) ? 'border-warning border-2' : '' ?>">
+                            <div
+                                class="card h-100 shadow-sm <?= !empty($parceiro['destaque']) ? 'border-warning border-2' : '' ?>">
 
                                 <div class="card-body d-flex flex-column">
 
                                     <div class="d-flex align-items-center gap-3 mb-3">
 
-                                        <img src="<?= htmlspecialchars($logo) ?>" alt="<?= htmlspecialchars($parceiro['nome']) ?>"
-                                            class="rounded-circle border"
+                                        <img src="<?= htmlspecialchars($logo) ?>"
+                                            alt="<?= htmlspecialchars($parceiro['nome']) ?>" class="rounded-circle border"
                                             style="width:64px; height:64px; object-fit:cover;">
 
                                         <div>
@@ -492,7 +496,7 @@ function urlFiltroTipoCampanha(string $tipo): string
                                     <?php if (!empty($parceiro['cidade'])): ?>
                                         <p class="small text-muted mb-2">
                                             <i class="bi bi-geo-alt"></i>
-                                            <?= htmlspecialchars($parceiro['cidade']) ?><?= !empty($parceiro['estado']) ? '/' . htmlspecialchars($parceiro['estado']) : '' ?>
+                                            <?= htmlspecialchars($parceiro['cidade']) ?>            <?= !empty($parceiro['estado']) ? '/' . htmlspecialchars($parceiro['estado']) : '' ?>
                                         </p>
                                     <?php endif; ?>
 
@@ -512,7 +516,8 @@ function urlFiltroTipoCampanha(string $tipo): string
                                     <div class="mt-auto pt-2">
 
                                         <span class="badge bg-light text-dark border mb-2">
-                                            <?= (int) $parceiro['total_campanhas'] ?> ação<?= (int) $parceiro['total_campanhas'] === 1 ? '' : 'ões' ?> em andamento
+                                            <?= (int) $parceiro['total_campanhas'] ?>
+                                            ação<?= (int) $parceiro['total_campanhas'] === 1 ? '' : 'ões' ?> em andamento
                                         </span>
 
                                         <a href="<?= Url::pagina('parceiro.php') ?>?id=<?= (int) $parceiro['id'] ?>"
@@ -539,7 +544,8 @@ function urlFiltroTipoCampanha(string $tipo): string
                     <?= Paginador::renderizar($paginaParceiros, $totalPaginasParceiros, 2, 'pagina_parceiros') ?>
                     <p class="text-center text-muted small mt-2 mb-0">
                         Página <?= $paginaParceiros ?> de <?= $totalPaginasParceiros ?>
-                        · <?= $totalParceiros ?> parceiro<?= $totalParceiros === 1 ? '' : 's' ?> encontrado<?= $totalParceiros === 1 ? '' : 's' ?>
+                        · <?= $totalParceiros ?> parceiro<?= $totalParceiros === 1 ? '' : 's' ?>
+                        encontrado<?= $totalParceiros === 1 ? '' : 's' ?>
                     </p>
                 </div>
             <?php endif; ?>
@@ -558,7 +564,7 @@ function urlFiltroTipoCampanha(string $tipo): string
                     <h3 class="fw-bold">Sua ONG ou empresa também pode estar aqui</h3>
                     <p class="mb-0">
                         Parceiros ganham perfil público, espaço para divulgar campanhas, eventos e
-                        pedidos de doação, e aparecem na home do PetFinder. Em troca, ajudam a levar
+                        pedidos de doação, e aparecem na home do EcoSistemPet. Em troca, ajudam a levar
                         a plataforma para mais tutores — e mais pets encontram um lar.
                     </p>
                 </div>
@@ -577,12 +583,12 @@ function urlFiltroTipoCampanha(string $tipo): string
 
     <footer class="bg-dark text-light py-4">
         <div class="container text-center">
-            © <?= date('Y') ?> PetFinder Brasil ·
+            © <?= date('Y') ?> EcoSistemPet ·
             <a href="<?= Url::raiz('index.html') ?>" class="text-light">Voltar para a home</a>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     <script src="<?= Url::asset('js/compartilhamento.js') ?>"></script>
 
 </body>

@@ -3,14 +3,16 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/bootstrap.php';
+$naoInformado = 'Não informado';
 
 $controller = new PetController();
+$imagemController = new PetImagemController();
 $favoritoModel = new Favorito();
 
 $id = isset($_GET["id"]) ? (int) $_GET["id"] : 0;
 
 $pet = $controller->buscarPorId($id);
-$imagensAdicionais = $pet ? $controller->buscarImagens($id) : [];
+$imagensAdicionais = $pet ? $imagemController->buscarImagens($id) : [];
 
 $statusCores = [
     "Para Adoção" => "success",
@@ -21,10 +23,10 @@ $statusCores = [
 ];
 
 $corStatus = $pet ? ($statusCores[$pet["status"]] ?? "secondary") : "secondary";
-$seoTitulo = $pet ? $pet["nome"] . " - PetFinder Brasil" : "Pet não encontrado - PetFinder Brasil";
+$seoTitulo = $pet ? $pet["nome"] . " - EcoSistemPet" : "Pet não encontrado - EcoSistemPet";
 $seoDescricao = $pet
-    ? "Conheça " . $pet["nome"] . ", pet com status " . $pet["status"] . ". Encontre informações e formas de ajudar no PetFinder Brasil."
-    : "Pet não encontrado no PetFinder Brasil.";
+    ? "Conheça " . $pet["nome"] . ", pet com status " . $pet["status"] . ". Encontre informações e formas de ajudar no EcoSistemPet."
+    : "Pet não encontrado no EcoSistemPet.";
 $seoImagem = Foto::url(
     ($pet && $pet["foto"] !== "sem-foto.png") ? ($pet["foto"] ?? null) : null,
     'pets'
@@ -40,21 +42,21 @@ $seoImagem = Foto::url(
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= $pet ? htmlspecialchars($pet["nome"]) . " - " : "" ?>PetFinder Brasil</title>
+    <title><?= $pet ? htmlspecialchars($pet["nome"]) . " - " : "" ?>EcoSistemPet</title>
     <?= Seo::tags($seoTitulo, $seoDescricao, Url::pagina('pet.php') . '?id=' . $id, $seoImagem, "article") ?>
 
     <!-- BOOTSTRAP -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
 
     <!-- BOOTSTRAP ICONS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
 
     <link rel="stylesheet" href="../../assets/css/style.css">
 
 </head>
 
 <body style="padding-top:38px;">
-    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="Voltar para a página anterior">← Voltar</button></div>
+    <div style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#f8f9fa;border-bottom:1px solid #dee2e6;padding:8px 20px;height:38px;box-sizing:border-box;"><button type="button" onclick="if(window.history.length>1){history.back();}else{window.location.href='../../index.html';}" style="background:none;border:none;color:#1B365D;cursor:pointer;font-size:14px;padding:0;" aria-label="← Voltar para a página anterior">← Voltar</button></div>
 
     <!-- ========================================================= -->
     <!-- CABEÇALHO SIMPLES -->
@@ -66,10 +68,10 @@ $seoImagem = Foto::url(
 
             <a href="../../index.html" class="d-flex align-items-center text-decoration-none">
 
-                <img src="../../assets/img/logo.png" alt="PetFinder Brasil" height="40" class="me-2">
+                <img src="../../assets/img/logo.png" alt="EcoSistemPet" height="40" class="me-2">
 
                 <div>
-                    <div class="fw-bold text-dark">PetFinder Brasil</div>
+                    <div class="fw-bold text-dark">EcoSistemPet</div>
                     <small class="text-muted">Tudo para seu pet em um só lugar</small>
                 </div>
 
@@ -112,7 +114,7 @@ $seoImagem = Foto::url(
                         <div class="mt-3 d-flex flex-wrap gap-2">
                             <?php foreach ($imagensAdicionais as $imagem): ?>
                                 <img src="<?= htmlspecialchars(Foto::url($imagem['arquivo'], 'pets')) ?>" class="img-thumbnail"
-                                    style="width: 120px; height: 90px; object-fit: cover;" alt="Imagem adicional">
+                                    style="width: 120px; height: 90px; object-fit: cover;" alt="Outro ângulo de <?= htmlspecialchars($pet['nome'] ?? 'pet') ?>">
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
@@ -138,7 +140,7 @@ $seoImagem = Foto::url(
                         <div class="col-6 col-md-4">
                             <div class="border rounded-3 p-3 text-center h-100">
                                 <div class="text-muted small">Sexo</div>
-                                <div class="fw-semibold"><?= htmlspecialchars($pet["sexo"] ?: "Não informado") ?></div>
+                                <div class="fw-semibold"><?= htmlspecialchars($pet["sexo"] ?: $naoInformado) ?></div>
                             </div>
                         </div>
 
@@ -153,7 +155,7 @@ $seoImagem = Foto::url(
                             <div class="border rounded-3 p-3 text-center h-100">
                                 <div class="text-muted small">Peso</div>
                                 <div class="fw-semibold">
-                                    <?= $pet["peso"] !== null ? htmlspecialchars((string) $pet["peso"]) . " kg" : "Não informado" ?>
+                                    <?= $pet["peso"] !== null ? htmlspecialchars((string) $pet["peso"]) . " kg" : $naoInformado ?>
                                 </div>
                             </div>
                         </div>
@@ -162,7 +164,7 @@ $seoImagem = Foto::url(
                             <div class="border rounded-3 p-3 text-center h-100">
                                 <div class="text-muted small">Altura</div>
                                 <div class="fw-semibold">
-                                    <?= $pet["altura"] !== null ? htmlspecialchars((string) $pet["altura"]) . " cm" : "Não informado" ?>
+                                    <?= $pet["altura"] !== null ? htmlspecialchars((string) $pet["altura"]) . " cm" : $naoInformado ?>
                                 </div>
                             </div>
                         </div>
@@ -226,7 +228,7 @@ $seoImagem = Foto::url(
                     <h5>Tutor responsável</h5>
 
                     <p class="mb-3">
-                        <?= htmlspecialchars($pet["tutor_nome"] ?? 'Não informado') ?>
+                        <?= htmlspecialchars($pet["tutor_nome"] ?? $naoInformado) ?>
                     </p>
 
                     <?php if (!empty($pet["tutor_telefone"])): ?>
@@ -254,11 +256,11 @@ $seoImagem = Foto::url(
     </main>
 
     <footer class="border-top py-4 text-center text-muted">
-        © <?= date("Y") ?> PetFinder Brasil
+        © <?= date("Y") ?> EcoSistemPet
     </footer>
 
     <!-- BOOTSTRAP JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
 </body>
 

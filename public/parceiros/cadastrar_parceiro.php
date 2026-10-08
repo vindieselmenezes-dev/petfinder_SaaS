@@ -26,7 +26,7 @@ $editando = $id > 0;
 if ($editando && !$parceiroModel->podeAdministrar($id, (int) Auth::id(), Auth::ehAdministrador())) {
     http_response_code(403);
     Flash::erro('Você não tem permissão para editar este parceiro.');
-    header('Location: ' . Url::pagina('painel_parceiro.php'));
+    Url::redirecionar(Url::pagina('painel_parceiro.php'));
     exit;
 }
 
@@ -34,7 +34,7 @@ $parceiro = $editando ? $parceiroModel->buscarPorId($id, false) : null;
 
 if ($editando && $parceiro === null) {
     Flash::erro('Parceiro não encontrado.');
-    header('Location: ' . Url::pagina('painel_parceiro.php'));
+    Url::redirecionar(Url::pagina('painel_parceiro.php'));
     exit;
 }
 
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form = $controller->dadosParceiroDoPost($_POST);
     $erros = $controller->validarParceiro($form);
 
-    if (count($erros) === 0) {
+    if (empty($erros)) {
 
         $logo = $controller->processarImagem($_FILES['logo'] ?? [], 'parceiros', 'parceiro');
 
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (count($erros) === 0) {
+    if (empty($erros)) {
 
         $form['logo'] = $logo ?? '';
 
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($parceiroModel->atualizar($id, $form)) {
                 Flash::sucesso('Dados do parceiro atualizados!');
-                header('Location: ' . Url::pagina('painel_parceiro.php'));
+                Url::redirecionar(Url::pagina('painel_parceiro.php'));
                 exit;
             }
 
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Flash::sucesso(
                     'Candidatura enviada! Nossa equipe vai analisar e você recebe um retorno em breve.'
                 );
-                header('Location: ' . Url::pagina('painel_parceiro.php'));
+                Url::redirecionar(Url::pagina('painel_parceiro.php'));
                 exit;
             }
 
@@ -120,7 +120,7 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
     <div style="background:#fff; padding:30px; border-radius:12px; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
 
         <h1 class="fw-bold" style="font-size:26px; margin-bottom:6px;">
-            🤝 <?= $editando ? 'Editar parceiro' : 'Seja um parceiro do PetFinder' ?>
+            🤝 <?= $editando ? 'Editar parceiro' : 'Seja um parceiro do EcoSistemPet' ?>
         </h1>
 
         <p style="color:#7f8c8d;">
@@ -132,7 +132,7 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
             <?php endif; ?>
         </p>
 
-        <?php if (count($erros) > 0): ?>
+        <?php if (!empty($erros)): ?>
             <div class="alert alert-danger">
                 <ul class="mb-0">
                     <?php foreach ($erros as $erro): ?>
@@ -188,7 +188,7 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
             </div>
 
             <div class="col-12">
-                <label class="form-label" for="como_ajuda">Como vocês ajudam a divulgar o PetFinder?</label>
+                <label class="form-label" for="como_ajuda">Como vocês ajudam a divulgar o EcoSistemPet?</label>
                 <input type="text" name="como_ajuda" id="como_ajuda" class="form-control" maxlength="255"
                     placeholder="Ex: divulgamos os pets perdidos nas nossas redes e em eventos"
                     value="<?= htmlspecialchars($form['como_ajuda']) ?>">

@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../app/bootstrap.php';
+$planoGratis = 'Grátis';
+$naoInformado = 'Não informado';
 
 require_once __DIR__ . '/../../app/Models/Usuario.php';
 require_once __DIR__ . '/../../app/Models/MetricaEmpresa.php';
@@ -75,8 +77,8 @@ $podeGerenciarFaturamento = in_array($papelUsuario, ['proprietario', 'administra
 $metricas = (new MetricaEmpresa())->resumo($empresaId);
 
 // 3. INCLUI O CABEÇALHO E MENU DO PROJETO 1
-include __DIR__ . '/../../app/Includes/header.php';
-include __DIR__ . '/../../app/Includes/menu.php';
+include_once __DIR__ . '/../../app/Includes/header.php';
+include_once __DIR__ . '/../../app/Includes/menu.php';
 ?>
 
 <!-- CONTEÚDO DO PAINEL B2B -->
@@ -96,13 +98,13 @@ include __DIR__ . '/../../app/Includes/menu.php';
         </span>
         <span
             style="background: <?php echo !empty($empresaData['plano_destaque']) ? '#f39c12' : '#3498db'; ?>; color: white; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; margin-left: 8px;">
-            📦 Plano <?php echo htmlspecialchars($empresaData['plano_nome'] ?? 'Grátis'); ?>
+            📦 Plano <?php echo htmlspecialchars($empresaData['plano_nome'] ?? $planoGratis); ?>
         </span>
     </p>
 
     <?php if ($trialVencido): ?>
         <div class="mensagem erro" style="margin-bottom: 20px;">
-            ⏰ O período de teste do seu plano <strong><?php echo htmlspecialchars($empresaData['plano_nome'] ?? 'Grátis'); ?></strong> venceu.
+            ⏰ O período de teste do seu plano <strong><?php echo htmlspecialchars($empresaData['plano_nome'] ?? $planoGratis); ?></strong> venceu.
             Sua empresa também parou de aparecer nas buscas públicas. Escolha um plano pago pra reativar.
             <br>
             <a href="planos.php?empresa_id=<?php echo $empresaId; ?>" class="btn-acao" style="background:#015C1E; color:white; display:inline-block; margin-top:8px;">📈 Ver planos</a>
@@ -131,7 +133,7 @@ include __DIR__ . '/../../app/Includes/menu.php';
         <div class="org-item" style="margin-bottom: 25px;">
             <strong style="display:block; margin-bottom:10px;">📦 Plano da Empresa</strong>
             <p style="margin: 0 0 10px 0;">
-                Plano atual: <strong><?php echo htmlspecialchars($empresaData['plano_nome'] ?? 'Grátis'); ?></strong>
+                Plano atual: <strong><?php echo htmlspecialchars($empresaData['plano_nome'] ?? $planoGratis); ?></strong>
             </p>
             <a href="planos.php?empresa_id=<?php echo $empresaId; ?>" class="btn-acao"
                 style="background:#015C1E; color:white;">Ver planos e trocar</a>
@@ -154,9 +156,9 @@ include __DIR__ . '/../../app/Includes/menu.php';
     <!-- BOTÃO NOVO ATENDIMENTO -->
     <div style="margin-bottom: 30px;">
         <?php if ($readOnly): ?>
-            <a href="#" class="btn btn-disabled"
-                style="background: #ccc; color: #666; cursor: not-allowed; padding: 10px 20px; text-decoration: none; border-radius: 4px;"
-                onclick="alert('Empresa inativa no momento.')">➕ Novo Registro Clínico</a>
+            <button type="button" class="btn btn-disabled"
+                style="background: #ccc; color: #666; cursor: not-allowed; padding: 10px 20px; border: 0; font: inherit; border-radius: 4px;"
+                onclick="alert('Empresa inativa no momento.')">➕ Novo Registro Clínico</button>
         <?php else: ?>
             <a href="<?= Url::pagina('novo_prontuario.php') ?>?empresa_id=<?php echo $empresaId; ?>" class="btn"
                 style="background: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block; margin-right: 10px;">➕
@@ -181,21 +183,21 @@ include __DIR__ . '/../../app/Includes/menu.php';
     // já tenha sido retificada (ou seja, que apareça como retificacao_de_id
     // de outra linha mais nova). O original nunca é apagado, só deixa de
     // aparecer na lista principal — dá pra ver o histórico completo clicando.
-    $stmtHistory = $pdo->prepare(" 
-    SELECT pr.* 
-    FROM prontuarios pr 
+    $stmtHistory = $pdo->prepare("
+    SELECT pr.*
+    FROM prontuarios pr
     JOIN consultas c ON c.id = pr.consulta_id
     WHERE c.empresa_id = ?
     AND pr.id NOT IN (
         SELECT retificacao_de_id FROM prontuarios WHERE retificacao_de_id IS NOT NULL
     )
-    ORDER BY pr.id DESC 
+    ORDER BY pr.id DESC
 ");
     $stmtHistory->execute([$empresaId]);
     $historicos = $stmtHistory->fetchAll();
 
 
-    if (count($historicos) > 0):
+    if (!empty($historicos)):
         foreach ($historicos as $reg):
             ?>
             <div class="record-card"
@@ -211,11 +213,11 @@ include __DIR__ . '/../../app/Includes/menu.php';
                 </div>
                 <div class="record-body">
                     <p style="margin: 5px 0;"><strong>Diagnóstico:</strong>
-                        <?php echo htmlspecialchars($reg['diagnostico'] ?? 'Não informado'); ?></p>
+                        <?php echo htmlspecialchars($reg['diagnostico'] ?? $naoInformado); ?></p>
                     <p style="margin: 5px 0;"><strong>Tratamento:</strong>
-                        <?php echo htmlspecialchars($reg['tratamento'] ?? 'Não informado'); ?></p>
+                        <?php echo htmlspecialchars($reg['tratamento'] ?? $naoInformado); ?></p>
                     <p style="margin: 5px 0;"><strong>Medicamentos:</strong>
-                        <?php echo htmlspecialchars($reg['medicamentos'] ?? 'Não informado'); ?></p>
+                        <?php echo htmlspecialchars($reg['medicamentos'] ?? $naoInformado); ?></p>
                     <?php if (!empty($reg['recomendacoes'])): ?>
                         <p style="margin: 5px 0; font-size: 13px; color: #777;"><strong>Recomendações:</strong>
                             <?php echo htmlspecialchars($reg['recomendacoes']); ?></p>
@@ -246,5 +248,5 @@ include __DIR__ . '/../../app/Includes/menu.php';
 
 <?php
 // 4. INCLUI O RODAPÉ DO PROJETO 1
-include __DIR__ . '/../../app/Includes/footer.php';
+include_once __DIR__ . '/../../app/Includes/footer.php';
 ?>

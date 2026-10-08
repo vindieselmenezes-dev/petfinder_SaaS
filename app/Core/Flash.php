@@ -29,6 +29,7 @@ final class Flash
 
     private function __construct()
     {
+        // Classe utilitária (apenas métodos estáticos): não deve ser instanciada.
     }
 
     public static function sucesso(string $mensagem): void

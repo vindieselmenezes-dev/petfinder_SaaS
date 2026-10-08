@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $mensagens = [
                         'aprovado' => 'Sua parceria foi aprovada! Já pode publicar campanhas, eventos e doações.',
                         'recusado' => 'Sua solicitação de parceria não foi aprovada.',
-                        'inativo'  => 'Sua parceria foi inativada e não aparece mais no site.',
+                        'inativo' => 'Sua parceria foi inativada e não aparece mais no site.',
                         'pendente' => 'Sua parceria voltou para análise.',
                     ];
 
@@ -153,7 +153,8 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
 
                                 <?php if (!empty($parceiro['cidade'])): ?>
                                     <p class="small text-muted mb-1">
-                                        📍 <?= htmlspecialchars($parceiro['cidade']) ?><?= !empty($parceiro['estado']) ? '/' . htmlspecialchars($parceiro['estado']) : '' ?>
+                                        📍
+                                        <?= htmlspecialchars($parceiro['cidade']) ?>            <?= !empty($parceiro['estado']) ? '/' . htmlspecialchars($parceiro['estado']) : '' ?>
                                     </p>
                                 <?php endif; ?>
 
@@ -176,17 +177,20 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
                                     <?= Csrf::campoHtml() ?>
                                     <input type="hidden" name="parceiro_id" value="<?= $parceiroId ?>">
 
-                                    <input type="text" name="observacao" class="form-control form-control-sm mb-2"
+                                    <label for="observacao-parceiro-<?= $parceiroId ?>" class="visually-hidden">Observação da
+                                        moderação do parceiro</label>
+                                    <input id="observacao-parceiro-<?= $parceiroId ?>" type="text" name="observacao"
+                                        class="form-control form-control-sm mb-2"
                                         placeholder="Observação (aparece para o parceiro)"
                                         value="<?= htmlspecialchars($parceiro['observacao_admin'] ?? '') ?>">
 
                                     <div class="d-flex gap-1 flex-wrap">
-                                        <button type="submit" name="status" value="aprovado"
-                                            class="btn btn-success btn-sm">✅ Aprovar</button>
-                                        <button type="submit" name="status" value="recusado"
-                                            class="btn btn-danger btn-sm">❌ Recusar</button>
-                                        <button type="submit" name="status" value="inativo"
-                                            class="btn btn-secondary btn-sm">⏸️ Inativar</button>
+                                        <button type="submit" name="status" value="aprovado" class="btn btn-success btn-sm">✅
+                                            Aprovar</button>
+                                        <button type="submit" name="status" value="recusado" class="btn btn-danger btn-sm">❌
+                                            Recusar</button>
+                                        <button type="submit" name="status" value="inativo" class="btn btn-secondary btn-sm">⏸️
+                                            Inativar</button>
                                     </div>
 
                                 </form>
@@ -195,7 +199,8 @@ require_once __DIR__ . '/../../app/Includes/menu.php';
                                     <?= Csrf::campoHtml() ?>
                                     <input type="hidden" name="acao" value="destaque">
                                     <input type="hidden" name="parceiro_id" value="<?= $parceiroId ?>">
-                                    <input type="hidden" name="destaque" value="<?= empty($parceiro['destaque']) ? '1' : '0' ?>">
+                                    <input type="hidden" name="destaque"
+                                        value="<?= empty($parceiro['destaque']) ? '1' : '0' ?>">
                                     <button type="submit" class="btn btn-outline-warning btn-sm w-100">
                                         <?= empty($parceiro['destaque']) ? '⭐ Colocar em destaque' : '☆ Remover destaque' ?>
                                     </button>

@@ -47,8 +47,9 @@ final class PushNotifier
         $stmt = $pdo->prepare('SELECT id, endpoint, p256dh, auth FROM push_subscriptions WHERE usuario_id = :usuario_id AND ativo = 1');
         $stmt->execute([':usuario_id' => $usuarioId]);
         $subscriptions = $stmt->fetchAll();
-        if (!$subscriptions)
+        if (!$subscriptions) {
             return false;
+        }
 
         $auth = [
             'VAPID' => [
