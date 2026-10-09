@@ -1,0 +1,63 @@
+name: Testes
+
+# Roda a suíte do projeto (tests/run_all.php) a cada Pull Request e a cada
+# envio para a main. O banco de teste é montado do zero a partir de database/.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+
+    services:
+      # MariaDB 10.11 é a mesma família do XAMPP
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: petfinder
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_DATABASE: petfinder
+      CI_RECRIAR_BANCO: sim
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Instalar o PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_mysql, mbstring, fileinfo, gd
+          coverage: none
+
+      - name: Conferir a sintaxe de todos os arquivos PHP
+        run: |
+          erros=$(find app public config tests -name '*.php' -print0 | xargs -0 -n1 php -l 2>&1 | grep -v '^No syntax errors detected' || true)
+          if [ -n "$erros" ]; then
+            echo "$erros"
+            exit 1
+          fi
+          echo "Sintaxe OK"
+
+      - name: Montar o banco de teste
+        run: |
+          sed -i 's/\r$//' tests/ci/montar_banco.sh
+          bash tests/ci/montar_banco.sh
+
+      - name: Rodar os testes
+        run: php tests/run_all.php
