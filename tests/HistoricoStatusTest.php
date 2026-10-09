@@ -33,9 +33,10 @@ function criarPetTesteHistorico(Pet $pet, string $sufixo): int
 
 TestKit::run('cadastrar() já registra o primeiro evento do histórico', function () {
     $pet = new Pet();
+    $historico = new PetHistorico();
     $petId = criarPetTesteHistorico($pet, 'Cadastro');
 
-    $historico = $pet->buscarHistoricoStatus($petId);
+    $historico = $historico->buscarHistoricoStatus($petId);
 
     TestKit::assertEquals(1, count($historico), 'deveria ter exatamente 1 evento logo após o cadastro');
     TestKit::assertNull($historico[0]['status_anterior'], 'o primeiro evento não deveria ter status anterior');
@@ -46,11 +47,12 @@ TestKit::run('cadastrar() já registra o primeiro evento do histórico', functio
 
 TestKit::run('atualizarStatus() registra a mudança quando o status realmente muda', function () {
     $pet = new Pet();
+    $historico = new PetHistorico();
     $petId = criarPetTesteHistorico($pet, 'Mudanca');
 
     $pet->atualizarStatus($petId, 'Perdido', $GLOBALS['TESTE_USUARIO_ID'], 'Teste automatizado');
 
-    $historico = $pet->buscarHistoricoStatus($petId);
+    $historico = $historico->buscarHistoricoStatus($petId);
 
     TestKit::assertEquals(2, count($historico), 'deveria ter 2 eventos: cadastro + mudança pra Perdido');
     TestKit::assertEquals('Perdido', $historico[0]['status_novo'], 'o mais recente deveria vir primeiro');
@@ -62,12 +64,13 @@ TestKit::run('atualizarStatus() registra a mudança quando o status realmente mu
 
 TestKit::run('atualizarStatus() NÃO registra nada quando o status não muda', function () {
     $pet = new Pet();
+    $historico = new PetHistorico();
     $petId = criarPetTesteHistorico($pet, 'SemMudanca');
 
     // Manda o mesmo status que o pet já tem
     $pet->atualizarStatus($petId, 'Com Tutor', $GLOBALS['TESTE_USUARIO_ID']);
 
-    $historico = $pet->buscarHistoricoStatus($petId);
+    $historico = $historico->buscarHistoricoStatus($petId);
 
     TestKit::assertEquals(1, count($historico), 'não deveria criar evento novo se o status não mudou de verdade');
 
@@ -76,6 +79,7 @@ TestKit::run('atualizarStatus() NÃO registra nada quando o status não muda', f
 
 TestKit::run('atualizar() geral também registra mudança de status', function () {
     $pet = new Pet();
+    $historico = new PetHistorico();
     $petId = criarPetTesteHistorico($pet, 'EdicaoGeral');
 
     $petAtual = $pet->buscarPorId($petId);
@@ -97,7 +101,7 @@ TestKit::run('atualizar() geral também registra mudança de status', function (
         'usuario_id'      => $GLOBALS['TESTE_USUARIO_ID'],
     ]);
 
-    $historico = $pet->buscarHistoricoStatus($petId);
+    $historico = $historico->buscarHistoricoStatus($petId);
 
     TestKit::assertEquals(2, count($historico), 'edição geral mudando o status deveria logar 1 evento novo');
     TestKit::assertEquals('Para Adoção', $historico[0]['status_novo']);
@@ -108,11 +112,12 @@ TestKit::run('atualizar() geral também registra mudança de status', function (
 
 TestKit::run('histórico registra quem fez a mudança', function () {
     $pet = new Pet();
+    $historico = new PetHistorico();
     $petId = criarPetTesteHistorico($pet, 'Autoria');
 
     $pet->atualizarStatus($petId, 'Perdido', $GLOBALS['TESTE_USUARIO_ID']);
 
-    $historico = $pet->buscarHistoricoStatus($petId);
+    $historico = $historico->buscarHistoricoStatus($petId);
 
     TestKit::assertEquals($GLOBALS['TESTE_USUARIO_ID'], (int) $historico[0]['alterado_por']);
     TestKit::assertNotNull($historico[0]['alterado_por_nome'], 'deveria trazer o nome de quem alterou');
