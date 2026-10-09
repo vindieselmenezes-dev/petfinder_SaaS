@@ -53,4 +53,5 @@ ou `Endereco.php`, vale rodar os testes de novo pra garantir que nada quebrou se
 - `bootstrap.php` — carrega tudo que os testes precisam (banco, Models, TestKit)
 - `TestKit.php` — mini framework com as funções de verificação (assertTrue, assertEquals, etc.)
 - `UsuarioTest.php`, `PetTest.php`, `FavoritoTest.php`, `EnderecoTest.php` — os testes de cada Model
+- `RefatoracaoTest.php` — testes da busca de adoção, galeria e histórico de pets, filtros/estoque/galeria de produtos, galeria de empresa e funções auxiliares (CampanhaApresentacao, PrestadorCadastroHelper)
 - `run_all.php` — o arquivo que você realmente executa; monta o cenário, roda tudo, limpa o banco no final

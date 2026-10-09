@@ -10,6 +10,8 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/../Models/Prestador.php';
+require_once __DIR__ . '/../Models/PrestadorAvaliacao.php';
+require_once __DIR__ . '/../Models/PrestadorSolicitacao.php';
 require_once __DIR__ . '/NotificacaoController.php';
 
 class PrestadorController

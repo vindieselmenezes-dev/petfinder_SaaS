@@ -10,6 +10,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/../Models/Pet.php';
+require_once __DIR__ . '/../Models/PetImagem.php';
 
 class PetController
 {

@@ -105,6 +105,7 @@ require __DIR__ . '/PlanoTest.php';
 require __DIR__ . '/RateLimiterTest.php';
 require __DIR__ . '/NewsletterTest.php';
 require __DIR__ . '/CampanhaTest.php';
+require __DIR__ . '/RefatoracaoTest.php';
 
 $pdo = Database::conectar();
 
