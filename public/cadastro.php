@@ -23,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sobrenome = $partesNome[1] ?? '';
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
-    $perfil = $_POST['perfil'] ?? 'tutor'; // administrador, empresa, tutor
+    // Só tutor ou empresa: administrador nunca é escolhido por quem se cadastra.
+    $perfil = Auth::tipoDeCadastroPublico($_POST['perfil'] ?? null);
 
     if (empty($nomeCompleto) || empty($email) || empty($password)) {
         $mensagem = "Por favor, preencha todos os campos.";
@@ -142,7 +143,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <select id="perfil" name="perfil" required>
                     <option value="tutor">Tutor (Cliente Comum)</option>
                     <option value="empresa">Empresa (Clínica Veterinária)</option>
-                    <option value="administrador">Administrador Global (Master)</option>
                 </select>
             </div>
 

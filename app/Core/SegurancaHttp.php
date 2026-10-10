@@ -33,6 +33,17 @@ final class SegurancaHttp
     }
 
     /**
+     * Só é "local" quando APP_ENV=local está definido de forma explícita.
+     * Se a variável faltar ou tiver outro valor, o ambiente é tratado como
+     * produção (falha segura). Use para decidir o que NUNCA pode aparecer
+     * fora do ambiente de desenvolvimento (links de teste, dados de debug).
+     */
+    public static function ehAmbienteLocal(): bool
+    {
+        return getenv('APP_ENV') === 'local';
+    }
+
+    /**
      * Redireciona para HTTPS em produção. Em ambiente local (APP_ENV=local)
      * não força nada, pra não quebrar quem está testando em
      * http://localhost sem certificado.
