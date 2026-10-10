@@ -8,3 +8,6 @@ storage/logs/*.log
 storage/cache/*.xml
 
 .scannerwork/
+
+backup_*.sql
+*.sql.bak

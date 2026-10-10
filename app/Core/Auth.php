@@ -106,6 +106,22 @@ final class Auth
         return in_array(self::tipo(), $tipos, true);
     }
 
+    /**
+     * Tipos de conta que o próprio visitante pode escolher no cadastro público.
+     * "administrador" NUNCA entra aqui: contas de administrador são promovidas
+     * por outro administrador ou direto no banco de dados.
+     */
+    public const TIPOS_CADASTRO_PUBLICO = ['tutor', 'empresa'];
+
+    /**
+     * Valida o tipo de conta pedido no cadastro público. Qualquer valor fora
+     * da lista permitida (inclusive "administrador") vira "tutor".
+     */
+    public static function tipoDeCadastroPublico(?string $pedido): string
+    {
+        return in_array($pedido, self::TIPOS_CADASTRO_PUBLICO, true) ? $pedido : 'tutor';
+    }
+
     public static function ehAdministrador(): bool
     {
         return self::tipo() === self::TIPO_ADMINISTRADOR;

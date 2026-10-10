@@ -51,7 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // o link aqui na tela também, só pra dar pra testar o fluxo
             // sem precisar de servidor de e-mail. Remover isso quando o
             // envio real estiver configurado.
-            $linkDeTeste = $link;
+            // Só em ambiente local (APP_ENV=local). Fora dele, mostrar o link aqui
+            // deixaria qualquer pessoa redefinir a senha de qualquer conta só
+            // sabendo o e-mail: o link chega apenas por e-mail.
+            if (SegurancaHttp::ehAmbienteLocal()) {
+                $linkDeTeste = $link;
+            }
         }
     }
 }
