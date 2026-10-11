@@ -21,6 +21,14 @@ final class Auth
     private const CHAVE_EMAIL  = 'usuario_email';
     private const CHAVE_TIPO   = 'perfil_tipo';
 
+    // Modo suporte: o administrador entra no painel de uma empresa e precisa
+    // poder voltar a ser administrador sem sair e entrar de novo.
+    private const CHAVE_SUPORTE         = 'is_impersonating';
+    private const CHAVE_SUPORTE_POR     = 'impersonated_by';
+    private const CHAVE_SUPORTE_EMPRESA = 'impersonated_empresa_id';
+    private const CHAVE_SUPORTE_NOME    = 'impersonated_empresa_nome';
+    private const CHAVE_TIPO_ORIGINAL   = 'perfil_tipo_original';
+
     /**
      * Tipos de perfil reconhecidos pelo sistema
      */
@@ -104,6 +112,66 @@ final class Auth
     public static function tipoEhUmDe(string ...$tipos): bool
     {
         return in_array(self::tipo(), $tipos, true);
+    }
+
+    /**
+     * Entra no modo suporte: o administrador passa a ver o painel da empresa
+     * (o tipo da sessão vira "empresa"), guardando o tipo original para
+     * poder voltar. Só um administrador, fora do modo suporte, consegue iniciar.
+     */
+    public static function iniciarModoSuporte(int $empresaId, string $empresaNome): bool
+    {
+        if (!self::check() || !self::ehAdministrador() || self::emModoSuporte()) {
+            return false;
+        }
+
+        $_SESSION[self::CHAVE_TIPO_ORIGINAL]   = self::TIPO_ADMINISTRADOR;
+        $_SESSION[self::CHAVE_SUPORTE_POR]     = self::id();
+        $_SESSION[self::CHAVE_SUPORTE]         = true;
+        $_SESSION[self::CHAVE_SUPORTE_EMPRESA] = $empresaId;
+        $_SESSION[self::CHAVE_SUPORTE_NOME]    = $empresaNome;
+        $_SESSION[self::CHAVE_TIPO]            = self::TIPO_EMPRESA;
+
+        return true;
+    }
+
+    /**
+     * Verdadeiro só quando a sessão foi realmente colocada em modo suporte por
+     * um administrador: as marcas precisam bater com o usuário logado.
+     */
+    public static function emModoSuporte(): bool
+    {
+        return ($_SESSION[self::CHAVE_SUPORTE] ?? false) === true
+            && (int) ($_SESSION[self::CHAVE_SUPORTE_POR] ?? 0) === (int) (self::id() ?? 0)
+            && ($_SESSION[self::CHAVE_TIPO_ORIGINAL] ?? '') === self::TIPO_ADMINISTRADOR;
+    }
+
+    public static function nomeEmpresaSuporte(): string
+    {
+        return (string) ($_SESSION[self::CHAVE_SUPORTE_NOME] ?? 'Empresa');
+    }
+
+    /**
+     * Sai do modo suporte e devolve o tipo de administrador. Se a sessão não
+     * estiver em modo suporte válido, só limpa as marcas e NÃO promove ninguém.
+     */
+    public static function encerrarModoSuporte(): bool
+    {
+        $valido = self::emModoSuporte();
+
+        if ($valido) {
+            $_SESSION[self::CHAVE_TIPO] = self::TIPO_ADMINISTRADOR;
+        }
+
+        unset(
+            $_SESSION[self::CHAVE_SUPORTE],
+            $_SESSION[self::CHAVE_SUPORTE_POR],
+            $_SESSION[self::CHAVE_SUPORTE_EMPRESA],
+            $_SESSION[self::CHAVE_SUPORTE_NOME],
+            $_SESSION[self::CHAVE_TIPO_ORIGINAL]
+        );
+
+        return $valido;
     }
 
     /**

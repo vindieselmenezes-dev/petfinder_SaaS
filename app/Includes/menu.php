@@ -46,6 +46,16 @@ function menuGrupo(string $titulo, string $icone, array $itens, string $paginaAt
 <aside class="sidebar" id="sidebarMenu">
     <button type="button" class="sidebar-fechar" id="sidebarFechar" aria-label="Fechar menu">✕</button>
     <nav>
+        <?php if (Auth::emModoSuporte()): ?>
+            <div role="status" style="background:#fff3cd;border:2px solid #e0a800;border-radius:8px;padding:10px;margin:0 0 12px;font-size:13px;color:#664d03;">
+                <strong>🛟 Modo suporte</strong><br>
+                Você está no painel de <strong><?= htmlspecialchars(Auth::nomeEmpresaSuporte()) ?></strong> como administrador.
+                <form method="POST" action="<?= Url::pagina('encerrar_suporte.php') ?>" style="margin-top:8px;">
+                    <?= Csrf::campoHtml() ?>
+                    <button type="submit" style="width:100%;padding:8px;border:0;border-radius:6px;background:#664d03;color:#fff;font-weight:600;cursor:pointer;">↩ Voltar ao administrador</button>
+                </form>
+            </div>
+        <?php endif; ?>
         <ul>
             <!-- Links Comuns para Todos os Usuários -->
             <li<?= menuClasseAtiva('dashboard.php', $paginaAtualMenu) ?>><a href="<?= Url::pagina('dashboard.php') ?>">🏠 Dashboard</a></li>

@@ -53,9 +53,10 @@ try {
 
     // 3. ATIVA A PERSONIFICAÇÃO NA SESSÃO DO NAVEGADOR
     // O sistema vai "achar" que você faz parte dessa empresa temporariamente
-    $_SESSION['is_impersonating'] = true;
-    $_SESSION['impersonated_empresa_id'] = $empresaId;
-    $_SESSION['perfil_tipo'] = 'empresa'; // Muda o menu para o modo empresa na hora!
+    // Guarda o tipo original (administrador) para o botão "Voltar ao administrador".
+    if (!Auth::iniciarModoSuporte($empresaId, $empresaNome)) {
+        die("Erro: não foi possível iniciar o modo suporte.");
+    }
 
     // Redireciona você de forma mágica direto para dentro do painel da empresa escolhida!
     echo "<script>
