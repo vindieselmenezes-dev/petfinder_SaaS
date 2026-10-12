@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../app/Helpers/Mailer.php';
+require_once __DIR__ . '/../../app/Models/RateLimiter.php';
 
 $usuarioId = (int) ($_SESSION['2fa_pendente_usuario_id'] ?? 0);
 if ($usuarioId <= 0) {
@@ -26,9 +27,24 @@ if (!$usuario || empty($usuario['dois_fatores_ativo'])) {
 
 $mensagem = null;
 $erro = null;
+
+// O código tem só 6 dígitos (1 milhão de combinações), então sem limite
+// daria para adivinhá-lo por tentativa e erro. Limite POR USUÁRIO (não por
+// sessão, senão abrir uma sessão nova zeraria a contagem): 5 envios a cada
+// 10 minutos; ao estourar, 15 minutos de bloqueio e o código atual é
+// descartado. Tentativas com CSRF inválido não contam.
+$limite2fa = new RateLimiter();
+$idLimite2fa = 'u' . $usuarioId;
+$textoBloqueio2fa = static fn(): string => 'Muitas tentativas. Tente novamente em '
+    . max(1, $limite2fa->minutosRestantes('2fa', $idLimite2fa)) . ' minuto(s).';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
         $erro = 'Sessão expirada. Atualize a página e tente novamente.';
+    } elseif (!$limite2fa->permitido('2fa', 5, 10, 15, $idLimite2fa)) {
+        $pdo->prepare('UPDATE usuarios SET dois_fatores_codigo = NULL, dois_fatores_codigo_expira = NULL WHERE id = :id')
+            ->execute([':id' => $usuarioId]);
+        $erro = $textoBloqueio2fa();
     } else {
         $codigo = preg_replace('/\D/', '', (string) ($_POST['codigo'] ?? ''));
         $expira = strtotime((string) ($usuario['dois_fatores_codigo_expira'] ?? ''));
@@ -39,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario_email'] = $usuario['email'];
             $_SESSION['perfil_tipo'] = $_SESSION['2fa_pendente_perfil'] ?? $usuario['tipo_usuario'] ?? 'cliente';
             unset($_SESSION['2fa_pendente_usuario_id'], $_SESSION['2fa_pendente_perfil']);
+            $limite2fa->zerar('2fa', $idLimite2fa);
             $pdo->prepare('UPDATE usuarios SET dois_fatores_codigo = NULL, dois_fatores_codigo_expira = NULL, ultimo_login = NOW() WHERE id = :id')->execute([':id' => $usuarioId]);
             $destino = $_SESSION['2fa_voltar'] ?? Url::pagina('onboarding.php');
             unset($_SESSION['2fa_voltar']);
@@ -47,6 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $erro = 'Código inválido ou expirado.';
     }
+} elseif ($limite2fa->minutosRestantes('2fa', $idLimite2fa) > 0) {
+    // Em bloqueio não gera nem envia código novo (evita também encher o e-mail do usuário).
+    $erro = $textoBloqueio2fa();
 } elseif (empty($usuario['dois_fatores_codigo']) || strtotime((string) $usuario['dois_fatores_codigo_expira']) <= time()) {
     $codigo = (string) random_int(100000, 999999);
     $pdo->prepare('UPDATE usuarios SET dois_fatores_codigo = :codigo, dois_fatores_codigo_expira = DATE_ADD(NOW(), INTERVAL 10 MINUTE) WHERE id = :id')->execute([':codigo' => $codigo, ':id' => $usuarioId]);

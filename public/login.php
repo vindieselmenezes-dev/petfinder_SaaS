@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../app/bootstrap.php';
+require_once __DIR__ . '/../app/Models/LimiteLogin.php';
+require_once __DIR__ . '/../app/Models/RateLimiter.php';
 
 $pdo = Database::conectar();
 
@@ -24,6 +26,47 @@ function voltarSeguro(?string $url): ?string
     return $url;
 }
 
+/**
+ * Limites do login. Retorna quantos minutos faltam de bloqueio (0 = liberado).
+ *
+ * Dois limites independentes:
+ *  - por e-mail (5 erros em 15 min -> 15 min de bloqueio): segura quem
+ *    tenta adivinhar a senha de UMA conta, mesmo trocando de IP;
+ *  - por IP (20 tentativas em 10 min -> 15 min de bloqueio): segura quem
+ *    testa uma senha em MUITAS contas.
+ * O e-mail é contado exista a conta ou não, para a resposta não revelar
+ * quais e-mails estão cadastrados.
+ */
+function minutosDeBloqueioDoLogin(string $email): int
+{
+    $limiteLogin = limiteLogin();
+    $chave = LimiteLogin::chave($email);
+
+    if ($limiteLogin->estaBloqueado($chave)) {
+        return max(1, $limiteLogin->minutosRestantes($chave));
+    }
+
+    $limiteIp = new RateLimiter();
+
+    if (!$limiteIp->permitido('login', 20, 10, 15)) {
+        return max(1, $limiteIp->minutosRestantes('login'));
+    }
+
+    return 0;
+}
+
+function limiteLogin(): LimiteLogin
+{
+    static $instancia = null;
+
+    return $instancia ??= new LimiteLogin();
+}
+
+function mensagemDeBloqueioDoLogin(int $minutos): string
+{
+    return "Muitas tentativas de login. Tente novamente em {$minutos} minuto(s).";
+}
+
 $voltar = voltarSeguro($_GET['voltar'] ?? $_POST['voltar'] ?? null);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -35,6 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tipoMensagem = "erro";
     } elseif (empty($email) || empty($password)) {
         $mensagem = "Por favor, preencha todos os campos.";
+        $tipoMensagem = "erro";
+    } elseif (($minutosBloqueio = minutosDeBloqueioDoLogin($email)) > 0) {
+        $mensagem = mensagemDeBloqueioDoLogin($minutosBloqueio);
         $tipoMensagem = "erro";
     } else {
         // 1. Busca o usuário JUNTO com o tipo de perfil dele (tabela perfis)
@@ -58,6 +104,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($senhaValida) {
+            limiteLogin()->registrarSucesso(LimiteLogin::chave($email));
+
             if (!empty($user['dois_fatores_ativo'])) {
                 $_SESSION['2fa_pendente_usuario_id'] = (int) $user['id'];
                 $_SESSION['2fa_pendente_perfil'] = $user['perfil_tipo'] ?? $user['tipo_usuario'] ?? 'cliente';
@@ -81,7 +129,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: " . $destino);
             exit();
         } else {
-            $mensagem = "E-mail ou senha incorretos.";
+            $chaveEmail = LimiteLogin::chave($email);
+            limiteLogin()->registrarFalha($chaveEmail);
+
+            // Se esta foi a tentativa que estourou o limite, já avisa.
+            if (limiteLogin()->estaBloqueado($chaveEmail)) {
+                $mensagem = mensagemDeBloqueioDoLogin(max(1, limiteLogin()->minutosRestantes($chaveEmail)));
+            } else {
+                $mensagem = "E-mail ou senha incorretos.";
+            }
             $tipoMensagem = "erro";
         }
     }

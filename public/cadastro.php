@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../app/bootstrap.php';
+require_once __DIR__ . '/../app/Helpers/ValidacaoSenha.php';
 
 $pdo = Database::conectar();
 
@@ -29,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($nomeCompleto) || empty($email) || empty($password)) {
         $mensagem = "Por favor, preencha todos os campos.";
         $tipoMensagem = "erro";
-    } elseif (strlen($password) < 6) {
-        $mensagem = "A senha deve ter no mínimo 6 caracteres.";
+    } elseif (($erroSenha = ValidacaoSenha::validar($password)) !== null) {
+        $mensagem = $erroSenha;
         $tipoMensagem = "erro";
     } else {
         // Verifica duplicidade na tabela de destino padronizada
@@ -134,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="email" id="email" name="email" required placeholder="Ex: meuadm@email.com">
             </div>
             <div class="form-group">
-                <label for="password">Senha (Mínimo 6 caracteres)</label>
+                <label for="password">Senha (<?= htmlspecialchars(ValidacaoSenha::regraTexto()) ?>)</label>
                 <input type="password" id="password" name="password" required placeholder="Crie uma senha segura">
             </div>
 

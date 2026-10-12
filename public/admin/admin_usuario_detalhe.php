@@ -11,6 +11,7 @@ if (!isset($_SESSION['usuario_id']) || ($_SESSION['perfil_tipo'] ?? '') !== 'adm
 require_once '../../app/Models/Usuario.php';
 require_once '../../app/Models/Empresa.php';
 require_once '../../app/Helpers/Csrf.php';
+require_once '../../app/Helpers/ValidacaoSenha.php';
 $pdo = Database::conectar();
 
 $usuarioModel = new Usuario();
@@ -74,12 +75,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($acao === 'redefinir_senha') {
             $novaSenha = $_POST['nova_senha'] ?? '';
-            if (strlen($novaSenha) >= 6) {
+            $erroSenha = ValidacaoSenha::validar($novaSenha);
+            if ($erroSenha === null) {
                 $usuarioModel->atualizarSenha($usuarioId, password_hash($novaSenha, PASSWORD_DEFAULT));
                 $mensagem = 'Senha redefinida com sucesso!';
                 $tipoMensagem = 'sucesso';
             } else {
-                $mensagem = 'A nova senha precisa ter pelo menos 6 caracteres.';
+                $mensagem = $erroSenha;
                 $tipoMensagem = 'erro';
             }
         }
@@ -184,9 +186,9 @@ require_once '../../app/Includes/menu.php';
                     <?= Csrf::campoHtml() ?>
                     <input type="hidden" name="acao" value="redefinir_senha">
                     <div class="grupo-form">
-                        <label for="nova_senha">Nova senha (mín. 6 caracteres)</label>
+                        <label for="nova_senha">Nova senha (<?= htmlspecialchars(ValidacaoSenha::regraTexto()); ?>)</label>
                         <input type="password" id="nova_senha" name="nova_senha" class="form-control"
-                            autocomplete="new-password" minlength="6" required>
+                            autocomplete="new-password" minlength="<?= ValidacaoSenha::MINIMO; ?>" maxlength="<?= ValidacaoSenha::MAXIMO; ?>" required>
                     </div>
                     <button type="submit" class="btn-acao"
                         style="background:#e67e22; color:white; padding:10px 20px; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Redefinir
