@@ -9,6 +9,7 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 require_once '../../app/Models/Usuario.php';
 require_once '../../app/Models/ResetSenha.php';
 require_once '../../app/Helpers/Csrf.php';
+require_once '../../app/Helpers/ValidacaoSenha.php';
 
 $usuarioModel = new Usuario();
 $resetModel   = new ResetSenha();
@@ -44,9 +45,11 @@ if ($tokenValido && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nova_
         $novaSenha = $_POST['nova_senha'] ?? '';
         $confirmacao = $_POST['confirmacao'] ?? '';
 
-        if (strlen($novaSenha) < 6) {
+        $erroSenha = ValidacaoSenha::validar($novaSenha);
 
-            $mensagem     = 'A senha precisa ter pelo menos 6 caracteres.';
+        if ($erroSenha !== null) {
+
+            $mensagem     = $erroSenha;
             $tipoMensagem = 'erro';
 
         } elseif ($novaSenha !== $confirmacao) {
@@ -86,13 +89,13 @@ require_once '../../app/Includes/header.php';
                 <input type="hidden" name="token" value="<?= htmlspecialchars($token); ?>">
 
                 <div class="grupo-form">
-                    <label for="nova_senha">Nova senha (mín. 6 caracteres)</label>
-                    <input type="password" id="nova_senha" name="nova_senha" class="form-control" autocomplete="new-password" minlength="6" required>
+                    <label for="nova_senha">Nova senha (<?= htmlspecialchars(ValidacaoSenha::regraTexto()); ?>)</label>
+                    <input type="password" id="nova_senha" name="nova_senha" class="form-control" autocomplete="new-password" minlength="<?= ValidacaoSenha::MINIMO; ?>" maxlength="<?= ValidacaoSenha::MAXIMO; ?>" required>
                 </div>
 
                 <div class="grupo-form">
                     <label for="confirmacao">Confirme a nova senha</label>
-                    <input type="password" id="confirmacao" name="confirmacao" class="form-control" autocomplete="new-password" minlength="6" required>
+                    <input type="password" id="confirmacao" name="confirmacao" class="form-control" autocomplete="new-password" minlength="<?= ValidacaoSenha::MINIMO; ?>" maxlength="<?= ValidacaoSenha::MAXIMO; ?>" required>
                 </div>
 
                 <button type="submit" class="btn-acao" style="background:#3498db; color:white; width:100%; padding:12px; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Redefinir Senha</button>

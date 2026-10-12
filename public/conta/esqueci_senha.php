@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 
 require_once '../../app/Models/Usuario.php';
 require_once '../../app/Models/ResetSenha.php';
+require_once '../../app/Models/RateLimiter.php';
 require_once '../../app/Helpers/Mailer.php';
 require_once '../../app/Helpers/Csrf.php';
 
@@ -28,14 +29,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
 
         $email = trim($_POST['email'] ?? '');
-        $usuario = $usuarioModel->buscarPorEmail($email);
 
-        // Por segurança, a mensagem é sempre a mesma exista ou não o e-mail
-        // (não dá pra alguém descobrir quais e-mails estão cadastrados)
-        $mensagem = 'Se esse e-mail estiver cadastrado, enviamos um link de redefinição.';
-        $tipoMensagem = 'sucesso';
+        // Limite por IP: 5 pedidos a cada 15 minutos (bloqueia por 30).
+        // Segura quem dispara pedidos em massa para gerar tokens e e-mails.
+        $limite = new RateLimiter();
+        $excedeuLimiteIp = !$limite->permitido('esqueci_senha_ip', 5, 15, 30);
+        $usuario = $excedeuLimiteIp ? null : $usuarioModel->buscarPorEmail($email);
 
-        if ($usuario) {
+        if ($excedeuLimiteIp) {
+            // Esta resposta depende só do IP de quem pede, nunca de o
+            // e-mail existir, então não revela nada sobre as contas.
+            $mensagem = 'Muitos pedidos de redefinição. Tente novamente em '
+                . max(1, $limite->minutosRestantes('esqueci_senha_ip')) . ' minuto(s).';
+            $tipoMensagem = 'erro';
+        } else {
+            // Por segurança, a mensagem é sempre a mesma exista ou não o e-mail
+            // (não dá pra alguém descobrir quais e-mails estão cadastrados)
+            $mensagem = 'Se esse e-mail estiver cadastrado, enviamos um link de redefinição.';
+            $tipoMensagem = 'sucesso';
+        }
+
+        // Limite por e-mail: no máximo 3 e-mails por hora para a mesma conta,
+        // para ninguém usar este formulário para lotar a caixa de entrada de
+        // outra pessoa. Passou do limite, a tela responde igual — só não envia.
+        $chaveEmail = 'e:' . hash('sha256', mb_strtolower($email));
+
+        if ($usuario && $limite->permitido('esqueci_senha_email', 3, 60, 60, $chaveEmail)) {
             $token = $resetModel->gerarToken((int) $usuario['id']);
             $link = Url::absoluta(Url::pagina('redefinir_senha.php') . '?' . http_build_query(['token' => $token]));
 

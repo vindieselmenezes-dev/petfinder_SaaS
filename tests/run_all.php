@@ -108,6 +108,7 @@ require __DIR__ . '/CampanhaTest.php';
 require __DIR__ . '/RefatoracaoTest.php';
 require __DIR__ . '/SegurancaCadastroTest.php';
 require __DIR__ . '/SuporteModoTest.php';
+require __DIR__ . '/SegurancaSenhaLimitesTest.php';
 
 $pdo = Database::conectar();
 

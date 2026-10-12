@@ -189,6 +189,22 @@ class RateLimiter
     }
 
     /**
+     * Apaga o contador dessa ação/origem (ex.: depois de um login ou de
+     * um código 2FA correto, para o histórico de erros não pesar contra
+     * quem acertou).
+     */
+    public function zerar(string $acao, ?string $identificador = null): void
+    {
+        $identificador = $identificador ?? self::ip();
+
+        $stmt = $this->pdo->prepare("
+            DELETE FROM limite_requisicoes
+             WHERE acao = :acao AND identificador = :identificador
+        ");
+        $stmt->execute([':acao' => $acao, ':identificador' => $identificador]);
+    }
+
+    /**
      * Minutos restantes de bloqueio para essa ação/origem (0 = livre).
      * Útil para mostrar "tente novamente em X minutos" na tela.
      */
@@ -213,24 +229,113 @@ class RateLimiter
     }
 
     /**
-     * IP de quem está fazendo a requisição. Confia no primeiro endereço
-     * de X-Forwarded-For quando presente (site atrás de proxy/CDN),
-     * senão usa REMOTE_ADDR — mesmo nível de confiança que o projeto já
-     * usa em SegurancaHttp::forcarHttpsSeNecessario() para X-Forwarded-Proto,
-     * sem lista de proxies confiáveis. Suficiente para conter flood, não
-     * para identificar quem está por trás de um IP com certeza.
+     * IP de quem está fazendo a requisição.
+     *
+     * O cabeçalho X-Forwarded-For é escrito por QUEM ENVIA a requisição:
+     * se o site responde direto para a internet, qualquer pessoa pode
+     * mandar um valor diferente a cada tentativa e nunca cair no limite.
+     * Por isso o cabeçalho só é considerado quando a conexão vem de um
+     * proxy/CDN que você declarou em TRUSTED_PROXIES (no .env), uma lista
+     * separada por vírgulas de IPs ou faixas CIDR. Exemplo:
+     *
+     *   TRUSTED_PROXIES=10.0.0.5,172.16.0.0/12
+     *
+     * Sem TRUSTED_PROXIES, vale sempre o REMOTE_ADDR (o IP real da
+     * conexão). Se o site estiver atrás de proxy/CDN e a variável não
+     * for definida, todos os visitantes parecem ter o IP do proxy.
+     *
+     * Quando a conexão vem de um proxy confiável, lê o cabeçalho da
+     * direita para a esquerda e usa o primeiro IP que não seja de proxy
+     * confiável: os valores à esquerda podem ter sido forjados pelo
+     * cliente, o da direita foi anotado pelo seu próprio proxy.
      */
     public static function ip(): string
     {
-        $encaminhado = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '';
+        $remoto = $_SERVER['REMOTE_ADDR'] ?? 'desconhecido';
+        $confiaveis = self::proxiesConfiaveis();
 
-        if ($encaminhado !== '') {
-            $primeiro = trim(explode(',', $encaminhado)[0]);
-            if ($primeiro !== '') {
-                return $primeiro;
+        if ($confiaveis === [] || !self::ipEmLista($remoto, $confiaveis)) {
+            return $remoto;
+        }
+
+        $encaminhado = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '';
+        if ($encaminhado === '') {
+            return $remoto;
+        }
+
+        foreach (array_reverse(explode(',', $encaminhado)) as $candidato) {
+            $candidato = trim($candidato);
+
+            if (filter_var($candidato, FILTER_VALIDATE_IP) === false) {
+                continue;
+            }
+
+            if (!self::ipEmLista($candidato, $confiaveis)) {
+                return $candidato;
             }
         }
 
-        return $_SERVER['REMOTE_ADDR'] ?? 'desconhecido';
+        return $remoto;
+    }
+
+    /**
+     * Lista de proxies confiáveis (IPs ou CIDRs) vinda de TRUSTED_PROXIES.
+     *
+     * @return string[]
+     */
+    private static function proxiesConfiaveis(): array
+    {
+        $valor = getenv('TRUSTED_PROXIES');
+
+        if ($valor === false || trim($valor) === '') {
+            return [];
+        }
+
+        return array_values(array_filter(array_map('trim', explode(',', $valor)), 'strlen'));
+    }
+
+    /**
+     * $ip está em alguma das regras (IP exato ou CIDR, IPv4 ou IPv6)?
+     *
+     * @param string[] $regras
+     */
+    private static function ipEmLista(string $ip, array $regras): bool
+    {
+        $binarioIp = @inet_pton($ip);
+
+        if ($binarioIp === false) {
+            return false;
+        }
+
+        foreach ($regras as $regra) {
+            [$rede, $bits] = array_pad(explode('/', $regra, 2), 2, null);
+            $binarioRede = @inet_pton($rede);
+
+            // Famílias diferentes (IPv4 x IPv6) nunca casam.
+            if ($binarioRede === false || strlen($binarioRede) !== strlen($binarioIp)) {
+                continue;
+            }
+
+            $total = strlen($binarioIp) * 8;
+            $bits = ($bits === null || !ctype_digit($bits)) ? $total : min((int) $bits, $total);
+
+            $bytesInteiros = intdiv($bits, 8);
+            $restante = $bits % 8;
+
+            if ($bytesInteiros > 0 && substr($binarioIp, 0, $bytesInteiros) !== substr($binarioRede, 0, $bytesInteiros)) {
+                continue;
+            }
+
+            if ($restante > 0) {
+                $mascara = (0xFF << (8 - $restante)) & 0xFF;
+                if ((ord($binarioIp[$bytesInteiros]) & $mascara) !== (ord($binarioRede[$bytesInteiros]) & $mascara)) {
+                    continue;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }
