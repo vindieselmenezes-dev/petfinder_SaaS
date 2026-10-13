@@ -53,7 +53,7 @@ TestKit::run('token expirado não passa mais na validação', function () {
 
     // Simula o relógio andando: força a expiração pra 1 hora atrás
     $stmt = $pdo->prepare("UPDATE reset_senha_tokens SET expira_em = DATE_SUB(NOW(), INTERVAL 1 HOUR) WHERE token = :token");
-    $stmt->execute([':token' => $token]);
+    $stmt->execute([':token' => ResetSenha::hashDoToken($token)]);
 
     $resultado = $reset->validarToken($token);
     TestKit::assertNull($resultado, 'um token expirado não deveria validar');

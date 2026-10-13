@@ -6,13 +6,13 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 require_once __DIR__ . '/../../app/Helpers/Csrf.php';
 
 if (!Auth::check()) {
-    header('Location: ' . Url::pagina('login.php'));
+    Url::redirecionar(Url::pagina('login.php'));
     exit;
 }
 
 // Sair do modo suporte muda o que a sessão pode fazer: só por POST, com token.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !Csrf::validar($_POST['csrf_token'] ?? null)) {
-    header('Location: ' . Url::pagina('dashboard.php'));
+    Url::redirecionar(Url::pagina('dashboard.php'));
     exit;
 }
 
@@ -36,5 +36,5 @@ if ($encerrou) {
     }
 }
 
-header('Location: ' . Url::pagina($encerrou ? 'suporte_admin.php' : 'dashboard.php'));
+Url::redirecionar(Url::pagina($encerrou ? 'suporte_admin.php' : 'dashboard.php'));
 exit;

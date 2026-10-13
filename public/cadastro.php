@@ -4,6 +4,23 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../app/bootstrap.php';
 require_once __DIR__ . '/../app/Helpers/ValidacaoSenha.php';
+require_once __DIR__ . '/../app/Models/RateLimiter.php';
+
+/**
+ * Limite de cadastros por IP: 10 tentativas por hora (bloqueio de 1 hora).
+ * Segura quem cria contas em massa (spam, testes de e-mail). Retorna os
+ * minutos que faltam de bloqueio (0 = liberado).
+ */
+function minutosDeBloqueioDoCadastro(): int
+{
+    $limite = new RateLimiter();
+
+    if ($limite->permitido('cadastro', 10, 60, 60)) {
+        return 0;
+    }
+
+    return max(1, $limite->minutosRestantes('cadastro'));
+}
 
 $pdo = Database::conectar();
 
@@ -13,6 +30,9 @@ $tipoMensagem = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
         $mensagem = "Sessão expirada. Atualize a página e tente novamente.";
+        $tipoMensagem = "erro";
+    } elseif (($minutosBloqueio = minutosDeBloqueioDoCadastro()) > 0) {
+        $mensagem = "Muitas tentativas de cadastro. Tente novamente em {$minutosBloqueio} minuto(s).";
         $tipoMensagem = "erro";
     } else {
     $nomeCompleto = trim($_POST['name'] ?? '');
@@ -72,8 +92,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
 
             } catch (Exception $e) {
-                $pdo->rollBack();
-                $mensagem = "Erro ao salvar no banco de dados: " . $e->getMessage();
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+
+                // O detalhe técnico (nome de tabela, coluna, SQL) vai só para o log do
+                // servidor: mostrá-lo ao visitante ajudaria quem procura falhas.
+                error_log('Falha ao cadastrar usuário: ' . $e->getMessage());
+                $mensagem = "Não foi possível criar a conta agora. Tente novamente em instantes.";
                 $tipoMensagem = "erro";
             }
         }

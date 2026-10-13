@@ -11,3 +11,12 @@ storage/cache/*.xml
 
 backup_*.sql
 *.sql.bak
+# Credenciais locais (caso use o database.local.php)
+config/database.local.php
+
+# Arquivos enviados por usuários (fotos, documentos)
+uploads/*
+!uploads/.gitkeep
+
+# Arquivos de teste temporários
+public/teste.php

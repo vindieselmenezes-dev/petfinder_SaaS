@@ -308,34 +308,44 @@ class RateLimiter
         }
 
         foreach ($regras as $regra) {
-            [$rede, $bits] = array_pad(explode('/', $regra, 2), 2, null);
-            $binarioRede = @inet_pton($rede);
-
-            // Famílias diferentes (IPv4 x IPv6) nunca casam.
-            if ($binarioRede === false || strlen($binarioRede) !== strlen($binarioIp)) {
-                continue;
+            if (self::ipNaFaixa($binarioIp, $regra)) {
+                return true;
             }
-
-            $total = strlen($binarioIp) * 8;
-            $bits = ($bits === null || !ctype_digit($bits)) ? $total : min((int) $bits, $total);
-
-            $bytesInteiros = intdiv($bits, 8);
-            $restante = $bits % 8;
-
-            if ($bytesInteiros > 0 && substr($binarioIp, 0, $bytesInteiros) !== substr($binarioRede, 0, $bytesInteiros)) {
-                continue;
-            }
-
-            if ($restante > 0) {
-                $mascara = (0xFF << (8 - $restante)) & 0xFF;
-                if ((ord($binarioIp[$bytesInteiros]) & $mascara) !== (ord($binarioRede[$bytesInteiros]) & $mascara)) {
-                    continue;
-                }
-            }
-
-            return true;
         }
 
         return false;
+    }
+
+    /**
+     * Um IP (em binário, como devolvido por inet_pton) casa com UMA regra?
+     * A regra é um IP exato ("10.0.0.5") ou uma faixa CIDR ("10.0.0.0/8").
+     */
+    private static function ipNaFaixa(string $binarioIp, string $regra): bool
+    {
+        [$rede, $bits] = array_pad(explode('/', $regra, 2), 2, null);
+        $binarioRede = @inet_pton($rede);
+
+        // Famílias diferentes (IPv4 x IPv6) nunca casam.
+        if ($binarioRede === false || strlen($binarioRede) !== strlen($binarioIp)) {
+            return false;
+        }
+
+        $total = strlen($binarioIp) * 8;
+        $bits = ($bits === null || !ctype_digit($bits)) ? $total : min((int) $bits, $total);
+
+        $bytesInteiros = intdiv($bits, 8);
+        $restante = $bits % 8;
+
+        if (substr($binarioIp, 0, $bytesInteiros) !== substr($binarioRede, 0, $bytesInteiros)) {
+            return false;
+        }
+
+        if ($restante === 0) {
+            return true;
+        }
+
+        $mascara = (0xFF << (8 - $restante)) & 0xFF;
+
+        return (ord($binarioIp[$bytesInteiros]) & $mascara) === (ord($binarioRede[$bytesInteiros]) & $mascara);
     }
 }
