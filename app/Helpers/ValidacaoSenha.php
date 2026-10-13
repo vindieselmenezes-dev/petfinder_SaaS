@@ -7,7 +7,7 @@ declare(strict_types=1);
  * PETFINDER BRASIL
  * Helper: ValidacaoSenha
  * ==========================================================
- * REGRA ÚNICA de senha do sistema. Todo lugar que cria ou troca
+ * REGRA ÚNICA de senha do sistema. Qualquer lugar que cria ou troca
  * uma senha (cadastro, cadastro de empresa, alterar senha, link de
  * redefinição, redefinição feita pelo administrador) passa por aqui.
  *

@@ -1,0 +1,26 @@
+PETFINDER - Regra unica de senha e limite de tentativas
+=========================================================
+
+COMO USAR
+1. Faca backup (ou garanta que o projeto esta no git, sem alteracoes suas pendentes).
+2. Copie o conteudo desta pasta PARA CIMA da raiz do projeto, aceitando
+   substituir os arquivos (as pastas app/, public/, tests/ e database/
+   ja existem la; os caminhos aqui dentro sao os mesmos do projeto).
+3. APAGUE este arquivo do projeto (a copia duplicada, que mantem a
+   versao vulneravel):
+       app/Models/Models/RateLimiter.php
+   (a pasta app/Models/Models/ pode ser removida se ficar vazia)
+4. No .env do servidor, so se o site ficar atras de proxy/CDN, preencha:
+       TRUSTED_PROXIES=ip1,ip2
+   Sem proxy, deixe vazio. (.env.example ja documenta isso; o .env real
+   NAO esta neste zip.)
+5. Rode os testes:  php tests/run_all.php   (esperado: 155 sucessos)
+
+CONTAS DE DEMONSTRACAO (Demo@123)
+Em database/manutencao/:
+   demo_1_verificar.sql  -> so leitura; rode primeiro
+   demo_2_apagar.sql     -> apaga as 9 contas demo; faca BACKUP antes
+
+OBSERVACAO
+O jeito mais seguro de aplicar e o arquivo .patch (git am), que mostra
+exatamente o que muda. Este zip e a alternativa sem git.

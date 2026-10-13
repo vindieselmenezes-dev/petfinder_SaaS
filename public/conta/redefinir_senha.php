@@ -60,7 +60,8 @@ if ($tokenValido && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nova_
         } else {
 
             $usuarioModel->atualizarSenha($usuarioId, password_hash($novaSenha, PASSWORD_DEFAULT));
-            $resetModel->marcarComoUsado($token);
+            // Invalida este link e qualquer outro pedido de redefinição em aberto.
+            $resetModel->invalidarTodosDoUsuario((int) $usuarioId);
 
             header('Location: ' . Url::pagina('login.php') . '?senha_redefinida=1');
             exit;

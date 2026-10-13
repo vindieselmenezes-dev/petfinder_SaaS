@@ -14,6 +14,25 @@ if (!isset($_SESSION['usuario_id'])) {
 require_once '../../app/Models/Usuario.php';
 require_once '../../app/Helpers/ValidacaoSenha.php';
 require_once '../../app/Helpers/Csrf.php';
+require_once '../../app/Models/RateLimiter.php';
+
+/**
+ * Limite na checagem da senha atual: 5 tentativas a cada 15 minutos por
+ * usuário (bloqueio de 30). Sem isso, quem pegar uma sessão aberta (computador
+ * emprestado, cookie roubado) poderia adivinhar a senha atual, que é o que
+ * protege a conta mesmo depois de a sessão cair. Retorna os minutos que faltam
+ * de bloqueio (0 = liberado).
+ */
+function minutosDeBloqueioDaSenhaAtual(int $usuarioId): int
+{
+    $limite = new RateLimiter();
+
+    if ($limite->permitido('alterar_senha', 5, 15, 30, 'u' . $usuarioId)) {
+        return 0;
+    }
+
+    return max(1, $limite->minutosRestantes('alterar_senha', 'u' . $usuarioId));
+}
 
 $usuarioModel = new Usuario();
 $usuarioId    = (int) $_SESSION['usuario_id'];
@@ -41,6 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensagem     = 'Usuário não encontrado.';
         $tipoMensagem = 'erro';
 
+    } elseif (($minutosBloqueio = minutosDeBloqueioDaSenhaAtual($usuarioId)) > 0) {
+
+        $mensagem     = "Muitas tentativas. Tente novamente em {$minutosBloqueio} minuto(s).";
+        $tipoMensagem = 'erro';
+
     } elseif (!password_verify($senhaAtual, $usuario['senha'])) {
 
         $mensagem     = 'A senha atual está incorreta.';
@@ -66,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $novoHash = password_hash($senhaNova, PASSWORD_DEFAULT);
 
         if ($usuarioModel->atualizarSenha($usuarioId, $novoHash)) {
+            (new RateLimiter())->zerar('alterar_senha', 'u' . $usuarioId);
             $mensagem     = 'Senha alterada com sucesso!';
             $tipoMensagem = 'sucesso';
         } else {
