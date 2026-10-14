@@ -3,44 +3,42 @@
  *
  * Estratégia:
  * - Assets estáticos (css/js/imagens/ícones): cache-first, com atualização
- *   em segundo plano. São arquivos que raramente mudam e não têm nada
- *   pessoal do usuário.
- * - Páginas (navegação / *.php / index.html): network-first. NUNCA servimos
- *   uma página PHP do cache como resposta principal, porque elas carregam
- *   token CSRF e estado de sessão (login, carrinho etc.) que fica velho
- *   instantaneamente. Só caímos pra uma página "offline" simples quando
- *   não há rede.
- * - Qualquer requisição que não seja GET (POST de formulário, por exemplo)
- *   nunca passa pelo cache — vai direto pra rede, do jeito que já era.
+ *   em segundo plano.
+ * - Páginas (navegação / *.php / index.html): network-first. Nunca servimos
+ *   página PHP do cache (CSRF e sessão ficam velhos). Sem rede, cai na
+ *   página offline.
+ * - Requisições que não sejam GET e chamadas a app/ (ajax) vão direto
+ *   para a rede, sem cache.
+ * - O prefixo do site (ex.: /petfinder-SaaS/ no XAMPP, / na hospedagem)
+ *   vem do escopo do service worker, então o arquivo é o mesmo nos dois.
  */
 
-const VERSION = "petfinder-v4";
+const VERSION = "petfinder-v5";
 const STATIC_CACHE = `${VERSION}-static`;
 const OFFLINE_URL = "offline.html";
+const BASE = new URL(self.registration.scope).pathname; // termina com "/"
 
 const STATIC_ASSETS = [
     "assets/css/style.css",
     "assets/css/dashboard.css",
     "assets/img/logo.png",
-    "assets/img/icons/icon-192.png",
-    "assets/img/icons/icon-512.png",
+    "assets/img/icons/icon-192v2.png",
+    "assets/img/icons/icon-512v2.png",
     "manifest.json",
     OFFLINE_URL,
 ];
 
 self.addEventListener("install", (event) => {
     event.waitUntil(
-        caches.open(STATIC_CACHE).then((cache) => {
-            // addAll falha inteiro se 1 arquivo faltar; adiciona um a um
-            // pra um asset ausente não derrubar a instalação toda.
-            return Promise.all(
+        caches.open(STATIC_CACHE).then((cache) =>
+            Promise.all(
                 STATIC_ASSETS.map((url) =>
                     cache.add(url).catch(() => {
-                        /* arquivo pode não existir nesta página; ignora */
+                        /* arquivo ausente não derruba a instalação */
                     })
                 )
-            );
-        })
+            )
+        )
     );
     self.skipWaiting();
 });
@@ -62,8 +60,8 @@ self.addEventListener("push", (event) => {
     const dados = event.data ? event.data.json() : {};
     event.waitUntil(self.registration.showNotification(dados.title || "EcoSistemPet", {
         body: dados.body || "Você tem uma nova atualização.",
-        icon: "/petfinder-SaaS/assets/img/icons/icon-192.png",
-        data: { url: dados.url || "/petfinder-SaaS/public/notificacoes.php" }
+        icon: BASE + "assets/img/icons/icon-192v2.png",
+        data: { url: dados.url || BASE + "public/notificacoes.php" }
     }));
 });
 
@@ -74,7 +72,7 @@ self.addEventListener("notificationclick", (event) => {
 
 function isStaticAsset(url) {
     return (
-        url.pathname.startsWith("/petfinder-SaaS/assets/") ||
+        url.pathname.startsWith(BASE + "assets/") ||
         url.pathname.endsWith("manifest.json")
     );
 }
@@ -82,21 +80,23 @@ function isStaticAsset(url) {
 self.addEventListener("fetch", (event) => {
     const { request } = event;
 
-    // Só mexemos em GET. POST/PUT/DELETE (login, formulários com CSRF,
-    // compras etc.) sempre vão direto pra rede, sem passar pelo SW.
     if (request.method !== "GET") {
         return;
     }
 
     const url = new URL(request.url);
 
-    // Não mexe em requisições de outra origem (CDN do Bootstrap etc.)
+    // Outra origem (CDN do Bootstrap etc.): não mexe.
     if (url.origin !== self.location.origin) {
         return;
     }
 
+    // Chamadas ajax e demais arquivos de app/: sempre direto na rede.
+    if (url.pathname.startsWith(BASE + "app/")) {
+        return;
+    }
+
     if (isStaticAsset(url)) {
-        // Cache-first para assets estáticos.
         event.respondWith(
             caches.match(request).then((cached) => {
                 const fetchPromise = fetch(request)
@@ -114,7 +114,6 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
-    // Navegação de página (index.html, telas .php): network-first.
     if (request.mode === "navigate") {
         event.respondWith(
             fetch(request).catch(() =>
