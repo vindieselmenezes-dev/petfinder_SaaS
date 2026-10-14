@@ -6,6 +6,7 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteRule ^app/ajax/ - [L]
     RewriteRule ^(app|config|storage|vendor|database)(/|$) - [F,L]
 </IfModule>
 
