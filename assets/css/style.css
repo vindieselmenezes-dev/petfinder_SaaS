@@ -339,6 +339,34 @@ html.pwa-mais-aberto .pwa-more-panel {
     background: #f3f8f5;
 }
 
+/* Botão em destaque "Deseja desinstalar o app?" no menu "Mais" */
+.pwa-more-desinstalar {
+    width: 100%;
+    min-height: 52px;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border: 2px solid #c0392b;
+    border-radius: 10px;
+    background: #fdecea;
+    color: #a52a1f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.pwa-more-desinstalar:active {
+    background: #c0392b;
+    color: #fff;
+}
+
+.pwa-more-desinstalar i {
+    font-size: 1.15rem;
+}
+
 html.pwa-mais-aberto body {
     overflow: hidden;
 }

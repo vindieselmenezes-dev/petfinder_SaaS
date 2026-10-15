@@ -932,6 +932,85 @@ main.container h2 {
     }
 }
 
+/* ==========================================================
+   PAINÉIS ADMIN / FORMULÁRIOS — SEM CORTE NEM ROLAGEM LATERAL
+   ==========================================================
+   Caixa branca usada nas telas de moderação, mensagens de contato e
+   painel de parceiros (antes era style inline com padding de 30px).
+   Os blocos de informações/ações dos cards de moderação deixam de ter
+   largura mínima fixa: encolhem até caber na tela, em vez de empurrar
+   a página pra além da largura do aparelho. */
+
+.painel-caixa {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    min-width: 0;
+}
+
+.painel-caixa .card,
+.painel-caixa .card-body {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.info-moderacao {
+    min-width: min(260px, 100%);
+}
+
+.acoes-moderacao {
+    min-width: min(280px, 100%);
+}
+
+@media (max-width: 1024px),
+(max-height: 500px) and (orientation: landscape) {
+
+    .painel-caixa {
+        padding: 14px;
+    }
+
+    /* O .card do dashboard já tem padding de 25px; somado ao .card-body
+       do Bootstrap gastava ~40px de cada lado de uma tela de ~300px. */
+    .painel-caixa .card {
+        padding: 0;
+    }
+
+    .info-moderacao,
+    .acoes-moderacao {
+        flex: 1 1 100%;
+    }
+
+    /* Abas/filtros em grupo de botões: quebram de linha em vez de
+       estourar a largura (mesmo comportamento da página de prestadores). */
+    .conteudo .btn-group,
+    main.container .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .conteudo .btn-group>.btn,
+    main.container .btn-group>.btn {
+        flex: 1 1 auto;
+        margin-left: 0 !important;
+        border-radius: var(--bs-btn-border-radius, .375rem) !important;
+    }
+
+    /* Campos de formulário nunca passam da largura do conteúdo */
+    .conteudo .container,
+    main.container {
+        min-width: 0;
+    }
+
+    .conteudo img,
+    main.container img {
+        max-width: 100%;
+    }
+}
+
 /* Reduz movimento pra quem tem essa preferência ativada no navegador */
 @media (prefers-reduced-motion: reduce) {
     * {

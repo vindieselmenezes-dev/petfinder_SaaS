@@ -446,7 +446,7 @@ $tituloPagina = match ($tipo) {
                                 value="1">
                         </div>
                     </div>
-                    <div class="col-md-9 d-flex align-items-end gap-4 pb-2">
+                    <div class="col-md-9 d-flex flex-wrap align-items-end gap-2 gap-md-4 pb-2">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="arCondicionado" id="arCondicionado"
                                 value="1">

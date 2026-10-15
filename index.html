@@ -89,7 +89,7 @@
     <!-- CSS -->
     <!-- ========================= -->
 
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261014-desinstalar">
 
 </head>
 
@@ -2588,7 +2588,67 @@
             <a href="public/meus_pets.php"><i class="bi bi-emoji-smile" aria-hidden="true"></i>Meus Pets</a>
             <a href="public/loja/meus_pedidos.php"><i class="bi bi-box-seam" aria-hidden="true"></i>Meus Pedidos</a>
         </div>
+        <button type="button" class="pwa-more-desinstalar" id="pwaDesinstalarBtn">
+            <i class="bi bi-trash3-fill" aria-hidden="true"></i>
+            <span>Deseja desinstalar o app?</span>
+        </button>
     </section>
+
+    <!-- Instruções de desinstalação do app (o navegador não permite que o site se desinstale sozinho) -->
+    <div class="modal fade" id="modalDesinstalarApp" tabindex="-1" aria-labelledby="modalDesinstalarAppTitulo"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDesinstalarAppTitulo">
+                        <i class="bi bi-trash3" aria-hidden="true"></i> Desinstalar o EcoSistemPet
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-muted">
+                        Isso remove apenas o ícone do app deste aparelho. Sua conta, seus pets e seus pedidos
+                        continuam guardados, e você pode instalar de novo quando quiser.
+                    </p>
+
+                    <div data-desinstalar="android">
+                        <h6 class="fw-bold"><i class="bi bi-android2" aria-hidden="true"></i> Android</h6>
+                        <ol>
+                            <li>Na tela inicial, <strong>segure</strong> o ícone do EcoSistemPet.</li>
+                            <li>Toque em <strong>Desinstalar</strong> (em alguns aparelhos aparece como
+                                <strong>Remover</strong>).</li>
+                            <li>Confirme em <strong>OK</strong>.</li>
+                        </ol>
+                    </div>
+
+                    <div data-desinstalar="ios">
+                        <h6 class="fw-bold"><i class="bi bi-apple" aria-hidden="true"></i> iPhone / iPad</h6>
+                        <ol>
+                            <li>Na tela inicial, <strong>segure</strong> o ícone do EcoSistemPet.</li>
+                            <li>Toque em <strong>Remover app</strong>.</li>
+                            <li>Escolha <strong>Apagar app</strong> e confirme.</li>
+                        </ol>
+                    </div>
+
+                    <div data-desinstalar="desktop">
+                        <h6 class="fw-bold"><i class="bi bi-laptop" aria-hidden="true"></i> Computador (Chrome ou Edge)</h6>
+                        <ol>
+                            <li>Com o app aberto, clique nos três pontinhos <strong>(&#8942;)</strong> no canto da
+                                janela.</li>
+                            <li>Escolha <strong>Desinstalar EcoSistemPet</strong> e confirme.</li>
+                        </ol>
+                    </div>
+
+                    <p class="small text-muted mb-0" id="desinstalarOutros">
+                        Está em outro aparelho? Os passos de todos os sistemas estão acima.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Entendi</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <nav class="pwa-bottom-nav" id="pwaBottomNav" aria-label="Navegação principal do aplicativo">
         <a href="index.html" aria-current="page">
@@ -2629,6 +2689,40 @@
                 botaoMais.setAttribute('aria-expanded', String(vaiAbrir));
                 if (vaiAbrir) botaoFechar.focus();
             });
+
+            // "Deseja desinstalar o app?": fecha o painel e abre as instruções
+            // do sistema do aparelho (Android, iOS ou computador).
+            const botaoDesinstalar = document.getElementById('pwaDesinstalarBtn');
+            const modalDesinstalar = document.getElementById('modalDesinstalarApp');
+            if (botaoDesinstalar && modalDesinstalar) {
+                const ua = navigator.userAgent || '';
+                const ehIos = /iphone|ipad|ipod/i.test(ua) ||
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                const ehAndroid = /android/i.test(ua);
+                const plataforma = ehIos ? 'ios' : (ehAndroid ? 'android' : 'desktop');
+
+                botaoDesinstalar.addEventListener('click', function () {
+                    fecharMenuMais();
+                    modalDesinstalar.querySelectorAll('[data-desinstalar]').forEach(function (bloco) {
+                        // Mostra só o passo a passo do aparelho atual; se não der pra
+                        // detectar, o texto final avisa que todos estão listados.
+                        bloco.hidden = bloco.getAttribute('data-desinstalar') !== plataforma;
+                    });
+                    const aviso = document.getElementById('desinstalarOutros');
+                    if (aviso) {
+                        aviso.innerHTML = 'Está em outro aparelho? <a href="#" id="desinstalarVerTodos">Ver os passos de todos os sistemas</a>.';
+                        document.getElementById('desinstalarVerTodos').addEventListener('click', function (e) {
+                            e.preventDefault();
+                            modalDesinstalar.querySelectorAll('[data-desinstalar]').forEach(function (b) { b.hidden = false; });
+                            aviso.hidden = true;
+                        });
+                        aviso.hidden = false;
+                    }
+                    if (window.bootstrap) {
+                        window.bootstrap.Modal.getOrCreateInstance(modalDesinstalar).show();
+                    }
+                });
+            }
 
             botaoFechar.addEventListener('click', fecharMenuMais);
             fundoMais.addEventListener('click', fecharMenuMais);

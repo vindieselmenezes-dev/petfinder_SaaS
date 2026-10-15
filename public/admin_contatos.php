@@ -55,7 +55,7 @@ require_once __DIR__ . '/../app/Includes/menu.php';
 
 <main class="container" style="margin-top:100px; margin-left:240px; padding:20px; max-width:1100px;">
 
-    <div style="background:#fff; padding:30px; border-radius:12px; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+    <div class="painel-caixa">
 
         <h1 class="fw-bold" style="font-size:26px; margin-bottom:6px;">📬 Mensagens de contato</h1>
         <p style="color:#7f8c8d;">Enviadas pelo formulário público de contato do site.</p>

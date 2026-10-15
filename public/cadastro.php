@@ -44,11 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sobrenome = $partesNome[1] ?? '';
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
+    $confirmarPassword = $_POST['confirmar_password'] ?? '';
     // Só tutor ou empresa: administrador nunca é escolhido por quem se cadastra.
     $perfil = Auth::tipoDeCadastroPublico($_POST['perfil'] ?? null);
 
     if (empty($nomeCompleto) || empty($email) || empty($password)) {
         $mensagem = "Por favor, preencha todos os campos.";
+        $tipoMensagem = "erro";
+    } elseif (!hash_equals($password, $confirmarPassword)) {
+        $mensagem = "As senhas não conferem. Digite a mesma senha nos dois campos.";
         $tipoMensagem = "erro";
     } elseif (($erroSenha = ValidacaoSenha::validar($password)) !== null) {
         $mensagem = $erroSenha;
@@ -114,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Conta - Ecossistema Pet</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #FFF8E1 !important; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; position: relative; }
+        body { font-family: Arial, sans-serif; background-color: #FFF8E1 !important; display: flex; justify-content: center; align-items: center; min-height: 100vh; box-sizing: border-box; margin: 0; position: relative; }
         body::before {
             content: "";
             position: fixed;
@@ -134,6 +138,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; color: #34495e; font-weight: bold; }
         .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 6px; box-sizing: border-box; }
+        .campo-senha { position: relative; }
+        .form-group .campo-senha input { padding-right: 46px; }
+        .campo-senha .btn-olho { position: absolute; top: 0; right: 0; height: 100%; width: 44px; display: flex; align-items: center; justify-content: center; background: none; border: none; color: #7f8c8d; cursor: pointer; border-radius: 0 6px 6px 0; }
+        .campo-senha .btn-olho:hover, .campo-senha .btn-olho:focus-visible { color: #2c3e50; }
+        .campo-senha .btn-olho svg { width: 22px; height: 22px; }
+        .campo-senha .btn-olho .olho-fechado { display: none; }
+        .campo-senha .btn-olho[aria-pressed="true"] .olho-aberto { display: none; }
+        .campo-senha .btn-olho[aria-pressed="true"] .olho-fechado { display: block; }
+        .aviso-senha { font-size: 13px; margin-top: 5px; min-height: 16px; }
+        .aviso-senha.erro { color: #c0392b; }
+        .aviso-senha.ok { color: #27ae60; }
         .btn { width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; }
         .btn:hover { background: #2980b9; }
         .mensagem { padding: 10px; margin-bottom: 15px; border-radius: 6px; text-align: center; font-size: 14px; font-weight: bold; }
@@ -162,7 +177,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="form-group">
                 <label for="password">Senha (<?= htmlspecialchars(ValidacaoSenha::regraTexto()) ?>)</label>
-                <input type="password" id="password" name="password" required placeholder="Crie uma senha segura">
+                <div class="campo-senha">
+                    <input type="password" id="password" name="password" required autocomplete="new-password" placeholder="Crie uma senha segura">
+                    <button type="button" class="btn-olho" aria-label="Mostrar senha" aria-pressed="false" data-alvo="password">
+                        <svg class="olho-aberto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="olho-fechado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirmar_password">Confirmar senha</label>
+                <div class="campo-senha">
+                    <input type="password" id="confirmar_password" name="confirmar_password" required autocomplete="new-password" placeholder="Digite a senha novamente">
+                    <button type="button" class="btn-olho" aria-label="Mostrar senha" aria-pressed="false" data-alvo="confirmar_password">
+                        <svg class="olho-aberto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="olho-fechado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
+                </div>
+                <div class="aviso-senha" id="avisoSenha" aria-live="polite"></div>
             </div>
 
             <div class="form-group">
@@ -179,5 +211,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Já tem uma conta? <a href="login.php" style="color: #3498db; text-decoration: none; font-weight: bold;">Faça login</a>
         </div>
     </div>
+    <script>
+        (function () {
+            // Olho: mostra/esconde a senha do campo correspondente.
+            document.querySelectorAll('.btn-olho').forEach(function (botao) {
+                botao.addEventListener('click', function () {
+                    var campo = document.getElementById(botao.getAttribute('data-alvo'));
+                    if (!campo) return;
+                    var mostrar = campo.type === 'password';
+                    campo.type = mostrar ? 'text' : 'password';
+                    botao.setAttribute('aria-pressed', String(mostrar));
+                    botao.setAttribute('aria-label', mostrar ? 'Esconder senha' : 'Mostrar senha');
+                });
+            });
+
+            // Confere a confirmação enquanto digita e antes de enviar
+            // (o servidor confere de novo, isto é só pra ajudar quem digita).
+            var senha = document.getElementById('password');
+            var confirmar = document.getElementById('confirmar_password');
+            var aviso = document.getElementById('avisoSenha');
+            if (!senha || !confirmar || !aviso) return;
+
+            function conferir() {
+                if (confirmar.value === '') {
+                    aviso.textContent = '';
+                    aviso.className = 'aviso-senha';
+                    confirmar.setCustomValidity('');
+                    return true;
+                }
+                var igual = senha.value === confirmar.value;
+                aviso.textContent = igual ? 'As senhas conferem.' : 'As senhas não conferem.';
+                aviso.className = 'aviso-senha ' + (igual ? 'ok' : 'erro');
+                confirmar.setCustomValidity(igual ? '' : 'As senhas não conferem.');
+                return igual;
+            }
+
+            senha.addEventListener('input', conferir);
+            confirmar.addEventListener('input', conferir);
+        })();
+    </script>
 </body>
 </html>
