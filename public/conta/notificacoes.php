@@ -44,6 +44,11 @@ require_once "../../app/Includes/menu.php";
 
 </div>
 
+<div id="blocoAtivarPush" class="alert alert-info d-flex justify-content-between align-items-center flex-wrap gap-2" hidden>
+    <span id="textoAtivarPush">Receba os avisos do EcoSistemPet direto no celular, mesmo com o app fechado.</span>
+    <button type="button" class="btn btn-primary btn-sm" id="btnAtivarPush">🔔 Ativar notificações</button>
+</div>
+
 <div id="listaNotificacoes">
 
     <?php if (count($notificacoes) === 0): ?>

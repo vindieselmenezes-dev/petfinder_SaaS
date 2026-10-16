@@ -22,6 +22,29 @@ final class PushNotifier
         }
     }
 
+    /**
+     * Windows/XAMPP: sem o openssl.cnf o PHP não consegue criar a chave
+     * temporária que cifra o push ("Unable to create the local key").
+     * Em Linux (hospedagem) isso não é necessário.
+     */
+    private static function garantirConfigOpenssl(): void
+    {
+        if (PHP_OS_FAMILY !== 'Windows' || getenv('OPENSSL_CONF')) {
+            return;
+        }
+
+        foreach ([
+            'C:\\xampp\\php\\extras\\ssl\\openssl.cnf',
+            'C:\\xampp\\apache\\conf\\openssl.cnf',
+            dirname(PHP_BINARY) . '\\extras\\ssl\\openssl.cnf',
+        ] as $candidato) {
+            if (is_file($candidato)) {
+                putenv('OPENSSL_CONF=' . $candidato);
+                return;
+            }
+        }
+    }
+
     private static function tentarEnviar(int $usuarioId, string $titulo, string $mensagem, ?string $link): bool
     {
         // As dependências do Composer usadas aqui (web-push) podem exigir uma
@@ -38,6 +61,7 @@ final class PushNotifier
             return false;
         }
         require_once $autoload;
+        self::garantirConfigOpenssl();
 
         if (!class_exists('\Minishlink\WebPush\WebPush')) {
             return false;
@@ -59,7 +83,7 @@ final class PushNotifier
             ],
         ];
         $webPush = new \Minishlink\WebPush\WebPush($auth);
-        $payload = json_encode(['title' => $titulo, 'body' => $mensagem, 'url' => $link ?: '/petfinder-SaaS/public/notificacoes.php'], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+        $payload = json_encode(['title' => $titulo, 'body' => $mensagem, 'url' => $link ?: (class_exists('Url') ? Url::pagina('notificacoes.php') : '/')], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
 
         foreach ($subscriptions as $subscription) {
             $webPush->queueNotification(
