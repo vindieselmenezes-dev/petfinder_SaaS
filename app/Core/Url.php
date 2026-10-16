@@ -70,6 +70,8 @@ final class Url
         'encerrar_suporte.php' => 'suporte',
         'endereco.php' => 'conta',
         'esqueci_senha.php' => 'conta',
+        'confirmar_email.php' => 'conta',
+        'reenviar_confirmacao.php' => 'conta',
         'excluir_empresa.php' => 'empresas',
         'excluir_imagem_empresa.php' => 'empresas',
         'excluir_imagem_pet.php' => 'pets',

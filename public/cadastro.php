@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../app/bootstrap.php';
 require_once __DIR__ . '/../app/Helpers/ValidacaoSenha.php';
 require_once __DIR__ . '/../app/Models/RateLimiter.php';
+require_once __DIR__ . '/../app/Models/ConfirmacaoEmail.php';
 
 /**
  * Limite de cadastros por IP: 10 tentativas por hora (bloqueio de 1 hora).
@@ -92,7 +93,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $pdo->commit();
 
-                echo "<script>alert('Conta criada com sucesso na lista oficial!'); window.location.href='login.php';</script>";
+                // E-mail de confirmação. A conta já existe: uma falha no envio não
+                // pode desfazer o cadastro (a pessoa pede um novo link na tela
+                // seguinte). Só diz "enviamos" quando a geração do link deu certo.
+                $_SESSION['confirmacao_email_pendente'] = $email;
+                $parametroCadastro = '';
+                try {
+                    $linkConfirmacao = (new ConfirmacaoEmail())->enviarLink([
+                        'id'    => (int) $userId,
+                        'nome'  => $nome,
+                        'email' => $email,
+                    ]);
+                    if (SegurancaHttp::ehAmbienteLocal()) {
+                        $_SESSION['confirmacao_link_local'] = $linkConfirmacao;
+                    }
+                    $parametroCadastro = '?cadastro=1';
+                } catch (Throwable $eEnvio) {
+                    error_log('Falha ao enviar confirmação de e-mail: ' . $eEnvio->getMessage());
+                }
+
+                header('Location: ' . Url::pagina('reenviar_confirmacao.php') . $parametroCadastro);
                 exit;
 
             } catch (Exception $e) {

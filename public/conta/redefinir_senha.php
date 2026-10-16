@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 
 require_once '../../app/Models/Usuario.php';
 require_once '../../app/Models/ResetSenha.php';
+require_once '../../app/Models/ConfirmacaoEmail.php';
 require_once '../../app/Helpers/Csrf.php';
 require_once '../../app/Helpers/ValidacaoSenha.php';
 
@@ -60,6 +61,9 @@ if ($tokenValido && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nova_
         } else {
 
             $usuarioModel->atualizarSenha($usuarioId, password_hash($novaSenha, PASSWORD_DEFAULT));
+            // Quem abriu o link de redefinição provou ter acesso a esta caixa de
+            // e-mail: já conta como e-mail confirmado (evita ficar barrado no login).
+            (new ConfirmacaoEmail())->marcarComoConfirmado((int) $usuarioId);
             // Invalida este link e qualquer outro pedido de redefinição em aberto.
             $resetModel->invalidarTodosDoUsuario((int) $usuarioId);
 

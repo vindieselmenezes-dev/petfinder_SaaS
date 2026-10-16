@@ -5,11 +5,13 @@ declare(strict_types=1);
 require_once __DIR__ . '/../app/bootstrap.php';
 require_once __DIR__ . '/../app/Models/LimiteLogin.php';
 require_once __DIR__ . '/../app/Models/RateLimiter.php';
+require_once __DIR__ . '/../app/Models/ConfirmacaoEmail.php';
 
 $pdo = Database::conectar();
 
 $mensagem = "";
 $tipoMensagem = "";
+$emailNaoConfirmado = false;
 
 if (isset($_GET['senha_redefinida'])) {
     $mensagem = "Senha redefinida com sucesso! Faça login com sua nova senha.";
@@ -103,7 +105,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        if ($senhaValida) {
+        if ($senhaValida && ConfirmacaoEmail::usuarioPrecisaConfirmar($user)) {
+            // Senha correta, mas o e-mail ainda não foi confirmado: não abre
+            // sessão nem passa pelo 2FA. Só quem acertou a senha vê este aviso,
+            // então ele não revela contas para quem apenas chuta e-mails.
+            limiteLogin()->registrarSucesso(LimiteLogin::chave($email));
+            $_SESSION['confirmacao_email_pendente'] = (string) $user['email'];
+            $emailNaoConfirmado = true;
+            $mensagem = "Confirme seu e-mail para entrar. Enviamos um link para o endereço cadastrado.";
+            $tipoMensagem = "erro";
+        } elseif ($senhaValida) {
             limiteLogin()->registrarSucesso(LimiteLogin::chave($email));
 
             if (!empty($user['dois_fatores_ativo'])) {
@@ -264,7 +275,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2>🐾 Acessar Conta</h2>
 
         <?php if ($mensagem): ?>
-            <div class="mensagem <?= $tipoMensagem; ?>"><?= htmlspecialchars($mensagem); ?></div>
+            <div class="mensagem <?= $tipoMensagem; ?>"><?= htmlspecialchars($mensagem); ?>
+                <?php if ($emailNaoConfirmado): ?>
+                    <br><a href="<?= Url::pagina('reenviar_confirmacao.php') ?>">Não recebeu? Enviar novo link</a>
+                <?php endif; ?>
+            </div>
         <?php endif; ?>
 
         <form action="" method="POST" autocomplete="off">
