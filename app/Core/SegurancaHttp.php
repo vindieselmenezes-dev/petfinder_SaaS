@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/Env.php';
+
 /**
  * ==========================================================
  * PETFINDER BRASIL
@@ -40,7 +42,7 @@ final class SegurancaHttp
      */
     public static function ehAmbienteLocal(): bool
     {
-        return getenv('APP_ENV') === 'local';
+        return Env::get('APP_ENV') === 'local';
     }
 
     /**
@@ -50,7 +52,7 @@ final class SegurancaHttp
      */
     private static function forcarHttpsSeNecessario(): void
     {
-        $ambiente = getenv('APP_ENV') ?: 'local';
+        $ambiente = Env::get('APP_ENV') ?: 'local';
         if ($ambiente === 'local') {
             return;
         }

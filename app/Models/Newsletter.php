@@ -13,6 +13,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../Core/Env.php';
 
 class Newsletter
 {
@@ -125,7 +126,7 @@ class Newsletter
      */
     private static function chaveAssinatura(): string
     {
-        $chave = getenv('APP_KEY');
+        $chave = Env::get('APP_KEY');
 
         if ($chave === false || $chave === '') {
             error_log('APP_KEY não configurada no .env — usando chave padrão insegura para assinar links de descadastro da newsletter. Configure APP_KEY em produção.');

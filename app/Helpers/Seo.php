@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../Core/Env.php';
+
 final class Seo
 {
     public static function tags(
@@ -11,7 +13,7 @@ final class Seo
         ?string $image = null,
         string $type = 'website'
     ): string {
-        $baseUrl = rtrim((string) (getenv('APP_URL') ?: ''), '/');
+        $baseUrl = rtrim((string) (Env::get('APP_URL') ?: ''), '/');
         if ($baseUrl === '') {
             $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
             $baseUrl = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');

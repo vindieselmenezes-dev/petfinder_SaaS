@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/Env.php';
+
 /**
  * ==========================================================
  * PETFINDER BRASIL
@@ -172,7 +174,7 @@ final class Url
      */
     public static function base(): string
     {
-        $base = getenv('APP_BASE_PATH');
+        $base = Env::get('APP_BASE_PATH');
         return $base !== false ? rtrim($base, '/') : '';
     }
 

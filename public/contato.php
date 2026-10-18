@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 Mailer::enviar(
-                    getenv('EMAIL_CONTATO') ?: 'contato@petfinder.local',
+                    Env::get('EMAIL_CONTATO') ?: 'contato@petfinder.local',
                     'Nova mensagem de contato: ' . ($assuntoContato ?: 'Sem assunto'),
                     '<p><strong>Nome:</strong> ' . htmlspecialchars($form['nome']) . '</p>'
                     . '<p><strong>E-mail:</strong> ' . htmlspecialchars($form['email']) . '</p>'

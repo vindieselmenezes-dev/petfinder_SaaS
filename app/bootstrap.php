@@ -19,8 +19,13 @@ declare(strict_types=1);
 
 define('APP_ROOT', dirname(__DIR__));
 
+// --- Variáveis de ambiente (.env) -------------------------------------------
+// Carregadas ANTES de qualquer leitura de configuração (inclusive APP_DEBUG).
+require_once APP_ROOT . '/app/Core/Env.php';
+Env::carregar(APP_ROOT . '/.env');
+
 // --- Erros: registra em log, nunca mostra na tela em produção ---------------
-$appDebug = getenv('APP_DEBUG');
+$appDebug = Env::get('APP_DEBUG');
 error_reporting(E_ALL);
 ini_set('display_errors', $appDebug === 'true' ? '1' : '0');
 ini_set('log_errors', '1');
@@ -28,10 +33,8 @@ ini_set('error_log', APP_ROOT . '/storage/logs/php_errors.log');
 
 date_default_timezone_set('America/Sao_Paulo');
 
-// --- Dependências (Composer) + variáveis de ambiente -------------------------
+// --- Dependências (Composer) -------------------------------------------------
 require_once APP_ROOT . '/vendor/autoload.php';
-require_once APP_ROOT . '/app/Core/Env.php';
-Env::carregar(APP_ROOT . '/.env');
 
 // --- Cabeçalhos de segurança + HTTPS forçado (fora do ambiente local) -------
 require_once APP_ROOT . '/app/Core/SegurancaHttp.php';
@@ -46,7 +49,7 @@ if (session_status() === PHP_SESSION_NONE) {
         // critério que SegurancaHttp já usa pra forçar HTTPS. Marcar
         // 'secure' em ambiente local (sem certificado) faria o cookie
         // nunca ser aceito, quebrando o login em quem testa em localhost.
-        'secure'   => getenv('APP_ENV') !== 'local',
+        'secure'   => Env::get('APP_ENV') !== 'local',
         'httponly' => true,
         'samesite' => 'Lax',
     ]);

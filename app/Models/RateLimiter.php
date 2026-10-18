@@ -26,6 +26,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../Core/Env.php';
 
 class RateLimiter
 {
@@ -285,7 +286,7 @@ class RateLimiter
      */
     private static function proxiesConfiaveis(): array
     {
-        $valor = getenv('TRUSTED_PROXIES');
+        $valor = Env::get('TRUSTED_PROXIES');
 
         if ($valor === false || trim($valor) === '') {
             return [];
