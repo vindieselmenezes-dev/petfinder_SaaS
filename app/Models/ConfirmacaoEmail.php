@@ -30,7 +30,9 @@ class ConfirmacaoEmail
      */
     public static function exigido(): bool
     {
-        return getenv('EXIGIR_CONFIRMACAO_EMAIL') !== '0';
+        // Sem envio de e-mail disponível, exigir confirmação trancaria todo
+        // cadastro novo fora da conta: nesse caso a exigência fica desligada.
+        return Env::get('EXIGIR_CONFIRMACAO_EMAIL') !== '0' && Mailer::disponivel();
     }
 
     /**

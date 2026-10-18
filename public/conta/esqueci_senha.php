@@ -19,7 +19,9 @@ $mensagem = '';
 $tipoMensagem = '';
 $linkDeTeste = null; // só preenchido em modo local, ver nota abaixo
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$emailDisponivel = Mailer::disponivel();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $emailDisponivel) {
 
     if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
 
@@ -102,6 +104,15 @@ require_once '../../app/Includes/header.php';
 
         <div class="formulario-cadastro">
             <h1 style="text-align:center;">🔑 Esqueci Minha Senha</h1>
+
+            <?php if (!$emailDisponivel): ?>
+                <p style="color:#7f8c8d; text-align:center; font-size:14px; margin:20px 0;">
+                    A recuperação de senha por e-mail está <strong>temporariamente indisponível</strong>.
+                    Fale com o suporte e pediremos a redefinição da sua senha.
+                </p>
+                <a href="<?= Url::pagina('contato.php') ?>"
+                    style="display:block; text-align:center; background:#3498db; color:white; padding:12px; border-radius:6px; font-weight:bold; text-decoration:none;">Falar com o suporte</a>
+            <?php else: ?>
             <p style="color:#7f8c8d; text-align:center; font-size:14px; margin-bottom:20px;">Digite seu e-mail
                 cadastrado pra receber o link de redefinição.</p>
 
@@ -115,6 +126,7 @@ require_once '../../app/Includes/header.php';
                     style="background:#3498db; color:white; width:100%; padding:12px; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Enviar
                     Link de Redefinição</button>
             </form>
+            <?php endif; ?>
 
             <p style="text-align:center; margin-top:15px; font-size:14px;">
                 <a href="<?= Url::pagina('login.php') ?>" style="color:#7f8c8d; text-decoration:none;">⬅ Voltar pro

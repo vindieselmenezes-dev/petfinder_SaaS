@@ -96,6 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // E-mail de confirmação. A conta já existe: uma falha no envio não
                 // pode desfazer o cadastro (a pessoa pede um novo link na tela
                 // seguinte). Só diz "enviamos" quando a geração do link deu certo.
+                if (!Mailer::disponivel()) {
+                    // Sem envio de e-mail no servidor: nada de "enviamos um link".
+                    header('Location: ' . Url::pagina('login.php') . '?conta_criada=1');
+                    exit;
+                }
+
                 $_SESSION['confirmacao_email_pendente'] = $email;
                 $parametroCadastro = '';
                 try {

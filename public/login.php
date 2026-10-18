@@ -13,6 +13,11 @@ $mensagem = "";
 $tipoMensagem = "";
 $emailNaoConfirmado = false;
 
+if (isset($_GET['conta_criada'])) {
+    $mensagem = "Conta criada com sucesso! Você já pode entrar.";
+    $tipoMensagem = "sucesso";
+}
+
 if (isset($_GET['senha_redefinida'])) {
     $mensagem = "Senha redefinida com sucesso! Faça login com sua nova senha.";
     $tipoMensagem = "sucesso";
@@ -297,8 +302,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="btn">Entrar no Ecossistema</button>
             <p style="text-align:center; margin-top:12px; font-size:14px;">
-                <a href="<?= Url::pagina('esqueci_senha.php') ?>" style="color:#7f8c8d; text-decoration:none;">Esqueci
-                    minha senha</a>
+                <?php if (Mailer::disponivel()): ?>
+                    <a href="<?= Url::pagina('esqueci_senha.php') ?>" style="color:#7f8c8d; text-decoration:none;">Esqueci
+                        minha senha</a>
+                <?php else: ?>
+                    <span style="color:#7f8c8d;">Esqueceu a senha?
+                        <a href="<?= Url::pagina('contato.php') ?>" style="color:#3498db; text-decoration:none;">Fale com o suporte</a></span>
+                <?php endif; ?>
             </p>
         </form>
     </div>

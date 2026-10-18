@@ -7,6 +7,11 @@ require_once __DIR__ . '/../../app/Models/ConfirmacaoEmail.php';
 require_once __DIR__ . '/../../app/Models/RateLimiter.php';
 require_once __DIR__ . '/../../app/Helpers/Csrf.php';
 
+if (!Mailer::disponivel()) {
+    header('Location: ' . Url::pagina('login.php'));
+    exit;
+}
+
 $confirmacaoModel = new ConfirmacaoEmail();
 
 $mensagem = '';
