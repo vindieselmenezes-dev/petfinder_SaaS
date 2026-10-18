@@ -173,6 +173,7 @@ function menuGrupo(string $titulo, string $icone, array $itens, string $paginaAt
             ['meu_perfil.php', 'Meu Perfil'],
             ['endereco.php', '📍 Meu Endereço'],
             ['alterar_senha.php', '🔒 Alterar Senha'],
+            ['seguranca.php', '🛡️ Segurança (2FA)'],
             ['suporte.php', '💬 Fale com o Suporte'],
             ['logout.php', '🚪 Sair'],
         ], $paginaAtualMenu);

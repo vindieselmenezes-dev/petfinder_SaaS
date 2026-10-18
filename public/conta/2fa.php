@@ -9,6 +9,39 @@ require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../app/Helpers/Mailer.php';
 require_once __DIR__ . '/../../app/Models/RateLimiter.php';
 
+/**
+ * O código NÃO fica em texto puro no banco: guarda-se só um HMAC (10 primeiros
+ * caracteres) feito com a APP_KEY. Quem lesse o banco não conseguiria nem ver
+ * nem calcular os códigos ativos sem a chave do servidor.
+ */
+function codigo2faHash(string $codigo, int $usuarioId): string
+{
+    $chave = (string) (Env::get('APP_KEY') ?: 'ecosistempet-2fa');
+
+    return substr(hash_hmac('sha256', $codigo . ':' . $usuarioId, $chave), 0, 10);
+}
+
+/**
+ * Gera um código novo (o anterior deixa de valer), grava o hash e envia por
+ * e-mail. Devolve false se o envio falhar, para a tela avisar a pessoa.
+ *
+ * @param array<string,mixed> $usuario Precisa de id e email.
+ */
+function gerarEEnviarCodigo2fa(PDO $pdo, array $usuario): bool
+{
+    $codigo = (string) random_int(100000, 999999);
+
+    $pdo->prepare(
+        'UPDATE usuarios SET dois_fatores_codigo = :codigo, dois_fatores_codigo_expira = DATE_ADD(NOW(), INTERVAL 10 MINUTE) WHERE id = :id'
+    )->execute([':codigo' => codigo2faHash($codigo, (int) $usuario['id']), ':id' => (int) $usuario['id']]);
+
+    return Mailer::enviar(
+        (string) $usuario['email'],
+        'Seu código de acesso EcoSistemPet',
+        '<p>Seu código de verificação é <strong>' . $codigo . '</strong>. Ele expira em 10 minutos.</p>'
+    );
+}
+
 $usuarioId = (int) ($_SESSION['2fa_pendente_usuario_id'] ?? 0);
 if ($usuarioId <= 0) {
     Url::redirecionar(Url::pagina('login.php'));
@@ -16,7 +49,10 @@ if ($usuarioId <= 0) {
 }
 
 $pdo = Database::conectar();
-$stmt = $pdo->prepare('SELECT id, nome, email, dois_fatores_codigo, dois_fatores_codigo_expira, dois_fatores_ativo, tipo_usuario FROM usuarios WHERE id = :id');
+// codigo_valido é calculado PELO BANCO (NOW() do mesmo relógio que gravou a validade).
+// Comparar a data do banco com time() do PHP falha quando os dois estão em fusos
+// diferentes (o código correto aparecia como "expirado").
+$stmt = $pdo->prepare('SELECT id, nome, email, dois_fatores_codigo, dois_fatores_codigo_expira, dois_fatores_ativo, tipo_usuario, (dois_fatores_codigo_expira IS NOT NULL AND dois_fatores_codigo_expira > NOW()) AS codigo_valido FROM usuarios WHERE id = :id');
 $stmt->execute([':id' => $usuarioId]);
 $usuario = $stmt->fetch();
 if (!$usuario || empty($usuario['dois_fatores_ativo'])) {
@@ -41,14 +77,28 @@ $textoBloqueio2fa = static fn(): string => 'Muitas tentativas. Tente novamente e
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
         $erro = 'Sessão expirada. Atualize a página e tente novamente.';
+    } elseif (isset($_POST['reenviar'])) {
+        // Reenvio: não consome as tentativas de digitar o código; tem limite próprio
+        // (3 novos códigos a cada 10 minutos) para não encher a caixa de entrada.
+        if ($limite2fa->minutosRestantes('2fa', $idLimite2fa) > 0) {
+            $erro = $textoBloqueio2fa();
+        } elseif (!Mailer::disponivel()) {
+            $erro = 'O envio de e-mail está indisponível no momento. Fale com o suporte.';
+        } elseif (!$limite2fa->permitido('2fa_reenvio', 3, 10, 10, $idLimite2fa)) {
+            $erro = 'Muitos pedidos de novo código. Tente novamente em '
+                . max(1, $limite2fa->minutosRestantes('2fa_reenvio', $idLimite2fa)) . ' minuto(s).';
+        } elseif (gerarEEnviarCodigo2fa($pdo, $usuario)) {
+            $mensagem = 'Enviamos um novo código. O anterior deixou de valer.';
+        } else {
+            $erro = 'Não foi possível enviar o e-mail agora. Tente novamente em instantes.';
+        }
     } elseif (!$limite2fa->permitido('2fa', 5, 10, 15, $idLimite2fa)) {
         $pdo->prepare('UPDATE usuarios SET dois_fatores_codigo = NULL, dois_fatores_codigo_expira = NULL WHERE id = :id')
             ->execute([':id' => $usuarioId]);
         $erro = $textoBloqueio2fa();
     } else {
         $codigo = preg_replace('/\D/', '', (string) ($_POST['codigo'] ?? ''));
-        $expira = strtotime((string) ($usuario['dois_fatores_codigo_expira'] ?? ''));
-        if (strlen($codigo) === 6 && hash_equals((string) $usuario['dois_fatores_codigo'], $codigo) && $expira > time()) {
+        if (strlen($codigo) === 6 && hash_equals((string) $usuario['dois_fatores_codigo'], codigo2faHash($codigo, $usuarioId)) && !empty($usuario['codigo_valido'])) {
             session_regenerate_id(true);
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['usuario_nome'] = $usuario['nome'];
@@ -67,11 +117,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } elseif ($limite2fa->minutosRestantes('2fa', $idLimite2fa) > 0) {
     // Em bloqueio não gera nem envia código novo (evita também encher o e-mail do usuário).
     $erro = $textoBloqueio2fa();
-} elseif (empty($usuario['dois_fatores_codigo']) || strtotime((string) $usuario['dois_fatores_codigo_expira']) <= time()) {
-    $codigo = (string) random_int(100000, 999999);
-    $pdo->prepare('UPDATE usuarios SET dois_fatores_codigo = :codigo, dois_fatores_codigo_expira = DATE_ADD(NOW(), INTERVAL 10 MINUTE) WHERE id = :id')->execute([':codigo' => $codigo, ':id' => $usuarioId]);
-    Mailer::enviar((string) $usuario['email'], 'Seu código de acesso EcoSistemPet', '<p>Seu código de verificação é <strong>' . $codigo . '</strong>. Ele expira em 10 minutos.</p>');
-    $mensagem = 'Enviamos um código de verificação para seu e-mail.';
+} elseif (!Mailer::disponivel()) {
+    // Conta com 2FA, mas o servidor não consegue enviar e-mail: avisa em vez de fingir que enviou.
+    $erro = 'O envio de e-mail está indisponível no momento. Fale com o suporte.';
+} elseif (empty($usuario['dois_fatores_codigo']) || empty($usuario['codigo_valido'])) {
+    if (gerarEEnviarCodigo2fa($pdo, $usuario)) {
+        $mensagem = 'Enviamos um código de verificação para seu e-mail.';
+    } else {
+        $erro = 'Não foi possível enviar o código agora. Use "Reenviar código" em instantes.';
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -101,6 +155,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label class="form-label" for="codigo">Código de 6 dígitos</label><input class="form-control mb-3"
                 id="codigo" name="codigo" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required
                 autofocus><button class="btn btn-primary" type="submit">Verificar</button>
+        </form>
+        <form method="post" class="mt-3">
+            <?= Csrf::campoHtml() ?>
+            <input type="hidden" name="reenviar" value="1">
+            <small class="text-muted d-block mb-1">Não chegou? Confira também a caixa de spam.</small>
+            <button class="btn btn-link p-0" type="submit">Reenviar código</button>
         </form>
     </main>
 </body>
