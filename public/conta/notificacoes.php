@@ -16,6 +16,33 @@ require_once "../../app/Controllers/NotificacaoController.php";
 $controller = new NotificacaoController();
 $usuarioId  = (int) $_SESSION["usuario_id"];
 
+// Botão "Enviar notificação de teste para mim": cria uma notificação para a
+// própria conta (sino + push), para conferir o push sem precisar de terminal.
+require_once __DIR__ . '/../../app/Helpers/Csrf.php';
+require_once __DIR__ . '/../../app/Models/Notificacao.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['testar_push'])) {
+    if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
+        $_SESSION['flash_teste_push'] = ['erro', 'Sessão expirada. Atualize a página e tente novamente.'];
+    } elseif (time() - (int) ($_SESSION['ultimo_teste_push'] ?? 0) < 30) {
+        $_SESSION['flash_teste_push'] = ['erro', 'Aguarde alguns segundos antes de enviar outro teste.'];
+    } else {
+        $_SESSION['ultimo_teste_push'] = time();
+        (new Notificacao())->criar(
+            $usuarioId,
+            'Teste de notificação',
+            'Se você viu este aviso no aparelho, o push está funcionando.',
+            'Sistema'
+        );
+        $_SESSION['flash_teste_push'] = ['sucesso', 'Teste enviado! O aviso deve aparecer em instantes (e aqui na lista).'];
+    }
+    header('Location: ' . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
+$flashTestePush = $_SESSION['flash_teste_push'] ?? null;
+unset($_SESSION['flash_teste_push']);
+
 $notificacoes = $controller->listarPorUsuario($usuarioId);
 
 $iconePorTipo = [
@@ -44,10 +71,24 @@ require_once "../../app/Includes/menu.php";
 
 </div>
 
-<div id="blocoAtivarPush" class="alert alert-info d-flex justify-content-between align-items-center flex-wrap gap-2" hidden>
-    <span id="textoAtivarPush">Receba os avisos do EcoSistemPet direto no celular, mesmo com o app fechado.</span>
-    <button type="button" class="btn btn-primary btn-sm" id="btnAtivarPush">🔔 Ativar notificações</button>
-</div>
+<?php if (Env::get('PUSH_VAPID_PUBLIC_KEY')): ?>
+    <?php /* display:none inline (e não o atributo hidden): classes d-flex do Bootstrap usam !important e anulavam o hidden. */ ?>
+    <div id="blocoAtivarPush" class="alert alert-info justify-content-between align-items-center flex-wrap gap-2" style="display:none">
+        <span id="textoAtivarPush">Receba os avisos do EcoSistemPet direto no celular, mesmo com o app fechado.</span>
+        <button type="button" class="btn btn-primary btn-sm" id="btnAtivarPush">🔔 Ativar notificações</button>
+    </div>
+<?php endif; ?>
+
+<?php if (Env::get('PUSH_VAPID_PUBLIC_KEY')): ?>
+    <?php if ($flashTestePush): ?>
+        <div class="alert alert-<?= $flashTestePush[0] === 'sucesso' ? 'success' : 'warning' ?>"><?= htmlspecialchars($flashTestePush[1]) ?></div>
+    <?php endif; ?>
+    <form method="post" class="mb-3">
+        <?= Csrf::campoHtml(); ?>
+        <input type="hidden" name="testar_push" value="1">
+        <button type="submit" class="btn btn-outline-primary btn-sm">🔔 Enviar notificação de teste para mim</button>
+    </form>
+<?php endif; ?>
 
 <div id="listaNotificacoes">
 

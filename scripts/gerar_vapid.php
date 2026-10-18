@@ -62,8 +62,23 @@ try {
     exit(1);
 }
 
+$linhas = 'PUSH_VAPID_PUBLIC_KEY=' . $chaves['publicKey'] . "\n"
+    . 'PUSH_VAPID_PRIVATE_KEY=' . $chaves['privateKey'] . "\n"
+    . "PUSH_VAPID_SUBJECT=mailto:contato@seudominio.com.br\n";
+
+// Com --arquivo, grava em storage/vapid_novas.txt (copie de lá, inteiro, e APAGUE o
+// arquivo depois). Evita chaves cortadas ao copiar linhas longas do terminal.
+if (in_array('--arquivo', $argv, true)) {
+    $destino = __DIR__ . '/../storage/vapid_novas.txt';
+    if (@file_put_contents($destino, $linhas) === false) {
+        fwrite(STDERR, "Não foi possível gravar em storage/vapid_novas.txt.\n");
+        exit(1);
+    }
+    echo "\nChaves salvas em storage/vapid_novas.txt. Abra o arquivo no VS Code, copie as linhas\n";
+    echo "INTEIRAS para o .env e depois APAGUE o arquivo (ele contém a chave privada).\n";
+    exit(0);
+}
+
 echo "\nCole estas linhas no seu .env (troque o e-mail do SUBJECT pelo seu):\n\n";
-echo 'PUSH_VAPID_PUBLIC_KEY=' . $chaves['publicKey'] . "\n";
-echo 'PUSH_VAPID_PRIVATE_KEY=' . $chaves['privateKey'] . "\n";
-echo "PUSH_VAPID_SUBJECT=mailto:contato@seudominio.com.br\n\n";
+echo $linhas . "\n";
 echo "ATENÇÃO: a chave privada é segredo. Não suba o .env para o GitHub.\n";

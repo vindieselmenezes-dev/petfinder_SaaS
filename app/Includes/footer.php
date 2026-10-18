@@ -44,7 +44,7 @@
 <script src="<?= Url::asset('js/click-sounds.js') ?>"></script>
 <?php
 require_once __DIR__ . '/../Helpers/Csrf.php';
-$pushVapidKey = getenv('PUSH_VAPID_PUBLIC_KEY') ?: '';
+$pushVapidKey = Env::get('PUSH_VAPID_PUBLIC_KEY') ?: '';
 if ($pushVapidKey && Auth::check()):
     ?>
     <script>
@@ -52,7 +52,7 @@ if ($pushVapidKey && Auth::check()):
         window.PetfinderPushSubscriptionUrl = <?= json_encode(Url::ajax('salvar_push_subscription.php')) ?>;
         document.body.dataset.pushVapidKey = <?= json_encode($pushVapidKey) ?>;
     </script>
-    <script src="<?= Url::asset('js/push-notifications.js') ?>"></script>
+    <script src="<?= Url::asset('js/push-notifications.js') ?>?v=20261018"></script>
 <?php endif; ?>
 <script>
     if (window.PetfinderLocalizacao) {

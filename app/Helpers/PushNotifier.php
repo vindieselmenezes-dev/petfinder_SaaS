@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../Core/Env.php';
+
 require_once __DIR__ . '/../../config/database.php';
 
 final class PushNotifier
@@ -57,7 +59,7 @@ final class PushNotifier
         }
 
         $autoload = __DIR__ . '/../../vendor/autoload.php';
-        if (!is_file($autoload) || !getenv('PUSH_VAPID_PRIVATE_KEY') || !getenv('PUSH_VAPID_SUBJECT')) {
+        if (!is_file($autoload) || !Env::get('PUSH_VAPID_PRIVATE_KEY') || !Env::get('PUSH_VAPID_SUBJECT')) {
             return false;
         }
         require_once $autoload;
@@ -77,9 +79,9 @@ final class PushNotifier
 
         $auth = [
             'VAPID' => [
-                'subject' => getenv('PUSH_VAPID_SUBJECT'),
-                'publicKey' => getenv('PUSH_VAPID_PUBLIC_KEY'),
-                'privateKey' => getenv('PUSH_VAPID_PRIVATE_KEY'),
+                'subject' => Env::get('PUSH_VAPID_SUBJECT'),
+                'publicKey' => Env::get('PUSH_VAPID_PUBLIC_KEY'),
+                'privateKey' => Env::get('PUSH_VAPID_PRIVATE_KEY'),
             ],
         ];
         $webPush = new \Minishlink\WebPush\WebPush($auth);

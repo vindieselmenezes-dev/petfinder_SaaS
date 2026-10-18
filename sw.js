@@ -13,7 +13,7 @@
  *   vem do escopo do service worker, então o arquivo é o mesmo nos dois.
  */
 
-const VERSION = "petfinder-v8";
+const VERSION = "petfinder-v9";
 const STATIC_CACHE = `${VERSION}-static`;
 const OFFLINE_URL = "offline.html";
 const BASE = new URL(self.registration.scope).pathname; // termina com "/"
