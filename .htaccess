@@ -7,7 +7,8 @@ Options -Indexes
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteRule ^app/ajax/ - [L]
-    RewriteRule ^(app|config|storage|vendor|database)(/|$) - [F,L]
+    # logs/ guarda e-mails com links de redefinição de senha: nunca pode ser público.
+    RewriteRule ^(app|config|storage|vendor|database|logs|scripts|tests|docs)(/|$) - [F,L]
 </IfModule>
 
 # ==========================================================

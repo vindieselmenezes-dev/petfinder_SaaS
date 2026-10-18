@@ -42,7 +42,7 @@ class Notificacao
             ':tipo' => $tipo
         ]);
 
-        if ($criada && getenv('EMAIL_NOTIFICACOES') === '1') {
+        if ($criada && Env::get('EMAIL_NOTIFICACOES') === '1') {
             $stmtUsuario = $this->pdo->prepare('SELECT email, nome FROM usuarios WHERE id = :id');
             $stmtUsuario->execute([':id' => $usuarioId]);
             $usuario = $stmtUsuario->fetch();

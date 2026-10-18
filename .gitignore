@@ -5,6 +5,7 @@ playwright-report/
 test-results/
 logs/
 storage/logs/*.log
+storage/vapid_novas.txt
 storage/cache/*.xml
 
 .scannerwork/
