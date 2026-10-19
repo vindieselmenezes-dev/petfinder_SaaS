@@ -40,7 +40,8 @@ if ($novoId !== false) {
             "💬 Novo chamado de suporte",
             "$solicitanteNome abriu o chamado \"$assunto\" (prioridade $prioridade).",
             'Sistema',
-            'chamado.php?id=' . $novoId
+            'chamado.php?id=' . $novoId,
+            enviarEmail: true
         );
     }
 

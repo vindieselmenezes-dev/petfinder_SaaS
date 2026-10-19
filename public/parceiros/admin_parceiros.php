@@ -61,7 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'Parceria: ' . $parceiro['nome'],
                         $texto,
                         'Sistema',
-                        Url::pagina('painel_parceiro.php')
+                        Url::pagina('painel_parceiro.php'),
+                        enviarEmail: true
                     );
                 }
 

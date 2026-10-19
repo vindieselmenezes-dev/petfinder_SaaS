@@ -22,13 +22,13 @@ class NotificacaoController
         $this->notificacao = new Notificacao();
     }
 
-    public function criar(int $usuarioId, string $titulo, string $mensagem, string $tipo = 'Sistema', ?string $link = null): bool
+    public function criar(int $usuarioId, string $titulo, string $mensagem, string $tipo = 'Sistema', ?string $link = null, bool $enviarEmail = false): bool
     {
         if (!in_array($tipo, self::TIPOS_VALIDOS, true)) {
             $tipo = 'Sistema';
         }
 
-        return $this->notificacao->criar($usuarioId, $titulo, $mensagem, $tipo, $link);
+        return $this->notificacao->criar($usuarioId, $titulo, $mensagem, $tipo, $link, $enviarEmail);
     }
 
     public function listarPorUsuario(int $usuarioId): array

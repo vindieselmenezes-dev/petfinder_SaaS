@@ -12,6 +12,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../Helpers/Mailer.php';
 require_once __DIR__ . '/../Helpers/PushNotifier.php';
+require_once __DIR__ . '/../Core/Url.php';
 
 class Notificacao
 {
@@ -23,9 +24,63 @@ class Notificacao
     }
 
     /**
-     * Cria uma nova notificação para um usuário
+     * Transforma o link salvo na notificação em um endereço que realmente abre.
+     *
+     * O link vem de três formas: nome de página solta ("minhas_consultas.php",
+     * com ou sem ?query), caminho já resolvido ("/public/...", vindo de
+     * Url::pagina) ou endereço completo (https://...). Devolve um caminho do
+     * site (começa com "/") ou o endereço completo; null se não houver link.
      */
-    public function criar(int $usuarioId, string $titulo, string $mensagem, string $tipo = 'Sistema', ?string $link = null): bool
+    public static function resolverLink(?string $link): ?string
+    {
+        $link = trim((string) $link);
+
+        if ($link === '') {
+            return null;
+        }
+
+        if (preg_match('#^(https?:)?//#i', $link) || $link[0] === '/') {
+            return $link;
+        }
+
+        // Separa a query para o Url::pagina achar o módulo pelo nome do arquivo.
+        $partes = explode('?', $link, 2);
+        $caminho = Url::pagina($partes[0]);
+
+        return isset($partes[1]) ? $caminho . '?' . $partes[1] : $caminho;
+    }
+
+    /**
+     * Endereço completo (com domínio), para usar dentro de e-mails.
+     */
+    private static function linkAbsoluto(?string $link): ?string
+    {
+        $resolvido = self::resolverLink($link);
+
+        if ($resolvido === null || preg_match('#^(https?:)?//#i', $resolvido)) {
+            return $resolvido;
+        }
+
+        $absoluto = Url::absoluta($resolvido);
+
+        // Fora de uma requisição web não há HOST: usa a APP_URL do .env.
+        if ($absoluto === $resolvido) {
+            $appUrl = rtrim((string) (Env::get('APP_URL') ?: ''), '/');
+            return $appUrl !== '' ? $appUrl . $resolvido : $resolvido;
+        }
+
+        return $absoluto;
+    }
+
+    /**
+     * Cria uma nova notificação para um usuário.
+     *
+     * Toda notificação aparece no sino e dispara push. Ela só vira E-MAIL quando
+     * quem a cria pede ($enviarEmail = true: eventos que a pessoa não pode
+     * perder, como pedido, consulta, adoção ou resposta do suporte), ou quando
+     * EMAIL_NOTIFICACOES=1 no .env força e-mail para todas.
+     */
+    public function criar(int $usuarioId, string $titulo, string $mensagem, string $tipo = 'Sistema', ?string $link = null, bool $enviarEmail = false): bool
     {
         $sql = "
             INSERT INTO notificacoes (usuario_id, titulo, mensagem, link, tipo, lida)
@@ -42,7 +97,7 @@ class Notificacao
             ':tipo' => $tipo
         ]);
 
-        if ($criada && Env::get('EMAIL_NOTIFICACOES') === '1') {
+        if ($criada && ($enviarEmail || Env::get('EMAIL_NOTIFICACOES') === '1')) {
             $stmtUsuario = $this->pdo->prepare('SELECT email, nome FROM usuarios WHERE id = :id');
             $stmtUsuario->execute([':id' => $usuarioId]);
             $usuario = $stmtUsuario->fetch();
@@ -51,7 +106,8 @@ class Notificacao
                 $nome = htmlspecialchars((string) ($usuario['nome'] ?? 'usuário'), ENT_QUOTES, 'UTF-8');
                 $tituloSeguro = htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8');
                 $mensagemSegura = nl2br(htmlspecialchars($mensagem, ENT_QUOTES, 'UTF-8'));
-                $linkHtml = $link ? '<p><a href="' . htmlspecialchars($link, ENT_QUOTES, 'UTF-8') . '">Abrir no EcoSistemPet</a></p>' : '';
+                $linkEmail = self::linkAbsoluto($link);
+                $linkHtml = $linkEmail ? '<p><a href="' . htmlspecialchars($linkEmail, ENT_QUOTES, 'UTF-8') . '">Abrir no EcoSistemPet</a></p>' : '';
                 Mailer::enviar(
                     (string) $usuario['email'],
                     'EcoSistemPet: ' . $titulo,
@@ -61,7 +117,7 @@ class Notificacao
         }
 
         if ($criada) {
-            PushNotifier::enviar($usuarioId, $titulo, $mensagem, $link);
+            PushNotifier::enviar($usuarioId, $titulo, $mensagem, self::resolverLink($link));
         }
 
         return $criada;

@@ -66,15 +66,9 @@ require_once "../../app/Includes/menu.php";
         <?php foreach ($notificacoes as $notificacao): ?>
 
             <?php
-                // O link é salvo no banco como um nome de arquivo solto
-                // (ex: "meus_pets.php"), sem indicar em qual subpasta de
-                // public/ ele mora hoje. Por isso não pode ser usado direto
-                // como href — precisa passar pelo Url::pagina(), a mesma
-                // função que o menu usa, que sabe o módulo de cada página.
-                $linkNotificacao = trim((string) ($notificacao["link"] ?? ''));
-                if ($linkNotificacao !== '' && !preg_match('#^(https?:)?//#i', $linkNotificacao) && $linkNotificacao[0] !== '/') {
-                    $linkNotificacao = Url::pagina($linkNotificacao);
-                }
+                // O link salvo pode ser nome de página, caminho ou URL completa:
+                // Notificacao::resolverLink devolve sempre um endereço que abre.
+                $linkNotificacao = (string) Notificacao::resolverLink((string) ($notificacao["link"] ?? ''));
             ?>
 
             <?php $icone = $iconePorTipo[$notificacao["tipo"]] ?? "bi-bell-fill text-secondary"; ?>

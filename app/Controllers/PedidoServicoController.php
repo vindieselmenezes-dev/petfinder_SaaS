@@ -83,7 +83,8 @@ class PedidoServicoController
             'Você recebeu um orçamento',
             'Uma empresa respondeu ao seu pedido de serviço. Consulte o valor e os detalhes na sua área de solicitações.',
             'Pedido',
-            Url::pagina('minhas_solicitacoes_empresa.php')
+            Url::pagina('minhas_solicitacoes_empresa.php'),
+            enviarEmail: true
         );
 
         return true;

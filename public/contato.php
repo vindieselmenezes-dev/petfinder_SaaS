@@ -143,7 +143,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'Nova mensagem de contato',
                         $form['nome'] . ' enviou uma mensagem' . ($assuntoContato !== '' ? ': ' . $assuntoContato : '.'),
                         'Sistema',
-                        Url::pagina('admin_contatos.php')
+                        Url::pagina('admin_contatos.php'),
+                        enviarEmail: true
                     );
                 }
 

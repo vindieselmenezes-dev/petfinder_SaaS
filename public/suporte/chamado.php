@@ -58,7 +58,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' &
                 "💬 Seu chamado foi respondido",
                 "Suporte EcoSistemPet respondeu ao chamado \"$assuntoChamado\".",
                 'Sistema',
-                $linkChamado
+                $linkChamado,
+                enviarEmail: true
             );
         }
     } else {

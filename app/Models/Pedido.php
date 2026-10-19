@@ -489,7 +489,7 @@ class Pedido
                 ':observacao' => $observacao ?: 'Status atualizado.',
             ]);
             $this->pdo->commit();
-            (new Notificacao())->criar((int) $pedido['usuario_id'], 'Pedido atualizado', 'O pedido #' . $pedidoId . ' agora está: ' . $status . '.', 'Pedido', 'pedido_confirmado.php?id=' . $pedidoId);
+            (new Notificacao())->criar((int) $pedido['usuario_id'], 'Pedido atualizado', 'O pedido #' . $pedidoId . ' agora está: ' . $status . '.', 'Pedido', 'pedido_confirmado.php?id=' . $pedidoId, enviarEmail: true);
             return true;
         } catch (Throwable $exception) {
             $this->pdo->rollBack();

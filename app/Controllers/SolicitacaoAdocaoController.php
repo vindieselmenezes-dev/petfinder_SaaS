@@ -69,7 +69,8 @@ class SolicitacaoAdocaoController
             "🏠 Novo pedido de adoção!",
             "Alguém quer adotar " . $pet['nome'] . ". Veja os detalhes e responda.",
             'Sistema',
-            'solicitacoes_recebidas.php'
+            'solicitacoes_recebidas.php',
+            enviarEmail: true
         );
 
         return ['sucesso' => true, 'id' => $novoId, 'conversa_id' => $conversaId];
@@ -126,7 +127,8 @@ class SolicitacaoAdocaoController
             "🎉 Seu pedido de adoção foi aprovado!",
             "Parabéns! O pedido de adoção de " . $solicitacao['pet_nome'] . " foi aprovado. Bem-vindo à família!",
             'Sistema',
-            'meus_pets.php'
+            'meus_pets.php',
+            enviarEmail: true
         );
 
         return ['sucesso' => true];
@@ -155,7 +157,8 @@ class SolicitacaoAdocaoController
             "Sobre seu pedido de adoção",
             "Seu pedido de adoção de " . $solicitacao['pet_nome'] . " não foi aprovado desta vez. Não desanime, outros pets esperam por você!",
             'Sistema',
-            'minhas_solicitacoes.php'
+            'minhas_solicitacoes.php',
+            enviarEmail: true
         );
 
         return ['sucesso' => true];

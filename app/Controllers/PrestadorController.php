@@ -125,7 +125,8 @@ class PrestadorController
                     $mensagens[$status]['title'],
                     $mensagens[$status]['texto'],
                     'Sistema',
-                    'minhas_solicitacoes_prestador.php'
+                    'minhas_solicitacoes_prestador.php',
+                    enviarEmail: true
                 );
             }
         }
@@ -162,7 +163,8 @@ class PrestadorController
                 "🐾 Nova solicitação de serviço!",
                 "Você recebeu um novo pedido de {$rotulo}. Confira os detalhes e responda.",
                 'Sistema',
-                'solicitacoes_prestador.php?prestador_id=' . (int) $dados['prestador_id']
+                'solicitacoes_prestador.php?prestador_id=' . (int) $dados['prestador_id'],
+                enviarEmail: true
             );
         }
 

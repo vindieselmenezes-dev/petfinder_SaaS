@@ -76,7 +76,8 @@ class EmpresaSolicitacaoController
             "O tutor " . $solicitacaoCriada['tutor_nome'] . " solicitou "
                 . ($solicitacaoCriada['servico'] ?: 'um serviço') . " para " . $quando . "." . $buscaTexto,
             'Sistema',
-            'solicitacoes_empresa.php?empresa_id=' . $empresaId
+            'solicitacoes_empresa.php?empresa_id=' . $empresaId,
+            enviarEmail: true
         );
     }
 
@@ -128,7 +129,8 @@ class EmpresaSolicitacaoController
                     $mensagens[$status]['titulo'],
                     $mensagens[$status]['texto'],
                     'Sistema',
-                    'minhas_solicitacoes_empresa.php'
+                    'minhas_solicitacoes_empresa.php',
+                    enviarEmail: true
                 );
             }
         }
@@ -148,7 +150,8 @@ class EmpresaSolicitacaoController
                 "Pedido cancelado pelo tutor",
                 "O tutor " . $solicitacaoAntes['tutor_nome'] . " cancelou o pedido de " . $solicitacaoAntes['data_desejada'] . ".",
                 'Sistema',
-                'solicitacoes_empresa.php?empresa_id=' . (int) $solicitacaoAntes['empresa_id']
+                'solicitacoes_empresa.php?empresa_id=' . (int) $solicitacaoAntes['empresa_id'],
+                enviarEmail: true
             );
         }
 

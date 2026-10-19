@@ -51,7 +51,8 @@ class ConsultaController
                     "🩺 Nova consulta agendada!",
                     "Um tutor solicitou uma consulta em " . ($consultaCriada['data_consulta'] ?? '') . " às " . substr((string) ($consultaCriada['hora_consulta'] ?? ''), 0, 5) . ". Confirme ou reagende.",
                     'Consulta',
-                    'consultas_empresa.php?empresa_id=' . (int) $dados['empresa_id']
+                    'consultas_empresa.php?empresa_id=' . (int) $dados['empresa_id'],
+                    enviarEmail: true
                 );
             }
         }
@@ -94,7 +95,8 @@ class ConsultaController
                     $mensagens[$status]['titulo'],
                     $mensagens[$status]['texto'],
                     'Consulta',
-                    'minhas_consultas.php'
+                    'minhas_consultas.php',
+                    enviarEmail: true
                 );
             }
         }
@@ -114,7 +116,8 @@ class ConsultaController
                 "Consulta cancelada pelo tutor",
                 "O tutor " . $consultaAntes['tutor_nome'] . " cancelou a consulta de " . $consultaAntes['data_consulta'] . ".",
                 'Consulta',
-                'consultas_empresa.php?empresa_id=' . (int) $consultaAntes['empresa_id']
+                'consultas_empresa.php?empresa_id=' . (int) $consultaAntes['empresa_id'],
+                enviarEmail: true
             );
         }
 
