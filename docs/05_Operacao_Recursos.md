@@ -30,7 +30,7 @@ O envio passa por `app/Helpers/Mailer.php`, com PHPMailer e SMTP. Duas chaves in
 | Variável | Efeito |
 | --- | --- |
 | `EMAIL_ENVIO=1` | Liga o envio real: recuperação de senha, código 2FA, formulário de contato e confirmação de e-mail. |
-| `EMAIL_NOTIFICACOES=1` | Além disso, faz **toda** notificação do sistema virar e-mail. Gasta muito do limite diário do provedor; o push já avisa o celular. Mantenha `0` e use o e-mail só para os casos essenciais. |
+| `EMAIL_NOTIFICACOES=1` | Além disso, faz **toda** notificação do sistema virar e-mail, sem escolha. Gasta muito do limite diário do provedor; o push já avisa o celular. Mantenha `0`: os eventos importantes já enviam e-mail por conta própria (ver "E-mail por evento"). |
 
 Com as duas em `0`, o sistema só grava em `logs/emails.log`. Exemplo com Gmail (senha de app, não a senha da conta):
 
@@ -60,6 +60,21 @@ SMTP_PASSWORD=senha-de-app-sem-espacos
 - a opção de ativar o 2FA some (quem já tem 2FA ainda pode desativar);
 - o cadastro vai direto ao login, sem prometer link;
 - a confirmação de e-mail deixa de ser exigida.
+
+### E-mail por evento
+
+Toda notificação aparece no sino e dispara push. Ela só vira **e-mail** quando quem a cria pede: `Notificacao::criar(..., enviarEmail: true)`. Com `EMAIL_ENVIO=1` e `EMAIL_NOTIFICACOES=0`, enviam e-mail apenas estes eventos:
+
+- **Pedidos da loja:** atualização de status do pedido (`Pedido.php`).
+- **Consultas veterinárias:** nova consulta (veterinário), mudança de status (tutor) e cancelamento pelo tutor (veterinário).
+- **Serviços de empresas e prestadores:** novo pedido e cancelamento (empresa), mudança de status (tutor), nova solicitação (prestador) e orçamento recebido (tutor).
+- **Adoção:** novo pedido (dono do pet), aprovação e recusa (solicitante).
+- **Moderação:** resultado da moderação de campanha e de parceria.
+- **Suporte e contato:** novo chamado (administradores), resposta do suporte ao usuário e nova mensagem do formulário de contato (administradores).
+
+Ficam **só no sino e no push**: nova mensagem de conversa, pet favoritado, alertas de pet perdido, novos apoios em campanha, avisos de pedido compartilhado a empresas e respostas em chamado dirigidas a administradores. Para incluir ou tirar um evento, acrescente ou remova `enviarEmail: true` na chamada de `criar(...)` correspondente.
+
+O link do e-mail e do push é resolvido por `Notificacao::resolverLink()`: aceita nome de página (`minhas_consultas.php?id=1`), caminho (`/public/...`) ou URL completa, e devolve um endereço que abre. No e-mail vai com o domínio (da requisição ou da `APP_URL`).
 
 ## Confirmação de e-mail
 
