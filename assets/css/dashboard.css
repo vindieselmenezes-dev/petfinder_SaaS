@@ -227,6 +227,11 @@ main.container {
     margin-top: 100px !important;
     padding: 30px !important;
     display: block !important;
+    /* O .container do Bootstrap tem width:100%; somado à margem de 240px da
+       sidebar passava da janela em telas de 1280-1366px (barra de rolagem
+       horizontal). Com width:auto o bloco ocupa só o espaço que sobra, e o
+       max-width (Bootstrap ou inline) continua limitando em telas largas. */
+    width: auto !important;
 }
 
 /* Páginas onde a sidebar só existe pra quem está logado (ex: pets_adocao.php
@@ -250,7 +255,7 @@ main.container h2 {
 
 .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
     gap: 25px;
 }
 
@@ -923,7 +928,7 @@ main.container h2 {
     }
 
     .cards {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
         gap: 16px;
     }
 
@@ -1007,6 +1012,38 @@ main.container h2 {
 
     .conteudo img,
     main.container img {
+        max-width: 100%;
+    }
+}
+
+/* Notificações no celular: o .card do dashboard (padding 25px) somado ao
+   .card-body do Bootstrap (16px) deixava ~100px para o texto numa tela de 360px,
+   e a linha título + etiqueta "Nova" não quebrava. */
+@media (max-width: 1024px) {
+
+    .notificacao-item.card {
+        padding: 0;
+    }
+
+    .notificacao-item .flex-grow-1 {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .notificacao-item .d-flex.justify-content-between {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    /* Títulos grandes não podem passar da largura útil em telas estreitas */
+    .conteudo h1,
+    main.container h1 {
+        font-size: clamp(1.6rem, 7vw, 2.25rem);
+        overflow-wrap: anywhere;
+    }
+
+    .conteudo .form-select,
+    .conteudo .form-control {
         max-width: 100%;
     }
 }

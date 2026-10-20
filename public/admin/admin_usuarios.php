@@ -48,7 +48,7 @@ require_once '../../app/Includes/menu.php';
         <h1 style="color: #2c3e50; margin-bottom: 5px;">👥 Gestão de Usuários</h1>
         <p style="color: #7f8c8d; margin-bottom: 30px;">Veja o perfil completo de cada tutor: dados da conta, pets, empresas e permissões.</p>
 
-        <table class="tabela-pets">
+        <table class="tabela-pets tabela-cartao-mobile">
             <thead>
                 <tr>
                     <th>Nome</th>
@@ -61,11 +61,11 @@ require_once '../../app/Includes/menu.php';
                 <?php if (!empty($usuarios)): ?> 
                     <?php foreach ($usuarios as $usuario): ?> 
                         <tr>
-                            <td style="font-weight: bold;"><?= htmlspecialchars(($usuario['nome'] ?? '') . ' ' . ($usuario['sobrenome'] ?? '')); ?></td>
-                            <td><?= htmlspecialchars($usuario['email'] ?? ''); ?></td>
-                            <td><span style="background: #e1f5fe; color: #0288d1; padding: 3px 8px; border-radius: 4px; font-size: 13px; font-weight: bold;"><?= htmlspecialchars($usuario['perfil'] ?? 'cliente'); ?></span></td>
+                            <td data-col="nome" style="font-weight: bold;"><?= htmlspecialchars(($usuario['nome'] ?? '') . ' ' . ($usuario['sobrenome'] ?? '')); ?></td>
+                            <td data-th="E-mail"><?= htmlspecialchars($usuario['email'] ?? ''); ?></td>
+                            <td data-th="Perfil"><span style="background: #e1f5fe; color: #0288d1; padding: 3px 8px; border-radius: 4px; font-size: 13px; font-weight: bold;"><?= htmlspecialchars($usuario['perfil'] ?? 'cliente'); ?></span></td>
 
-                            <td style="text-align: center; white-space:nowrap;">
+                            <td data-col="acoes" style="text-align: center; white-space:nowrap;">
                                 <a href="admin_usuario_detalhe.php?id=<?= $usuario['id']; ?>" class="btn-acao" style="background:#2563eb; color:white;">👁️ Ver Perfil</a>
                                 <?php if ($usuario['id'] !== $_SESSION['usuario_id']): ?> 
                                     <form method="POST" style="display:inline" onsubmit="return confirm('Deseja remover este usuário?');">

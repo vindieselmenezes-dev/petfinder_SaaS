@@ -29,7 +29,7 @@ require_once "../../app/Includes/menu.php";
             <a href="<?= Url::pagina('meus_favoritos.php') ?>" style="color: #7f8c8d; text-decoration: none; font-size: 14px;">⭐ Ver pets favoritos</a>
         </p>
 
-        <table class="tabela-pets">
+        <table class="tabela-pets tabela-cartao-mobile">
             <thead>
                 <tr>
                     <th style="text-align:center; width:100px;">Foto</th>
@@ -44,7 +44,7 @@ require_once "../../app/Includes/menu.php";
                 <?php if (!empty($produtos)): ?>
                     <?php foreach ($produtos as $produto): ?>
                         <tr>
-                            <td style="text-align:center;">
+                            <td data-col="foto" style="text-align:center;">
                                 <?php
                                 if (Foto::existe($produto['imagem_principal'], 'produtos')) {
                                     $caminhoFoto = Foto::url($produto['imagem_principal'], 'produtos');
@@ -54,10 +54,10 @@ require_once "../../app/Includes/menu.php";
                                 }
                                 ?>
                             </td>
-                            <td style="font-weight: bold;">
+                            <td data-col="nome" style="font-weight: bold;">
                                 <?= htmlspecialchars($produto["nome"] ?? 'Sem nome'); ?>
                             </td>
-                            <td>
+                            <td data-th="Preço">
                                 <?php if (!empty($produto['preco_promocional'])): ?>
                                     <span style="text-decoration:line-through; color:#999;">R$ <?= number_format((float) $produto['preco_venda'], 2, ',', '.'); ?></span><br>
                                     <strong>R$ <?= number_format((float) $produto['preco_promocional'], 2, ',', '.'); ?></strong>
@@ -65,17 +65,17 @@ require_once "../../app/Includes/menu.php";
                                     R$ <?= number_format((float) ($produto['preco_venda'] ?? 0), 2, ',', '.'); ?>
                                 <?php endif; ?>
                             </td>
-                            <td>
+                            <td data-th="Status">
                                 <?php if ((int) ($produto['ativo'] ?? 0) === 1): ?>
                                     <span class="badge-status badge-com-tutor">Disponível</span>
                                 <?php else: ?>
                                     <span class="badge-status badge-perdido">Indisponível</span>
                                 <?php endif; ?>
                             </td>
-                            <td>
+                            <td data-th="Favoritado em">
                                 <?= !empty($produto["criado_em"]) ? date("d/m/Y", strtotime($produto["criado_em"])) : 'Não informado'; ?>
                             </td>
-                            <td style="text-align:center; white-space:nowrap;">
+                            <td data-col="acoes" style="text-align:center; white-space:nowrap;">
                                 <a class="btn-excluir" href="favoritar_produto.php?produto_id=<?= (int) $produto['produto_id']; ?>&acao=remover">🗑 Remover</a>
                             </td>
                         </tr>

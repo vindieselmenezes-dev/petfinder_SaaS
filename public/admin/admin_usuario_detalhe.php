@@ -126,7 +126,7 @@ require_once '../../app/Includes/menu.php';
         <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start;">
 
             <!-- DADOS BÁSICOS -->
-            <div class="formulario-cadastro" style="flex:1; min-width:320px;">
+            <div class="formulario-cadastro" style="flex:1; min-width:min(320px,100%);">
                 <h3 style="margin-top:0;">Dados da conta</h3>
                 <form method="POST">
                     <?= Csrf::campoHtml() ?>
@@ -164,11 +164,11 @@ require_once '../../app/Includes/menu.php';
                 <hr style="margin:25px 0; border:0; border-top:1px solid #eee;">
 
                 <h3>Perfil de acesso</h3>
-                <form method="POST" style="display:flex; gap:8px; align-items:center;">
+                <form method="POST" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
                     <?= Csrf::campoHtml() ?>
                     <input type="hidden" name="acao" value="atualizar_perfil">
                     <label for="perfil-usuario" class="visually-hidden">Perfil de acesso</label>
-                    <select id="perfil-usuario" name="perfil" class="form-select" style="width:auto;">
+                    <select id="perfil-usuario" name="perfil" class="form-select" style="width:auto; max-width:100%;">
                         <?php foreach (['cliente', 'empresa', 'veterinario', 'administrador'] as $tipoOpcao): ?>
                             <option value="<?= $tipoOpcao; ?>" <?= $tipoOpcao === $perfilAtual ? 'selected' : ''; ?>>
                                 <?= ucfirst($tipoOpcao); ?></option>
@@ -197,21 +197,21 @@ require_once '../../app/Includes/menu.php';
             </div>
 
             <!-- PETS E EMPRESAS -->
-            <div style="flex:1; min-width:320px;">
+            <div style="flex:1; min-width:min(320px,100%);">
 
                 <div class="org-item" style="margin-bottom:20px;">
                     <h3 style="margin-top:0;">🐾 Pets (<?= count($petsDoUsuario); ?>)</h3>
                     <?php if (!empty($petsDoUsuario)): ?>
                         <?php foreach ($petsDoUsuario as $p): ?>
                             <div
-                                style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid #f1f1f1;">
+                                style="display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid #f1f1f1;">
                                 <?php if (Foto::existe($p['foto'], 'pets')): ?>
                                     <img src="<?= htmlspecialchars(Foto::url($p['foto'], 'pets')) ?>" width="40" height="40"
                                         alt="Foto de <?= htmlspecialchars((string) ($p['nome'] ?? 'pet')) ?>"
                                         style="border-radius:50%; object-fit:cover;">
                                 <?php else: ?>
                                     <div
-                                        style="width:40px; height:40px; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center;">
+                                        style="width:40px; height:40px; border-radius:50%; background:#e2e8f0; display:flex; flex-wrap:wrap; align-items:center; justify-content:center;">
                                         🐶</div>
                                 <?php endif; ?>
                                 <div>
@@ -232,7 +232,7 @@ require_once '../../app/Includes/menu.php';
                     <?php if (!empty($empresasDoUsuario)): ?>
                         <?php foreach ($empresasDoUsuario as $emp): ?>
                             <div
-                                style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f1f1;">
+                                style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f1f1;">
                                 <div>
                                     <strong><?= htmlspecialchars($emp['nome_fantasia']); ?></strong>
                                     <span

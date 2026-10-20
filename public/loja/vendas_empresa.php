@@ -66,21 +66,21 @@ require_once "../../app/Includes/menu.php";
     </p>
 
     <div class="row mb-4" style="display:flex; gap:16px; flex-wrap:wrap;">
-        <div class="card" style="padding:16px; min-width:200px;">
+        <div class="card" style="padding:16px; min-width:min(200px,100%);">
             <div class="text-muted" style="font-size:.85rem;">Total vendido</div>
             <div style="font-size:1.4rem; font-weight:700;">R$ <?= number_format($totalVendido, 2, ',', '.') ?></div>
         </div>
-        <div class="card" style="padding:16px; min-width:200px;">
+        <div class="card" style="padding:16px; min-width:min(200px,100%);">
             <div class="text-muted" style="font-size:.85rem;">Comissão da plataforma</div>
             <div style="font-size:1.4rem; font-weight:700; color:#e67e22;">R$ <?= number_format($totalComissao, 2, ',', '.') ?></div>
         </div>
-        <div class="card" style="padding:16px; min-width:200px;">
+        <div class="card" style="padding:16px; min-width:min(200px,100%);">
             <div class="text-muted" style="font-size:.85rem;">Você receberia</div>
             <div style="font-size:1.4rem; font-weight:700; color:#27ae60;">R$ <?= number_format($totalRepasse, 2, ',', '.') ?></div>
         </div>
     </div>
 
-    <table class="tabela-pets">
+    <table class="tabela-pets tabela-cartao-mobile">
         <thead>
             <tr>
                 <th>Pedido</th>
@@ -99,14 +99,14 @@ require_once "../../app/Includes/menu.php";
 
                 <?php foreach ($vendas as $venda): ?>
                     <tr>
-                        <td><?= htmlspecialchars($venda['numero_pedido'] ?? ('#' . $venda['pedido_id'])) ?></td>
-                        <td><?= date('d/m/Y', strtotime($venda['criado_em'])) ?></td>
-                        <td><?= htmlspecialchars($venda['produto_nome']) ?></td>
-                        <td><?= (int) $venda['quantidade'] ?></td>
-                        <td>R$ <?= number_format((float) $venda['subtotal'], 2, ',', '.') ?></td>
-                        <td>R$ <?= number_format((float) $venda['valor_comissao'], 2, ',', '.') ?></td>
-                        <td>R$ <?= number_format((float) $venda['valor_repasse'], 2, ',', '.') ?></td>
-                        <td><span class="badge bg-<?= $corStatus[$venda['status']] ?? 'secondary' ?>"><?= htmlspecialchars($venda['status']) ?></span></td>
+                        <td data-col="nome"><?= htmlspecialchars($venda['numero_pedido'] ?? ('#' . $venda['pedido_id'])) ?></td>
+                        <td data-th="Data"><?= date('d/m/Y', strtotime($venda['criado_em'])) ?></td>
+                        <td data-th="Produto"><?= htmlspecialchars($venda['produto_nome']) ?></td>
+                        <td data-th="Qtd."><?= (int) $venda['quantidade'] ?></td>
+                        <td data-th="Subtotal">R$ <?= number_format((float) $venda['subtotal'], 2, ',', '.') ?></td>
+                        <td data-th="Comissão">R$ <?= number_format((float) $venda['valor_comissao'], 2, ',', '.') ?></td>
+                        <td data-th="Você recebe">R$ <?= number_format((float) $venda['valor_repasse'], 2, ',', '.') ?></td>
+                        <td data-th="Status"><span class="badge bg-<?= $corStatus[$venda['status']] ?? 'secondary' ?>"><?= htmlspecialchars($venda['status']) ?></span></td>
                     </tr>
                 <?php endforeach; ?>
 

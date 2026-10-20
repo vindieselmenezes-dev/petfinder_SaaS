@@ -242,7 +242,7 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
                             <input type="hidden" name="prestador_id" value="<?= (int) $prestador['id'] ?>">
                             <div class="grupo-form">
                                 <label class="form-label small" for="nota-avaliacao">Deixe sua avaliação</label>
-                                <select id="nota-avaliacao" name="nota" class="form-select w-auto d-inline-block me-2" required>
+                                <select id="nota-avaliacao" name="nota" class="form-select w-auto d-inline-block me-2" style="max-width:100%;" required>
                                     <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
                                     <option value="4">⭐⭐⭐⭐ Muito bom</option>
                                     <option value="3">⭐⭐⭐ Bom</option>
@@ -253,7 +253,7 @@ $veiculo = $prestador && $prestador['tipo'] === 'taxista_pet' ? $controller->bus
                                     (opcional)</label>
                                 <input id="comentario-avaliacao" type="text" name="comentario"
                                     class="form-control d-inline-block w-auto" placeholder="Comentário (opcional)"
-                                    style="min-width:250px;">
+                                    style="min-width:min(250px,100%); max-width:100%;">
                                 <button type="submit" class="btn btn-outline-primary">Enviar avaliação</button>
                             </div>
                         </form>

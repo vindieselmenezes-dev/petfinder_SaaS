@@ -73,7 +73,7 @@ if (isset($_SESSION['usuario_id'])) {
                     <h2 class="h5 fw-bold mb-1">Filtros de adoção</h2>
                     <p class="text-muted small mb-0">Refine por espécie, raça e cidade.</p>
                 </div>
-                <div class="d-flex gap-2">
+                <div class="d-flex flex-wrap gap-2">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-search" aria-hidden="true"></i> Buscar
                     </button>
@@ -120,7 +120,7 @@ if (isset($_SESSION['usuario_id'])) {
 
         <!-- RESULTADOS -->
         <?php if (!empty($pets)): ?>
-            <table class="tabela-pets">
+            <table class="tabela-pets tabela-cartao-mobile">
                 <thead>
                     <tr>
                         <th>Foto</th>
@@ -134,7 +134,7 @@ if (isset($_SESSION['usuario_id'])) {
                 <tbody>
                     <?php foreach ($pets as $pet): ?>
                         <tr>
-                            <td>
+                            <td data-col="foto">
                                 <?php if (Foto::existe($pet['foto'], 'pets')): ?>
                                     <img src="<?= htmlspecialchars(Foto::url($pet['foto'], 'pets')) ?>" width="45" height="45"
                                         alt="Foto de <?= htmlspecialchars((string) $pet['nome']) ?>"
@@ -145,12 +145,12 @@ if (isset($_SESSION['usuario_id'])) {
                                         🐶</div>
                                 <?php endif; ?>
                             </td>
-                            <td style="font-weight:bold;"><?= htmlspecialchars($pet['nome']); ?></td>
-                            <td><?= htmlspecialchars($pet['especie'] ?? ''); ?> · <?= htmlspecialchars($pet['raca'] ?? ''); ?>
+                            <td data-col="nome" style="font-weight:bold;"><?= htmlspecialchars($pet['nome']); ?></td>
+                            <td data-th="Espécie/Raça"><?= htmlspecialchars($pet['especie'] ?? ''); ?> · <?= htmlspecialchars($pet['raca'] ?? ''); ?>
                             </td>
-                            <td><?= htmlspecialchars($pet['sexo'] ?? ''); ?></td>
-                            <td><?= htmlspecialchars($pet['cidade'] ?? 'Não informado'); ?></td>
-                            <td style="text-align:center; white-space:nowrap;">
+                            <td data-th="Sexo"><?= htmlspecialchars($pet['sexo'] ?? ''); ?></td>
+                            <td data-th="Cidade"><?= htmlspecialchars($pet['cidade'] ?? 'Não informado'); ?></td>
+                            <td data-col="acoes" style="text-align:center; white-space:nowrap;">
                                 <a href="pet.php?id=<?= (int) $pet['id']; ?>" class="btn-acao"
                                     style="background:#3498db; color:white;">👁️ Ver Perfil</a>
                                 <?php if (isset($_SESSION['usuario_id'])): ?>

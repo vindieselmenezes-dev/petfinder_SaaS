@@ -33,7 +33,7 @@ require_once "../../app/Includes/menu.php";
     <a href="novo_chamado.php" class="btn-acao" style="background:#3498db; color:white; display:inline-block; margin-bottom:20px;">➕ Abrir novo chamado</a>
 
     <?php if (!empty($chamados)): ?>
-        <table class="tabela-pets">
+        <table class="tabela-pets tabela-cartao-mobile">
             <thead>
                 <tr>
                     <th>Assunto</th>
@@ -53,11 +53,11 @@ require_once "../../app/Includes/menu.php";
                     ][$chamado['status']] ?? '#95a5a6';
                 ?>
                     <tr>
-                        <td><strong><?= htmlspecialchars($chamado['assunto']); ?></strong></td>
-                        <td><?= htmlspecialchars($chamado['prioridade']); ?></td>
-                        <td><span class="badge-status" style="background:<?= $corStatus; ?>;"><?= htmlspecialchars($chamado['status']); ?></span></td>
-                        <td><?= date('d/m/Y H:i', strtotime($chamado['criado_em'])); ?></td>
-                        <td style="text-align:center;">
+                        <td data-col="nome"><strong><?= htmlspecialchars($chamado['assunto']); ?></strong></td>
+                        <td data-th="Prioridade"><?= htmlspecialchars($chamado['prioridade']); ?></td>
+                        <td data-th="Status"><span class="badge-status" style="background:<?= $corStatus; ?>;"><?= htmlspecialchars($chamado['status']); ?></span></td>
+                        <td data-th="Aberto em"><?= date('d/m/Y H:i', strtotime($chamado['criado_em'])); ?></td>
+                        <td data-col="acoes" style="text-align:center;">
                             <a href="chamado.php?id=<?= (int) $chamado['id']; ?>" class="btn-acao" style="background:#3498db; color:white;">Ver</a>
                         </td>
                     </tr>

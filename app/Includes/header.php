@@ -14,7 +14,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="<?= Url::asset('css/dashboard.css') ?>?v=20261014-responsivo">
+    <link rel="stylesheet" href="<?= Url::asset('css/dashboard.css') ?>?v=20261019-largura">
 
     <!-- PWA -->
     <link rel="manifest" href="<?= Url::raiz('manifest.json') ?>" crossorigin="use-credentials">

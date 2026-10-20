@@ -67,7 +67,7 @@ require_once "../../app/Includes/menu.php";
         <a href="<?= Url::pagina('vendas_empresa.php') ?>?empresa_id=<?= $empresaId ?>" class="btn btn-outline-primary">💰 Ver Vendas</a>
     </div>
 
-    <table class="tabela-pets">
+    <table class="tabela-pets tabela-cartao-mobile">
 
         <thead>
             <tr>
@@ -89,21 +89,21 @@ require_once "../../app/Includes/menu.php";
 
                     <tr>
 
-                        <td>
+                        <td data-col="foto">
                             <img src="<?= htmlspecialchars(Foto::url($produto['imagem_principal'] ?? null, 'produtos')) ?>"
                                 width="60" height="60" style="object-fit:cover; border-radius:8px;" alt="Produto">
                         </td>
 
-                        <td>
+                        <td data-col="nome">
                             <?= htmlspecialchars($produto['nome'] ?? ''); ?>
                             <?php if (!empty($produto['destaque'])): ?>
                                 <span class="badge-status badge-para-adocao">⭐ Destaque</span>
                             <?php endif; ?>
                         </td>
 
-                        <td><?= htmlspecialchars($produto['subcategoria_nome'] ?? 'Não informada'); ?></td>
+                        <td data-th="Subcategoria"><?= htmlspecialchars($produto['subcategoria_nome'] ?? 'Não informada'); ?></td>
 
-                        <td>
+                        <td data-th="Preço">
                             <?php if (!empty($produto['preco_promocional'])): ?>
                                 <span style="text-decoration:line-through; color:#999;">R$
                                     <?= number_format((float) $produto['preco_venda'], 2, ',', '.'); ?></span><br>
@@ -113,11 +113,11 @@ require_once "../../app/Includes/menu.php";
                             <?php endif; ?>
                         </td>
 
-                        <td>
+                        <td data-th="Estoque">
                             <?= (int) $produto['estoque_quantidade']; ?> un.
                         </td>
 
-                        <td>
+                        <td data-th="Status">
                             <?php if ((int) $produto['ativo'] === 1): ?>
                                 <span class="badge-status badge-com-tutor">Ativo</span>
                             <?php else: ?>
@@ -125,7 +125,7 @@ require_once "../../app/Includes/menu.php";
                             <?php endif; ?>
                         </td>
 
-                        <td>
+                        <td data-col="acoes">
 
                             <a class="btn-editar" href="editar_produto.php?id=<?= (int) $produto['id']; ?>">✏️ Editar</a>
 
