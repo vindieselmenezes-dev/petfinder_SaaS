@@ -151,6 +151,17 @@ Resumo do que foi aprendido ao publicar lá:
 | Código 2FA "inválido" com o código certo | Comparação de validade misturando fusos (corrigida: validade conferida pelo banco); código antigo após um reenvio; limite de tentativas atingido. |
 | Variável do `.env` "não pega" | Mais de uma linha com o mesmo nome (vale a primeira) ou `getenv()` usado no lugar de `Env::get()`. |
 
+## Layout responsivo
+
+Regras para as telas internas funcionarem do celular (360-440 px) ao desktop sem barra de rolagem horizontal:
+
+- Largura mínima fixa em bloco flexível: use `min-width: min(320px, 100%)`, nunca `min-width: 320px`.
+- Linhas `display:flex` com campo e botão: acrescente `flex-wrap: wrap`. Grupos de abas (`btn-group`) já quebram de linha no celular por regra global.
+- Tabelas: use `class="tabela-pets tabela-cartao-mobile"`, `data-col="nome|foto|acoes"` na célula principal e `data-th="Rótulo"` nas demais. No celular cada linha vira um cartão; no desktop nada muda.
+- O conteúdo principal (`.conteudo`, `main.container`) usa `width:auto` para respeitar a barra lateral de 240 px em notebooks de 1280-1366 px.
+
+Para conferir, abra a tela no DevTools em 440 px, 360 px e 1280 px: a página não deve ter rolagem horizontal. 320 px (aparelhos muito antigos) é atendido em melhor esforço.
+
 ## Onboarding
 
 `public/conta/onboarding.php` apresenta os primeiros passos para tutor ou empresa e registra a conclusão no perfil correspondente.
