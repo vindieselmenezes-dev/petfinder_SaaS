@@ -23,6 +23,9 @@ $rateLimiter = new RateLimiter();
 $erros = [];
 $enviado = false;
 $bloqueado = false;
+$protocolo = null;          // número da mensagem salva (mostrado à pessoa)
+$linkWhatsAppSucesso = null; // atalho com o resumo do pedido já escrito
+$copiaEnviada = false;       // enviamos uma confirmação para o e-mail informado
 $pedidoBanhoTosa = (($_POST['pedido'] ?? $_GET['pedido'] ?? '') === 'banho_e_tosa');
 $dadosPedido = [
     'pet_nome' => '',
@@ -35,6 +38,7 @@ $dadosPedido = [
 $form = [
     'nome' => Auth::check() ? Auth::nome() : '',
     'email' => Auth::check() ? Auth::email() : '',
+    'telefone' => '',
     'assunto' => '',
     'mensagem' => '',
 ];
@@ -58,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form = [
         'nome' => trim($_POST['nome'] ?? ''),
         'email' => trim($_POST['email'] ?? ''),
+        'telefone' => trim($_POST['telefone'] ?? ''),
         'assunto' => trim($_POST['assunto'] ?? ''),
         'mensagem' => trim($_POST['mensagem'] ?? ''),
     ];
@@ -75,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($armadilha !== '') {
         // Preencheu o honeypot: finge sucesso, não grava nada.
         $enviado = true;
-        $form = ['nome' => '', 'email' => '', 'assunto' => '', 'mensagem' => ''];
+        $form = ['nome' => '', 'email' => '', 'telefone' => '', 'assunto' => '', 'mensagem' => ''];
         $dadosPedido = ['pet_nome' => '', 'servico' => '', 'data_desejada' => '', 'periodo' => '', 'detalhes' => ''];
     } else {
 
@@ -85,6 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!filter_var($form['email'], FILTER_VALIDATE_EMAIL)) {
             $erros[] = 'Informe um e-mail válido.';
+        }
+
+        if ($form['telefone'] !== '' && !Contato::telefoneValido($form['telefone'])) {
+            $erros[] = 'Informe um telefone válido com DDD, ou deixe em branco.';
         }
 
         if ($pedidoBanhoTosa) {
@@ -111,6 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($erros)) {
             $assuntoContato = $pedidoBanhoTosa ? 'Pedido de banho e tosa' : $form['assunto'];
             $mensagemContato = $form['mensagem'];
+            $linhaTelefone = $form['telefone'] !== '' ? 'Telefone/WhatsApp: ' . $form['telefone'] : '';
 
             if ($pedidoBanhoTosa) {
                 $mensagemContato = implode("\n", [
@@ -125,6 +135,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
+            if ($linhaTelefone !== '') {
+                $mensagemContato .= "\n\n" . $linhaTelefone;
+            }
+
             $id = $mensagemModel->salvar([
                 'usuario_id' => Auth::check() ? Auth::id() : null,
                 'nome' => $form['nome'],
@@ -135,7 +149,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($id !== false) {
 
-                // Avisa quem administra o site, pelo sino de notificações.
+                $protocolo = (int) $id;
+
+                // Avisa quem administra o site pelo sino e pelo push. O e-mail com todos
+                // os detalhes vai UMA vez, para a caixa EMAIL_CONTATO (abaixo); por isso
+                // esta notificação não manda e-mail também (seriam dois avisos iguais).
                 $notificacaoModel = new Notificacao();
                 foreach ((new Usuario())->listarIdsAdministradores() as $adminId) {
                     $notificacaoModel->criar(
@@ -143,21 +161,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'Nova mensagem de contato',
                         $form['nome'] . ' enviou uma mensagem' . ($assuntoContato !== '' ? ': ' . $assuntoContato : '.'),
                         'Sistema',
-                        Url::pagina('admin_contatos.php'),
-                        enviarEmail: true
+                        Url::pagina('admin_contatos.php')
                     );
                 }
 
-                Mailer::enviar(
-                    Env::get('EMAIL_CONTATO') ?: 'contato@petfinder.local',
-                    'Nova mensagem de contato: ' . ($assuntoContato ?: 'Sem assunto'),
-                    '<p><strong>Nome:</strong> ' . htmlspecialchars($form['nome']) . '</p>'
-                    . '<p><strong>E-mail:</strong> ' . htmlspecialchars($form['email']) . '</p>'
-                    . '<p><strong>Mensagem:</strong><br>' . nl2br(htmlspecialchars($mensagemContato)) . '</p>'
+                $linkWhatsAppEquipe = Contato::whatsappLink(
+                    "Olá! Enviei a solicitação #{$protocolo} pelo site do EcoSistemPet."
+                    . ($pedidoBanhoTosa ? "\nPet: {$dadosPedido['pet_nome']}\nServiço: {$dadosPedido['servico']}\nData: {$dadosPedido['data_desejada']}" : '')
+                    . "\nNome: {$form['nome']}"
                 );
+                $linkWhatsAppSucesso = $linkWhatsAppEquipe;
+
+                // E-mail para a caixa da equipe. "Responder" (Reply-To) vai direto para a
+                // pessoa que escreveu, e o número do protocolo vai no assunto.
+                $caixaContato = Contato::email();
+                if ($caixaContato !== null) {
+                    Mailer::enviar(
+                        $caixaContato,
+                        '[#' . $protocolo . '] ' . ($assuntoContato ?: 'Mensagem de contato') . ' - ' . $form['nome'],
+                        '<p><strong>Protocolo:</strong> #' . $protocolo . '</p>'
+                        . '<p><strong>Nome:</strong> ' . htmlspecialchars($form['nome']) . '</p>'
+                        . '<p><strong>E-mail:</strong> ' . htmlspecialchars($form['email']) . '</p>'
+                        . '<p><strong>Mensagem:</strong><br>' . nl2br(htmlspecialchars($mensagemContato)) . '</p>'
+                        . '<p><a href="' . htmlspecialchars(Url::absoluta(Url::pagina('admin_contatos.php'))) . '">Abrir no painel</a>'
+                        . ' · Basta clicar em <em>Responder</em>: a resposta vai direto para ' . htmlspecialchars($form['email']) . '.</p>',
+                        $form['email']
+                    );
+                }
+
+                // Confirmação para quem escreveu (protocolo + resumo). No máximo 2 por hora
+                // para o mesmo e-mail, para o formulário não servir de disparador de spam.
+                if ((new RateLimiter())->permitido('contato_confirmacao', 2, 60, 60, 'e:' . hash('sha256', mb_strtolower($form['email'])))) {
+                    $contatoEmail = Contato::email();
+                    $copiaEnviada = Mailer::enviar(
+                        $form['email'],
+                        'Recebemos sua mensagem (protocolo #' . $protocolo . ') - EcoSistemPet',
+                        '<p>Olá, ' . htmlspecialchars($form['nome']) . '!</p>'
+                        . '<p>Recebemos sua mensagem e nossa equipe vai responder neste e-mail. '
+                        . 'Seu número de protocolo é <strong>#' . $protocolo . '</strong>.</p>'
+                        . '<p><strong>Resumo:</strong><br>' . nl2br(htmlspecialchars($mensagemContato)) . '</p>'
+                        . ($linkWhatsAppEquipe ? '<p>Para agilizar, você também pode nos chamar no '
+                            . '<a href="' . htmlspecialchars($linkWhatsAppEquipe) . '">WhatsApp</a> (' . htmlspecialchars(Contato::horario()) . ').</p>' : '')
+                        . ($contatoEmail ? '<p>Dúvidas? Responda a este e-mail ou escreva para ' . htmlspecialchars($contatoEmail) . '.</p>' : '')
+                        . '<p>O envio deste formulário não confirma agendamento de serviços.</p>'
+                    );
+                }
 
                 $enviado = true;
-                $form = ['nome' => '', 'email' => '', 'assunto' => '', 'mensagem' => ''];
+                $form = ['nome' => '', 'email' => '', 'telefone' => '', 'assunto' => '', 'mensagem' => ''];
                 $dadosPedido = ['pet_nome' => '', 'servico' => '', 'data_desejada' => '', 'periodo' => '', 'detalhes' => ''];
 
             } else {
@@ -238,23 +289,41 @@ $tituloPagina = 'Contato';
 
             <div class="col-lg-4">
 
-                <div class="card shadow-sm mb-3">
-                    <div class="card-body">
-                        <h2 class="h6 fw-bold"><i class="bi bi-envelope text-primary"></i> E-mail</h2>
-                        <p class="mb-0 small">
-                            <a href="mailto:contato@petfinder.com.br">contato@petfinder.com.br</a>
-                        </p>
-                    </div>
-                </div>
+                <?php
+                // Só aparecem os canais configurados no .env (EMAIL_CONTATO, WHATSAPP_CONTATO).
+                $emailContato = Contato::email();
+                $whatsappPagina = Contato::whatsappLink(
+                    $pedidoBanhoTosa
+                        ? 'Olá! Preciso de ajuda para encontrar um serviço de banho e tosa para o meu pet.'
+                        : 'Olá! Vim pelo site do EcoSistemPet e gostaria de ajuda.'
+                );
+                ?>
 
-                <div class="card shadow-sm mb-3">
-                    <div class="card-body">
-                        <h2 class="h6 fw-bold"><i class="bi bi-whatsapp text-success"></i> WhatsApp</h2>
-                        <p class="mb-0 small">
-                            Atendimento de segunda a sexta, das 9h às 18h.
-                        </p>
+                <?php if ($emailContato !== null): ?>
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <h2 class="h6 fw-bold"><i class="bi bi-envelope text-primary"></i> E-mail</h2>
+                            <p class="mb-0 small">
+                                <a href="mailto:<?= htmlspecialchars($emailContato) ?>?subject=<?= rawurlencode($pedidoBanhoTosa ? 'Pedido de banho e tosa' : 'Contato pelo site') ?>"><?= htmlspecialchars($emailContato) ?></a>
+                            </p>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
+
+                <?php if ($whatsappPagina !== null): ?>
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <h2 class="h6 fw-bold"><i class="bi bi-whatsapp text-success"></i> WhatsApp</h2>
+                            <p class="small mb-2">
+                                Atendimento de <?= htmlspecialchars(Contato::horario()) ?>.
+                            </p>
+                            <a href="<?= htmlspecialchars($whatsappPagina) ?>" target="_blank" rel="noopener"
+                                class="btn btn-success btn-sm w-100">
+                                <i class="bi bi-whatsapp"></i> Chamar no WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <div class="card shadow-sm mb-3">
                     <div class="card-body">
@@ -289,7 +358,17 @@ $tituloPagina = 'Contato';
 
                             <div class="alert alert-success">
                                 <i class="bi bi-check-circle-fill"></i>
-                                Mensagem enviada! Nossa equipe vai responder no e-mail informado.
+                                Mensagem enviada!
+                                <?php if ($protocolo): ?>Protocolo <strong>#<?= (int) $protocolo ?></strong>.<?php endif; ?>
+                                Nossa equipe vai responder no e-mail informado<?= $copiaEnviada ? ', e enviamos uma cópia para você' : '' ?>.
+                                <?php if ($linkWhatsAppSucesso): ?>
+                                    <div class="mt-2">
+                                        <a href="<?= htmlspecialchars($linkWhatsAppSucesso) ?>" target="_blank" rel="noopener"
+                                            class="btn btn-success btn-sm">
+                                            <i class="bi bi-whatsapp"></i> Agilizar pelo WhatsApp
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
                             </div>
 
                         <?php endif; ?>
@@ -328,6 +407,14 @@ $tituloPagina = 'Contato';
                                 <label class="form-label" for="email">E-mail *</label>
                                 <input type="email" name="email" id="email" class="form-control" required
                                     value="<?= htmlspecialchars($form['email']) ?>">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label" for="telefone">Telefone / WhatsApp</label>
+                                <input type="tel" name="telefone" id="telefone" class="form-control" maxlength="20"
+                                    inputmode="tel" autocomplete="tel" placeholder="(31) 99999-9999"
+                                    value="<?= htmlspecialchars($form['telefone']) ?>">
+                                <div class="form-text">Opcional: ajuda a equipe a falar com você mais rápido.</div>
                             </div>
 
                             <?php if ($pedidoBanhoTosa): ?>

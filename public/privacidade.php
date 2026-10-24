@@ -82,8 +82,13 @@ $dataAtualizacao = '15 de setembro de 2026';
                     O EcoSistemPet é operado por <strong>[razão social a definir]</strong>,
                     inscrita no CNPJ sob o nº <strong>[CNPJ a definir]</strong>, com sede em
                     <strong>[endereço a definir]</strong>. Para qualquer assunto relacionado a
-                    dados pessoais, você pode falar com nosso encarregado de dados (DPO) pelo
-                    e-mail <a href="mailto:privacidade@petfinder.com.br">privacidade@petfinder.com.br</a>.
+                    dados pessoais, você pode falar com nosso encarregado de dados (DPO)
+                    <?php $emailPrivacidade = Contato::emailPrivacidade(); ?>
+                    <?php if ($emailPrivacidade !== null): ?>
+                        pelo e-mail <a href="mailto:<?= htmlspecialchars($emailPrivacidade) ?>"><?= htmlspecialchars($emailPrivacidade) ?></a>.
+                    <?php else: ?>
+                        pelo <a href="<?= Url::pagina('contato.php') ?>">formulário de contato</a>.
+                    <?php endif; ?>
                 </p>
 
                 <h2 class="h5 fw-bold mt-4">2. Quais dados coletamos</h2>

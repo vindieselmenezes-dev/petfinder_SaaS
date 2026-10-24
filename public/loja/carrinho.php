@@ -36,7 +36,7 @@ foreach ($carrinho as $produtoId => $qtd) {
     <title>Carrinho - EcoSistemPet</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
-    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/style.css?v=20261019-cartoes">
 </head>
 
 <body style="padding-top:38px;">
@@ -73,7 +73,7 @@ foreach ($carrinho as $produtoId => $qtd) {
             </div>
         <?php else: ?>
             <div class="table-responsive">
-                <table class="table align-middle">
+                <table class="table align-middle tabela-cartoes">
                     <thead>
                         <tr>
                             <th>Produto</th>
@@ -87,16 +87,16 @@ foreach ($carrinho as $produtoId => $qtd) {
                     <tbody>
                         <?php foreach ($itens as $item): ?>
                             <tr>
-                                <td>
+                                <td data-col="nome">
                                     <a href="produto.php?id=<?= (int) $item['produto']['id'] ?>"
                                         class="text-decoration-none text-dark">
                                         <?= htmlspecialchars($item['produto']['nome']) ?>
                                     </a>
                                 </td>
-                                <td class="text-muted small"><?= htmlspecialchars($item['produto']['empresa_nome'] ?? '') ?>
+                                <td data-th="Vendido por" class="text-muted small"><?= htmlspecialchars($item['produto']['empresa_nome'] ?? '') ?>
                                 </td>
-                                <td>R$ <?= number_format($item['preco'], 2, ',', '.') ?></td>
-                                <td style="min-width:140px;">
+                                <td data-th="Preço">R$ <?= number_format($item['preco'], 2, ',', '.') ?></td>
+                                <td data-th="Quantidade" style="min-width:140px;">
                                     <form action="atualizar_carrinho.php" method="POST" class="d-flex align-items-center gap-2">
                                         <?= Csrf::campoHtml() ?>
                                         <input type="hidden" name="produto_id" value="<?= (int) $item['produto']['id'] ?>">
@@ -113,8 +113,8 @@ foreach ($carrinho as $produtoId => $qtd) {
                                         </button>
                                     </form>
                                 </td>
-                                <td>R$ <?= number_format((float) $item['total'], 2, ',', '.') ?></td>
-                                <td>
+                                <td data-th="Total">R$ <?= number_format((float) $item['total'], 2, ',', '.') ?></td>
+                                <td data-col="acoes">
                                     <form action="remover_carrinho.php" method="POST" class="d-inline">
                                         <?= Csrf::campoHtml() ?>
                                         <input type="hidden" name="produto_id" value="<?= (int) $item['produto']['id'] ?>">
