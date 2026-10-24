@@ -40,6 +40,7 @@ final class Url
         '2fa.php' => 'conta',
         'adestramento.php' => 'agendamentos',
         'adicionar_carrinho.php' => 'loja',
+        'admin_pedidos.php' => 'admin',
         'admin_usuario_detalhe.php' => 'admin',
         'admin_usuarios.php' => 'admin',
         'admin_configuracoes.php' => 'admin',
@@ -234,16 +235,84 @@ final class Url
      */
     public static function absoluta(string $caminhoRelativo): string
     {
-        if (empty($_SERVER['HTTP_HOST'])) {
-            return $caminhoRelativo;
+        $origem = self::origemConfiavel();
+
+        return $origem === null ? $caminhoRelativo : $origem . $caminhoRelativo;
+    }
+
+    /**
+     * Esquema + domínio usados em links absolutos (e-mail de redefinição de
+     * senha, confirmação de e-mail, notificações...).
+     *
+     * O cabeçalho "Host" é enviado pelo cliente e pode ser forjado: se o link
+     * do e-mail fosse montado só com ele, um atacante poderia pedir a redefinição
+     * de senha de uma vítima com um Host falso e fazer o e-mail apontar para o site
+     * dele ("envenenamento" do link). Por isso o APP_URL do .env tem prioridade.
+     * Só se ele não existir é que cai no Host da requisição, e mesmo assim só se
+     * tiver formato de domínio válido.
+     */
+    private static function origemConfiavel(): ?string
+    {
+        $appUrl = Env::get('APP_URL');
+
+        if (is_string($appUrl) && trim($appUrl) !== '') {
+            $partes = parse_url(trim($appUrl));
+            $esquema = strtolower((string) ($partes['scheme'] ?? ''));
+
+            // Usa só esquema + domínio (+ porta): o caminho já vem em $caminhoRelativo
+            // (via APP_BASE_PATH), então não pode ser repetido aqui.
+            if (is_array($partes) && in_array($esquema, ['http', 'https'], true) && !empty($partes['host'])) {
+                return $esquema . '://' . $partes['host'] . (isset($partes['port']) ? ':' . $partes['port'] : '');
+            }
+        }
+
+        $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
+
+        $hostValido = preg_match('/^[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?(:\d{1,5})?$/', $host) === 1
+            || preg_match('/^\[[0-9A-Fa-f:.]+\](:\d{1,5})?$/', $host) === 1;
+
+        if (!$hostValido) {
+            return null;
         }
 
         $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
             || ($_SERVER['SERVER_PORT'] ?? '') === '443'
             || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
 
-        $esquema = $https ? 'https://' : 'http://';
+        return ($https ? 'https://' : 'http://') . $host;
+    }
 
-        return $esquema . $_SERVER['HTTP_HOST'] . $caminhoRelativo;
+    /**
+     * Valida um destino de redirecionamento ("voltar para...") recebido do
+     * navegador. Só aceita caminhos DENTRO do próprio site; devolve null se o
+     * destino puder levar o visitante para outro domínio (open redirect).
+     *
+     * Barra, além de "http://" e "//dominio":
+     *  - barra invertida: navegadores tratam "/\dominio" como "//dominio";
+     *  - caracteres de controle (tab, quebra de linha...): navegadores os
+     *    removem, então "/<TAB>/dominio" também vira "//dominio";
+     *  - qualquer esquema ("javascript:", "data:", "ftp:"...).
+     */
+    public static function caminhoLocalOuNull(?string $url): ?string
+    {
+        if ($url === null) {
+            return null;
+        }
+
+        $url = trim($url);
+
+        if ($url === '' || strlen($url) > 2048) {
+            return null;
+        }
+
+        if (preg_match('/[\x00-\x1F\x7F\\\\]/', $url) === 1) {
+            return null;
+        }
+
+        if (preg_match('#^[A-Za-z][A-Za-z0-9+.\-]*:#', $url) === 1 || str_starts_with($url, '//')) {
+            return null;
+        }
+
+        return $url;
     }
 }

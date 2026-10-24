@@ -8,14 +8,24 @@ require_once __DIR__ . '/../../app/Models/Usuario.php';
 require_once __DIR__ . '/../../app/Helpers/EmpresaAcesso.php';
 $pdo = Database::conectar();
 
-if (!isset($_SESSION['usuario_id']) || !isset($_GET['empresa_id']) || !isset($_GET['status'])) {
+// Altera o faturamento da empresa: só aceita POST com token CSRF (nunca por link GET).
+if (!isset($_SESSION['usuario_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['empresa_id']) || !isset($_POST['status'])) {
     header('Location: ' . Url::raiz('index.html'));
     exit();
 }
 
-$empresaId  = (int)$_GET['empresa_id'];
-$novoStatus = $_GET['status'];
+Middleware::exigirCsrfValido();
+
+$empresaId  = (int)$_POST['empresa_id'];
+$novoStatus = (string)$_POST['status'];
 $usuarioId  = (int)$_SESSION['usuario_id'];
+
+// Sem cobrança real, qualquer dono poderia "reativar" a própria empresa suspensa.
+// Em produção só administrador/suporte técnico (ou modo demonstração).
+if (!PagamentoSimulado::usuarioPodeSimular($empresaId)) {
+    http_response_code(403);
+    die(PagamentoSimulado::mensagemIndisponivel());
+}
 
 // Validar se o status enviado é seguro e permitido
 if (!in_array($novoStatus, ['Ativo', 'Atrasado', 'Suspenso'], true)) {
@@ -66,5 +76,6 @@ try {
 
 } catch (Exception $e) {
     $pdo->rollBack();
-    die("Erro na automação de faturamento: " . $e->getMessage());
+    error_log('[simular_faturamento] ' . $e->getMessage());
+    die("Não foi possível alterar o faturamento agora. Tente novamente em instantes.");
 }

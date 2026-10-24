@@ -159,8 +159,7 @@ $tituloPagina = "Editar Pet";
                                 height="70"
                                 style="object-fit:cover; border-radius:8px;"
                                 alt="Foto adicional">
-                            <a href="excluir_imagem_pet.php?pet_id=<?= $petId; ?>&imagem_id=<?= (int) $imagem['id']; ?>"
-                               onclick="return confirm('Remover esta foto?');"
+                            <a <?= AcaoPost::atributos(Url::pagina('excluir_imagem_pet.php'), ['pet_id' => (int) $petId, 'imagem_id' => (int) $imagem['id']], 'Remover esta foto?') ?>
                                title="Remover foto"
                                style="position:absolute; top:-6px; right:-6px; background:#e74c3c; color:white; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; text-decoration:none; line-height:1;">✕</a>
                         </div>

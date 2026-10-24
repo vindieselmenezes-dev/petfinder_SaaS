@@ -66,5 +66,6 @@ try {
 
 } catch (Exception $e) {
     $pdo->rollBack();
-    die("Erro crítico ao processar suporte técnico: " . $e->getMessage());
+    error_log('[processa_impersonate] ' . $e->getMessage());
+    die("Não foi possível iniciar o modo suporte agora. Tente novamente em instantes.");
 }

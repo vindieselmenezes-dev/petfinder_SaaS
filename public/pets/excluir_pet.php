@@ -6,10 +6,18 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 
 Middleware::exigirLogin();
 
+// Ação que altera dados: só aceita POST com token CSRF (nunca por link GET).
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    Url::redirecionar(Url::pagina('meus_pets.php'));
+    exit;
+}
+
+Middleware::exigirCsrfValido();
+
 $controller = new PetController();
 $usuarioId  = Auth::id();
 
-$petId = (int) ($_GET["id"] ?? 0);
+$petId = (int) ($_POST["id"] ?? 0);
 
 if ($petId <= 0) {
     header('Location: ' . Url::pagina('meus_pets.php'));

@@ -36,6 +36,12 @@ foreach ($carrinho as $produtoId => $qtd) {
 
 $endereco = $enderecoModel->buscarPorUsuario((int) $_SESSION['usuario_id']);
 
+// Só cidade/UF (ex.: preenchidos no cadastro do pet) não bastam para entregar:
+// sem rua e número, o endereço é tratado como "ainda não cadastrado".
+if (!Endereco::estaCompleto($endereco)) {
+    $endereco = null;
+}
+
 require_once "../../app/Models/Pedido.php";
 $previsaoEntrega = (new Pedido())->calcularPrevisaoEntrega();
 
@@ -91,7 +97,7 @@ unset($_SESSION['checkout_erro']);
         <?php elseif (!$endereco): ?>
 
             <div class="alert alert-warning">
-                Você precisa cadastrar um endereço de entrega antes de continuar.
+                Você precisa cadastrar (ou completar com rua e número) um endereço de entrega antes de continuar.
                 <a href="<?= Url::pagina('endereco.php') ?>?voltar=checkout.php" class="alert-link">Cadastrar endereço</a>
             </div>
 
@@ -215,11 +221,20 @@ unset($_SESSION['checkout_erro']);
                             </div>
                         </div>
 
-                        <div class="alert alert-info small">
-                            <i class="bi bi-info-circle"></i>
-                            Ambiente de demonstração: o pagamento é confirmado automaticamente,
-                            sem integração com um gateway de pagamento real.
-                        </div>
+                        <?php if (PagamentoSimulado::habilitado()): ?>
+                            <div class="alert alert-info small">
+                                <i class="bi bi-info-circle"></i>
+                                Ambiente de demonstração: o pagamento é confirmado automaticamente,
+                                sem integração com um gateway de pagamento real.
+                            </div>
+                        <?php else: ?>
+                            <div class="alert alert-warning small">
+                                <i class="bi bi-info-circle"></i>
+                                O pagamento online ainda não está disponível. Seu pedido será registrado
+                                como <strong>Aguardando Pagamento</strong> e só será liberado depois que
+                                a equipe confirmar o pagamento.
+                            </div>
+                        <?php endif; ?>
 
                         <button type="submit" class="btn btn-primary btn-lg w-100">
                             <i class="bi bi-lock-fill"></i>

@@ -35,7 +35,7 @@ $corStatus = [
     <title>Meus Pedidos - EcoSistemPet</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha384-CK2SzKma4jA5H/MXDUU7i1TqZlCFaD4T01vtyDFvPlD97JQyS+IsSh1nI2EFbpyk" crossorigin="anonymous">
-    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/style.css?v=20261019-cartoes">
     <style>
         .pedidos-table-scroll {
             width: 100%;
@@ -97,7 +97,7 @@ $corStatus = [
         <?php else: ?>
 
             <div class="table-responsive pedidos-table-scroll" role="region" aria-label="Tabela de pedidos" tabindex="0">
-                <table class="table align-middle">
+                <table class="table align-middle tabela-cartoes">
                     <thead>
                         <tr>
                             <th>Pedido</th>
@@ -112,19 +112,19 @@ $corStatus = [
                     <tbody>
                         <?php foreach ($pedidos as $pedido): ?>
                             <tr>
-                                <td>#<?= htmlspecialchars($pedido['numero_pedido'] ?? (string) $pedido['id']) ?></td>
-                                <td><?= date('d/m/Y H:i', strtotime($pedido['criado_em'])) ?></td>
-                                <td><?= (int) $pedido['total_itens'] ?> item(ns)</td>
-                                <td>R$ <?= number_format((float) $pedido['valor_total'], 2, ',', '.') ?></td>
-                                <td>
+                                <td data-col="nome">#<?= htmlspecialchars($pedido['numero_pedido'] ?? (string) $pedido['id']) ?></td>
+                                <td data-th="Data"><?= date('d/m/Y H:i', strtotime($pedido['criado_em'])) ?></td>
+                                <td data-th="Itens"><?= (int) $pedido['total_itens'] ?> item(ns)</td>
+                                <td data-th="Total">R$ <?= number_format((float) $pedido['valor_total'], 2, ',', '.') ?></td>
+                                <td data-th="Entrega prevista">
                                     <?= !empty($pedido['previsao_entrega']) ? date('d/m/Y', strtotime($pedido['previsao_entrega'])) : '-' ?>
                                 </td>
-                                <td>
+                                <td data-th="Status">
                                     <span class="badge bg-<?= $corStatus[$pedido['status']] ?? 'secondary' ?>">
                                         <?= htmlspecialchars($pedido['status']) ?>
                                     </span>
                                 </td>
-                                <td>
+                                <td data-col="acoes">
                                     <a href="pedido_confirmado.php?id=<?= (int) $pedido['id'] ?>"
                                         class="btn btn-sm btn-outline-primary">
                                         Ver detalhes

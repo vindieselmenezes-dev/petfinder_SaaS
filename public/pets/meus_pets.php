@@ -89,7 +89,7 @@ function especieIcone(?string $especie): string {
                                     echo '<img src="'.htmlspecialchars($caminhoFoto).'" width="55" height="55" style="object-fit: cover; border-radius: 50%; border: 2px solid #ddd;" alt="Pet">';
                                 } else {
                                     echo '<div style="width: 55px; height: 55px; background: #e2e8f0; border-radius: 50%; border: 2px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; font-size: 24px;">'
-                                        . especieIcone($pet['especie_nome'] ?? null)
+                                        . especieIcone($pet['especie'] ?? null)
                                         . '</div>';
                                 }
                                 ?> 
@@ -98,8 +98,8 @@ function especieIcone(?string $especie): string {
                                 <?= htmlspecialchars($pet["nome"] ?? 'Sem Nome'); ?> 
                             </td>
                             <td data-col="especie" data-th="Espécie / Raça" style="padding: 15px; color: #555;">
-                                <?= especieIcone($pet['especie_nome'] ?? null); ?> <?= htmlspecialchars($pet["especie_nome"] ?? 'Não informada'); ?> 
-                                <br><small style="color: #999;"><?= htmlspecialchars($pet["raca_nome"] ?? 'Mestiço / Vira-lata'); ?></small>
+                                <?= especieIcone($pet['especie'] ?? null); ?> <?= htmlspecialchars($pet["especie"] ?? 'Não informada'); ?> 
+                                <br><small style="color: #999;"><?= htmlspecialchars($pet["raca"] ?? 'Mestiço / Vira-lata'); ?></small>
                             </td>
                             <td data-col="cidade" data-th="Cidade" style="padding: 15px; color: #777;">
                                 📍 <?= htmlspecialchars($pet["cidade"] ?? 'Não informada'); ?> 
@@ -117,9 +117,9 @@ function especieIcone(?string $especie): string {
                                 <?php if (($pet['status'] ?? '') !== 'Perdido'): ?>
                                     <a href="alerta_perdido.php?pet_id=<?= (int) $pet['id']; ?>" class="btn-acao" style="display: inline-block; background: #e67e22; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">🚨 Perdido</a>
                                 <?php else: ?>
-                                    <a href="marcar_pet_recuperado.php?id=<?= (int) $pet['id']; ?>" class="btn-acao" onclick="return confirm('Confirma que <?= htmlspecialchars(addslashes($pet['nome'] ?? 'o pet')); ?> foi recuperado?');" style="display: inline-block; background: #27ae60; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">✅ Recuperado</a>
+                                    <a <?= AcaoPost::atributos(Url::pagina('marcar_pet_recuperado.php'), ['id' => (int) $pet['id']], 'Confirma que ' . ($pet['nome'] ?? 'o pet') . ' foi recuperado?') ?> class="btn-acao" style="display: inline-block; background: #27ae60; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">✅ Recuperado</a>
                                 <?php endif; ?>
-                                <a href="excluir_pet.php?id=<?= (int) $pet['id']; ?>" class="btn-acao" onclick="return confirm('Tem certeza que deseja excluir este pet?');" style="display: inline-block; background: #e74c3c; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">❌ Excluir</a>
+                                <a <?= AcaoPost::atributos(Url::pagina('excluir_pet.php'), ['id' => (int) $pet['id']], 'Tem certeza que deseja excluir este pet?') ?> class="btn-acao" style="display: inline-block; background: #e74c3c; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">❌ Excluir</a>
                             </td>
                         </tr>
                     <?php endforeach; ?> 

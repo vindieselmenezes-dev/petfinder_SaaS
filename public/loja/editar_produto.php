@@ -349,8 +349,7 @@ require_once "../../app/Includes/menu.php";
                 <?php endif; ?>
 
                 <a
-                    href="excluir_imagem_produto.php?produto_id=<?= $produtoId ?>&imagem_id=<?= (int) $imagem['id'] ?>"
-                    onclick="return confirm('Remover essa foto?');"
+                    <?= AcaoPost::atributos(Url::pagina('excluir_imagem_produto.php'), ['produto_id' => (int) $produtoId, 'imagem_id' => (int) $imagem['id']], 'Remover essa foto?') ?>
                     style="position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:14px;">
                     ×
                 </a>

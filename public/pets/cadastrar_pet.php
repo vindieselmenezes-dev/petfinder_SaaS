@@ -6,8 +6,27 @@ require_once __DIR__ . '/../../app/bootstrap.php';
 
 Middleware::exigirLogin();
 
+require_once __DIR__ . '/../../app/Models/Endereco.php';
+
 $controller = new PetController();
 $imagemController = new PetImagemController();
+
+/*
+|--------------------------------------------------------------------------
+| Cidade do pet
+|--------------------------------------------------------------------------
+| O pet não tem cidade própria: ela vem do endereço principal do tutor.
+| Se o tutor ainda não tem cidade cadastrada, pedimos aqui (cidade + UF) e
+| gravamos no endereço principal dele; o resto do endereço pode ser
+| completado depois em "Meu Endereço".
+*/
+
+$enderecoModel = new Endereco();
+$enderecoPrincipal = $enderecoModel->buscarPorUsuario((int) Auth::id());
+$precisaCidade = $enderecoPrincipal === null || trim((string) ($enderecoPrincipal["cidade"] ?? "")) === "";
+
+$cidadeInformada = trim((string) preg_replace('/\s+/u', ' ', (string) ($_POST["cidade"] ?? "")));
+$estadoInformado = strtoupper(trim((string) ($_POST["estado"] ?? "")));
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +57,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (!Csrf::validar($_POST["csrf_token"] ?? null)) {
 
         $mensagem = "Sessão expirada. Atualize a página e tente novamente.";
+        $tipoMensagem = "erro";
+
+    } elseif ($precisaCidade && !Endereco::cidadeValida($cidadeInformada)) {
+
+        $mensagem = "Informe a cidade onde o pet mora (apenas letras, de 2 a 100 caracteres).";
+        $tipoMensagem = "erro";
+
+    } elseif ($precisaCidade && !Endereco::ufValida($estadoInformado)) {
+
+        $mensagem = "Selecione o estado (UF) onde o pet mora.";
         $tipoMensagem = "erro";
 
     } else {
@@ -95,7 +124,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($controller->cadastrar($dados, $imagensExtras)) {
 
-        Flash::sucesso("Pet cadastrado com sucesso!");
+        if ($precisaCidade && !$enderecoModel->salvarCidadeSeAusente((int) Auth::id(), $cidadeInformada, $estadoInformado)) {
+            Flash::aviso("Pet cadastrado, mas não conseguimos salvar a cidade. Informe em Meu Endereço.");
+        } else {
+            Flash::sucesso("Pet cadastrado com sucesso!");
+        }
 
         header('Location: ' . Url::pagina('meus_pets.php'));
 
@@ -366,6 +399,81 @@ $tituloPagina = "Cadastrar Pet";
     </div>
 
 </div>
+
+<?php if ($precisaCidade): ?>
+
+<div class="row">
+
+    <!-- CIDADE (vai para o endereço principal do tutor) -->
+
+    <div class="col-md-8">
+
+        <div class="grupo-form">
+
+            <label for="cidade">
+
+                Cidade onde o pet mora *
+
+            </label>
+
+            <input
+                type="text"
+                id="cidade"
+                name="cidade"
+                class="form-control"
+                list="listaCidadesPet"
+                maxlength="100"
+                autocomplete="address-level2"
+                value="<?= htmlspecialchars($cidadeInformada) ?>"
+                required>
+
+            <datalist id="listaCidadesPet">
+                <?php foreach ($controller->listarCidadesComPets() as $cidadeSugerida): ?>
+                    <option value="<?= htmlspecialchars((string) $cidadeSugerida) ?>"></option>
+                <?php endforeach; ?>
+            </datalist>
+
+            <small style="color:#7f8c8d;">
+                Fica salva no seu endereço principal e aparece nos seus pets. Você completa o resto em Meu Endereço.
+            </small>
+
+        </div>
+
+    </div>
+
+    <!-- UF -->
+
+    <div class="col-md-4">
+
+        <div class="grupo-form">
+
+            <label for="estado">
+
+                Estado (UF) *
+
+            </label>
+
+            <select
+                id="estado"
+                name="estado"
+                class="form-select"
+                required>
+
+                <option value="">Selecione</option>
+
+                <?php foreach (Endereco::UFS as $uf): ?>
+                    <option value="<?= $uf ?>" <?= $estadoInformado === $uf ? "selected" : "" ?>><?= $uf ?></option>
+                <?php endforeach; ?>
+
+            </select>
+
+        </div>
+
+    </div>
+
+</div>
+
+<?php endif; ?>
 
 <div class="row">
 

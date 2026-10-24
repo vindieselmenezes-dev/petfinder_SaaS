@@ -11,14 +11,22 @@ if (!isset($_SESSION["usuario_id"])) {
     exit;
 }
 
+// Ação que altera dados: só aceita POST com token CSRF (nunca por link GET).
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    Url::redirecionar(Url::pagina('meus_pets.php'));
+    exit;
+}
+
+Middleware::exigirCsrfValido();
+
 require_once "../../app/Controllers/PetController.php";
 
 $petController = new PetController();
 $imagemController = new PetImagemController();
 $usuarioId = (int) $_SESSION["usuario_id"];
 
-$petId    = (int) ($_GET["pet_id"] ?? 0);
-$imagemId = (int) ($_GET["imagem_id"] ?? 0);
+$petId    = (int) ($_POST["pet_id"] ?? 0);
+$imagemId = (int) ($_POST["imagem_id"] ?? 0);
 
 /*
 |--------------------------------------------------------------------------

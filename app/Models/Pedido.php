@@ -8,16 +8,21 @@ declare(strict_types=1);
  * Model: Pedido
  *
  * Responsável pela compra direta de produtos (estilo
- * marketplace): cria o pedido, os itens, "aprova" o
- * pagamento (simulado — não há gateway real integrado) e
- * deixa o gatilho `trg_atualiza_estoque` do banco cuidar de
- * descontar o estoque.
+ * marketplace): cria o pedido, os itens, registra o
+ * pagamento e deixa o gatilho `trg_atualiza_estoque` do
+ * banco cuidar de descontar o estoque.
+ *
+ * Sem gateway real integrado, o pagamento só é "aprovado"
+ * na hora no modo demonstração (ver PagamentoSimulado). Em
+ * produção o pedido nasce "Aguardando Pagamento" e só vira
+ * "Pago" por confirmação (admin / futura integração).
  * ==========================================================
  */
 
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/MetricaEmpresa.php';
 require_once __DIR__ . '/Notificacao.php';
+require_once __DIR__ . '/../Helpers/PagamentoSimulado.php';
 
 class Pedido
 {
@@ -72,6 +77,10 @@ class Pedido
         $numeroPedido = $this->gerarNumeroPedido();
         $previsaoEntrega = $this->calcularPrevisaoEntrega();
 
+        // Sem cobrança real, só aprova na hora no modo demonstração.
+        $aprovarAgora = PagamentoSimulado::habilitado();
+        $statusPedido = $aprovarAgora ? 'Pago' : 'Aguardando Pagamento';
+
         try {
             $this->pdo->beginTransaction();
 
@@ -79,7 +88,7 @@ class Pedido
                 INSERT INTO pedidos
                     (usuario_id, numero_pedido, valor_produtos, valor_frete, valor_desconto, valor_total, valor_comissao_total, status, previsao_entrega, endereco_id)
                 VALUES
-                    (:usuario_id, :numero_pedido, :valor_produtos, :valor_frete, :valor_desconto, :valor_total, :valor_comissao_total, 'Pago', :previsao_entrega, :endereco_id)
+                    (:usuario_id, :numero_pedido, :valor_produtos, :valor_frete, :valor_desconto, :valor_total, :valor_comissao_total, :status_pedido, :previsao_entrega, :endereco_id)
             ");
             $stmtPedido->execute([
                 ':usuario_id' => $usuarioId,
@@ -89,27 +98,30 @@ class Pedido
                 ':valor_desconto' => $valorDesconto,
                 ':valor_total' => $valorTotal,
                 ':valor_comissao_total' => $valorComissaoTotal,
+                ':status_pedido' => $statusPedido,
                 ':previsao_entrega' => $previsaoEntrega,
                 ':endereco_id' => $enderecoId,
             ]);
             $pedidoId = (int) $this->pdo->lastInsertId();
 
-            $this->registrarHistoricoPago($pedidoId);
+            $this->registrarHistoricoInicial($pedidoId, $aprovarAgora);
             $this->inserirItensPedido($pedidoId, $itensValidados);
 
-            // Pagamento: não existe gateway real integrado ainda, então o
-            // pagamento é simulado como aprovado na hora — dá pra trocar
-            // essa parte por uma integração de verdade no futuro sem mexer
-            // no resto do fluxo.
+            // Pagamento: não existe gateway real integrado ainda. No modo
+            // demonstração ele é simulado como aprovado na hora; fora dele
+            // fica "Pendente" até alguém confirmar — dá pra trocar essa parte
+            // por uma integração de verdade sem mexer no resto do fluxo.
             $stmtPagamento = $this->pdo->prepare("
                 INSERT INTO pagamentos (pedido_id, forma_pagamento_id, valor, status, codigo_transacao, data_pagamento)
-                VALUES (:pedido_id, :forma_pagamento_id, :valor, 'Aprovado', :codigo_transacao, NOW())
+                VALUES (:pedido_id, :forma_pagamento_id, :valor, :status_pagamento, :codigo_transacao, :data_pagamento)
             ");
             $stmtPagamento->execute([
                 ':pedido_id' => $pedidoId,
                 ':forma_pagamento_id' => $formaPagamentoId,
                 ':valor' => $valorTotal,
-                ':codigo_transacao' => 'SIMULADO-' . strtoupper(bin2hex(random_bytes(5))),
+                ':status_pagamento' => $aprovarAgora ? 'Aprovado' : 'Pendente',
+                ':codigo_transacao' => ($aprovarAgora ? 'SIMULADO-' : 'PENDENTE-') . strtoupper(bin2hex(random_bytes(5))),
+                ':data_pagamento' => $aprovarAgora ? date('Y-m-d H:i:s') : null,
             ]);
 
             if ($cupom !== null) {
@@ -202,7 +214,7 @@ class Pedido
         return min($valorDesconto, $valorProdutos);
     }
 
-    private function registrarHistoricoPago(int $pedidoId): void
+    private function registrarHistoricoInicial(int $pedidoId, bool $pagamentoAprovado): void
     {
         try {
             $stmtStatus = $this->pdo->prepare(
@@ -210,8 +222,8 @@ class Pedido
             );
             $stmtStatus->execute([
                 ':pedido_id' => $pedidoId,
-                ':status' => 'Pago',
-                ':observacao' => 'Pagamento aprovado.',
+                ':status' => $pagamentoAprovado ? 'Pago' : 'Aguardando Pagamento',
+                ':observacao' => $pagamentoAprovado ? 'Pagamento aprovado.' : 'Pedido registrado. Aguardando confirmação do pagamento.',
             ]);
         } catch (Throwable $exception) {
             // Permite concluir compras durante a janela de aplicação da migration.
@@ -462,6 +474,78 @@ class Pedido
         return $stmt->fetchAll();
     }
 
+    /**
+     * Lista pedidos de todos os clientes para o administrador (confirmação de pagamento).
+     *
+     * @param string|null $status Filtra por status do pedido (null/'' = todos).
+     */
+    public function listarParaAdmin(?string $status = null, int $limite = 100): array
+    {
+        $limite = max(1, min($limite, 200));
+
+        $sql = "
+            SELECT
+                p.id,
+                p.numero_pedido,
+                p.status,
+                p.valor_total,
+                p.criado_em,
+                u.nome AS cliente_nome,
+                u.sobrenome AS cliente_sobrenome,
+                u.email AS cliente_email,
+                (SELECT fp.nome
+                   FROM pagamentos pg
+                   INNER JOIN formas_pagamento fp ON fp.id = pg.forma_pagamento_id
+                  WHERE pg.pedido_id = p.id
+                  ORDER BY pg.id DESC LIMIT 1) AS forma_pagamento_nome,
+                (SELECT pg2.status FROM pagamentos pg2 WHERE pg2.pedido_id = p.id ORDER BY pg2.id DESC LIMIT 1) AS pagamento_status,
+                (SELECT COALESCE(SUM(pi.quantidade), 0) FROM pedido_itens pi WHERE pi.pedido_id = p.id) AS total_itens
+            FROM pedidos p
+            INNER JOIN usuarios u ON u.id = p.usuario_id
+        ";
+
+        $parametros = [];
+        if ($status !== null && $status !== '') {
+            $sql .= ' WHERE p.status = :status';
+            $parametros[':status'] = $status;
+        }
+
+        $sql .= " ORDER BY p.criado_em DESC, p.id DESC LIMIT {$limite}";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($parametros);
+
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Quantos pedidos esperam confirmação de pagamento e quanto dinheiro isso representa.
+     *
+     * @return array{quantidade: int, valor: float}
+     */
+    public function resumoAguardandoPagamento(): array
+    {
+        $linha = $this->pdo->query("
+            SELECT COUNT(*) AS quantidade, COALESCE(SUM(valor_total), 0) AS valor
+            FROM pedidos
+            WHERE status = 'Aguardando Pagamento'
+        ")->fetch();
+
+        return [
+            'quantidade' => (int) ($linha['quantidade'] ?? 0),
+            'valor' => (float) ($linha['valor'] ?? 0),
+        ];
+    }
+
+    public function statusAtual(int $pedidoId): ?string
+    {
+        $stmt = $this->pdo->prepare('SELECT status FROM pedidos WHERE id = :id');
+        $stmt->execute([':id' => $pedidoId]);
+        $status = $stmt->fetchColumn();
+
+        return $status === false ? null : (string) $status;
+    }
+
     public function atualizarStatus(int $pedidoId, string $status, string $observacao = ''): bool
     {
         $validos = ['Aguardando Pagamento', 'Pago', 'Separação', 'Enviado', 'Entregue', 'Cancelado'];
@@ -488,6 +572,25 @@ class Pedido
                 ':status' => $status,
                 ':observacao' => $observacao ?: 'Status atualizado.',
             ]);
+            // Cancelar um pedido que ainda NÃO foi pago: devolve o estoque (o gatilho do
+            // banco desconta ao inserir os itens) e recusa o pagamento pendente.
+            if ($status === 'Cancelado' && $pedido['status'] === 'Aguardando Pagamento') {
+                $this->pdo->prepare('
+                    UPDATE estoque e
+                    INNER JOIN (
+                        SELECT produto_id, SUM(quantidade) AS quantidade
+                        FROM pedido_itens
+                        WHERE pedido_id = :id
+                        GROUP BY produto_id
+                    ) itens ON itens.produto_id = e.produto_id
+                    SET e.quantidade = e.quantidade + itens.quantidade
+                ')->execute([':id' => $pedidoId]);
+                $this->pdo->prepare("UPDATE pagamentos SET status = 'Recusado' WHERE pedido_id = :id AND status = 'Pendente'")->execute([':id' => $pedidoId]);
+            }
+            // Confirmar o pedido como "Pago" também aprova o pagamento que estava pendente.
+            if ($status === 'Pago') {
+                $this->pdo->prepare("UPDATE pagamentos SET status = 'Aprovado', data_pagamento = NOW() WHERE pedido_id = :id AND status = 'Pendente'")->execute([':id' => $pedidoId]);
+            }
             $this->pdo->commit();
             (new Notificacao())->criar((int) $pedido['usuario_id'], 'Pedido atualizado', 'O pedido #' . $pedidoId . ' agora está: ' . $status . '.', 'Pedido', 'pedido_confirmado.php?id=' . $pedidoId, enviarEmail: true);
             return true;

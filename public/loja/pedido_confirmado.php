@@ -17,6 +17,7 @@ $pedidoModel = new Pedido();
 $pedidoId = (int) ($_GET['id'] ?? 0);
 $pedido = $pedidoModel->buscarPorId($pedidoId, (int) $_SESSION['usuario_id']);
 $statusHistorico = $pedido ? $pedidoModel->listarStatusHistorico($pedidoId, (int) $_SESSION['usuario_id']) : [];
+$aguardandoPagamento = $pedido && ($pedido['status'] ?? '') === 'Aguardando Pagamento';
 
 ?>
 <!DOCTYPE html>
@@ -63,12 +64,12 @@ $statusHistorico = $pedido ? $pedidoModel->listarStatusHistorico($pedidoId, (int
         <?php else: ?>
 
             <div class="text-center mb-4">
-                <i class="bi bi-check-circle-fill text-success" style="font-size:4rem;"></i>
-                <h1 class="fw-bold mt-3">Pedido confirmado!</h1>
+                <i class="bi <?= $aguardandoPagamento ? 'bi-hourglass-split text-warning' : 'bi-check-circle-fill text-success' ?>" style="font-size:4rem;"></i>
+                <h1 class="fw-bold mt-3"><?= $aguardandoPagamento ? 'Pedido registrado!' : 'Pedido confirmado!' ?></h1>
                 <p class="text-muted">
                     Número do pedido: <strong>#<?= htmlspecialchars($pedido['numero_pedido']) ?></strong>
                 </p>
-                <span class="badge bg-success fs-6">
+                <span class="badge <?= $aguardandoPagamento ? 'bg-warning text-dark' : 'bg-success' ?> fs-6">
                     <i class="bi bi-check2"></i>
                     <?= htmlspecialchars($pedido['status']) ?>
                 </span>
@@ -176,7 +177,7 @@ $statusHistorico = $pedido ? $pedidoModel->listarStatusHistorico($pedidoId, (int
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between fs-5 fw-bold">
-                                <span>Total pago</span>
+                                <span><?= $aguardandoPagamento ? 'Total a pagar' : 'Total pago' ?></span>
                                 <span>R$ <?= number_format((float) $pedido['valor_total'], 2, ',', '.') ?></span>
                             </div>
                             <p class="text-muted small mb-0 mt-2">

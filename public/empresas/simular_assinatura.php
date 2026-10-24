@@ -22,6 +22,17 @@ if (!isset($_SESSION['usuario_id']) || $planoId <= 0 || ($empresaId <= 0 && $pre
     exit();
 }
 
+// Sem gateway de pagamento real, trocar de plano aqui NÃO cobra nada (e ainda
+// reinicia o período de teste). Em produção só administrador/suporte técnico
+// ou o modo demonstração (PAGAMENTO_SIMULADO=true) podem usar esta simulação.
+if (!PagamentoSimulado::usuarioPodeSimular($empresaId)) {
+    Flash::erro(PagamentoSimulado::mensagemIndisponivel());
+    Url::redirecionar(
+        Url::pagina('planos.php') . '?' . ($empresaId > 0 ? 'empresa_id=' . $empresaId : 'prestador_id=' . $prestadorId)
+    );
+    exit();
+}
+
 $plano = (new PlanoController())->buscarPorId($planoId);
 
 if (!$plano || !$plano['ativo']) {
@@ -91,7 +102,8 @@ if ($empresaId > 0) {
 
     } catch (Exception $e) {
         $pdo->rollBack();
-        die("Erro na simulação de assinatura: " . $e->getMessage());
+        error_log('[simular_assinatura:empresa] ' . $e->getMessage());
+        die("Não foi possível atualizar o plano agora. Tente novamente em instantes.");
     }
 
     exit;
@@ -149,5 +161,6 @@ try {
 
 } catch (Exception $e) {
     $pdo->rollBack();
-    die("Erro na simulação de assinatura: " . $e->getMessage());
+    error_log('[simular_assinatura:prestador] ' . $e->getMessage());
+    die("Não foi possível atualizar o plano agora. Tente novamente em instantes.");
 }

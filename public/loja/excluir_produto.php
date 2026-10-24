@@ -11,6 +11,14 @@ if (!isset($_SESSION["usuario_id"])) {
     exit;
 }
 
+// Ação que altera dados: só aceita POST com token CSRF (nunca por link GET).
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    Url::redirecionar(Url::pagina('meus_produtos.php'));
+    exit;
+}
+
+Middleware::exigirCsrfValido();
+
 require_once "../../app/Controllers/EmpresaController.php";
 require_once "../../app/Controllers/ProdutoController.php";
 require_once "../../app/Helpers/EmpresaAcesso.php";
@@ -21,8 +29,8 @@ $produtoController  = new ProdutoController();
 $pdo = Database::conectar();
 
 $usuarioId = (int) $_SESSION["usuario_id"];
-$produtoId = (int) ($_GET["id"] ?? 0);
-$empresaId = (int) ($_GET["empresa_id"] ?? 0);
+$produtoId = (int) ($_POST["id"] ?? 0);
+$empresaId = (int) ($_POST["empresa_id"] ?? 0);
 
 /*
 |--------------------------------------------------------------------------

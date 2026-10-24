@@ -70,11 +70,30 @@ Toda notificação aparece no sino e dispara push. Ela só vira **e-mail** quand
 - **Serviços de empresas e prestadores:** novo pedido e cancelamento (empresa), mudança de status (tutor), nova solicitação (prestador) e orçamento recebido (tutor).
 - **Adoção:** novo pedido (dono do pet), aprovação e recusa (solicitante).
 - **Moderação:** resultado da moderação de campanha e de parceria.
-- **Suporte e contato:** novo chamado (administradores), resposta do suporte ao usuário e nova mensagem do formulário de contato (administradores).
+- **Suporte:** novo chamado (administradores) e resposta do suporte ao usuário. (O formulário de contato público tem e-mail próprio: ver "Contatos públicos e formulário de contato".)
 
 Ficam **só no sino e no push**: nova mensagem de conversa, pet favoritado, alertas de pet perdido, novos apoios em campanha, avisos de pedido compartilhado a empresas e respostas em chamado dirigidas a administradores. Para incluir ou tirar um evento, acrescente ou remova `enviarEmail: true` na chamada de `criar(...)` correspondente.
 
 O link do e-mail e do push é resolvido por `Notificacao::resolverLink()`: aceita nome de página (`minhas_consultas.php?id=1`), caminho (`/public/...`) ou URL completa, e devolve um endereço que abre. No e-mail vai com o domínio (da requisição ou da `APP_URL`).
+
+## Contatos públicos e formulário de contato
+
+Os canais que o site mostra ao público vêm do `.env`, lidos por `app/Helpers/Contato.php`. **Nada fica escrito no código**, e o que não estiver configurado simplesmente não aparece (em vez de mostrar um canal falso):
+
+| Variável | Onde aparece |
+| --- | --- |
+| `EMAIL_CONTATO` | Cartão de e-mail da página de contato e destino das mensagens do formulário. Use uma caixa que você realmente lê. |
+| `EMAIL_PRIVACIDADE` | Canal de dados pessoais (LGPD) da política de privacidade. Se vazio, usa `EMAIL_CONTATO`; sem nenhum dos dois, a página aponta para o formulário. |
+| `WHATSAPP_CONTATO` | Botão "Chamar no WhatsApp" (número com DDD, ex.: `31999998888`; o 55 é acrescentado). |
+| `WHATSAPP_HORARIO` | Texto do horário de atendimento (padrão: segunda a sexta, das 9h às 18h). |
+
+Ao enviar o formulário (`public/contato.php`, inclusive o pedido de banho e tosa):
+
+- A mensagem é salva em "Mensagens de contato" e ganha um **número de protocolo**, mostrado na tela.
+- A equipe recebe **um** e-mail em `EMAIL_CONTATO`, com o protocolo no assunto e o **Reply-To** apontando para quem escreveu: basta clicar em "Responder". Administradores também recebem o aviso no sino e no push.
+- Quem escreveu recebe uma **confirmação por e-mail** com o protocolo e o resumo (no máximo 2 por hora para o mesmo e-mail).
+- O campo opcional **Telefone / WhatsApp** é validado e vai junto na mensagem. Na tela de sucesso e na confirmação há um botão do WhatsApp com o resumo já escrito.
+- No painel "Mensagens de contato", cada mensagem tem **Responder por e-mail** (assunto e protocolo prontos) e, se a pessoa deixou telefone, **Chamar no WhatsApp**.
 
 ## Confirmação de e-mail
 
@@ -157,7 +176,7 @@ Regras para as telas internas funcionarem do celular (360-440 px) ao desktop sem
 
 - Largura mínima fixa em bloco flexível: use `min-width: min(320px, 100%)`, nunca `min-width: 320px`.
 - Linhas `display:flex` com campo e botão: acrescente `flex-wrap: wrap`. Grupos de abas (`btn-group`) já quebram de linha no celular por regra global.
-- Tabelas: use `class="tabela-pets tabela-cartao-mobile"`, `data-col="nome|foto|acoes"` na célula principal e `data-th="Rótulo"` nas demais. No celular cada linha vira um cartão; no desktop nada muda.
+- Tabelas: use `class="tabela-pets tabela-cartao-mobile"`, `data-col="nome|foto|acoes"` na célula principal e `data-th="Rótulo"` nas demais. No celular cada linha vira um cartão; no desktop nada muda. Nas páginas com layout próprio do Bootstrap (carrinho, Meus Pedidos), use `class="table tabela-cartoes"` com os mesmos atributos: o estilo está no `style.css`.
 - O conteúdo principal (`.conteudo`, `main.container`) usa `width:auto` para respeitar a barra lateral de 240 px em notebooks de 1280-1366 px.
 
 Para conferir, abra a tela no DevTools em 440 px, 360 px e 1280 px: a página não deve ter rolagem horizontal. 320 px (aparelhos muito antigos) é atendido em melhor esforço.

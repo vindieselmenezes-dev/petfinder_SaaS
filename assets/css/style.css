@@ -1733,6 +1733,15 @@ img.produto-card-img {
     color: #212529;
 }
 
+/* Selos de loja que ainda não existem: parecem botões, mas não são clicáveis. */
+.btn-app-em-breve,
+.btn-app-em-breve:hover {
+    opacity: .55;
+    cursor: default;
+    pointer-events: none;
+    background: #fff;
+}
+
 /* ===== Pilha de pets (grupos de 5 no card de adoção) ===== */
 .pilha-pets-card {
     all: unset;
@@ -1845,5 +1854,85 @@ img.produto-card-img {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* ==========================================================
+   TABELA DO BOOTSTRAP EM CARTÕES NO CELULAR
+   Usada no carrinho e em Meus Pedidos: cada linha vira um cartão, sem
+   rolagem lateral. Marque a tabela com .tabela-cartoes, a célula principal
+   com data-col="nome", a de botões com data-col="acoes" e as demais com
+   data-th="Rótulo".
+   ========================================================== */
+@media (max-width: 767.98px) {
+
+    .table-responsive:has(> .tabela-cartoes),
+    .pedidos-table-scroll {
+        overflow: visible !important;
+    }
+
+    .tabela-cartoes,
+    .pedidos-table-scroll .tabela-cartoes {
+        min-width: 0 !important;
+    }
+
+    .tabela-cartoes,
+    .tabela-cartoes tbody,
+    .tabela-cartoes tr,
+    .tabela-cartoes td {
+        display: block;
+        width: 100%;
+    }
+
+    .tabela-cartoes thead {
+        display: none;
+    }
+
+    .tabela-cartoes tr {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .tabela-cartoes td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-width: 0 !important;
+        padding: 6px 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .tabela-cartoes td::before {
+        content: attr(data-th);
+        flex: 0 0 auto;
+        font-weight: 600;
+        color: #6c757d;
+        text-align: left;
+    }
+
+    .tabela-cartoes td[data-col="nome"] {
+        justify-content: flex-start;
+        text-align: left;
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
+
+    .tabela-cartoes td[data-col="nome"]::before,
+    .tabela-cartoes td[data-col="acoes"]::before {
+        content: none;
+    }
+
+    .tabela-cartoes td[data-col="acoes"] {
+        justify-content: flex-end;
+        padding-top: 10px !important;
     }
 }

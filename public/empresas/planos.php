@@ -17,6 +17,10 @@ $prestadorId = (int) ($_GET['prestador_id'] ?? 0);
 // pode "renovar" o período de teste de graça escolhendo Grátis de novo.
 $exibindoParaEntidadeExistente = $empresaId > 0 || $prestadorId > 0;
 
+// Sem gateway de pagamento real, a contratação online fica fechada em produção
+// (só suporte/administrador ou modo demonstração conseguem simular a troca).
+$podeContratarPlano = PagamentoSimulado::usuarioPodeSimular($empresaId);
+
 ?>
 
 <!DOCTYPE html>
@@ -122,6 +126,10 @@ $exibindoParaEntidadeExistente = $empresaId > 0 || $prestadorId > 0;
                                 <?php if ($plano['slug'] === 'gratis' && $exibindoParaEntidadeExistente): ?>
                                     <button class="btn btn-outline-secondary w-100" disabled>
                                         Já utilizado no cadastro
+                                    </button>
+                                <?php elseif (($empresaId > 0 || $prestadorId > 0) && !$podeContratarPlano): ?>
+                                    <button class="btn btn-outline-secondary w-100" disabled>
+                                        Contratação online em breve
                                     </button>
                                 <?php elseif ($empresaId > 0): ?>
                                     <a href="simular_assinatura.php?empresa_id=<?= $empresaId ?>&plano_id=<?= (int) $plano['id'] ?>"

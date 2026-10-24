@@ -35,8 +35,18 @@ class Mailer
             || Env::get('APP_ENV') === 'local';
     }
 
-    public static function enviar(string $destinatario, string $assunto, string $corpoHtml): bool
+    /**
+     * @param string|null $responderPara E-mail para onde vai a resposta (Reply-To).
+     *        Usado quando quem lê não é quem escreveu: o formulário de contato manda
+     *        o e-mail para a caixa da equipe, e "Responder" tem que ir para o visitante.
+     */
+    public static function enviar(string $destinatario, string $assunto, string $corpoHtml, ?string $responderPara = null): bool
     {
+        // Valida aqui: o endereço vem de um formulário público (evita injeção de cabeçalho).
+        if ($responderPara !== null && !filter_var($responderPara, FILTER_VALIDATE_EMAIL)) {
+            $responderPara = null;
+        }
+
         self::registrarLog($destinatario, $assunto, $corpoHtml);
 
         if (Env::get('EMAIL_ENVIO') !== '1' && Env::get('EMAIL_NOTIFICACOES') !== '1') {
@@ -46,10 +56,10 @@ class Mailer
         $autoload = __DIR__ . '/../../vendor/autoload.php';
         if (is_file($autoload) && class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
             require_once $autoload;
-            return self::enviarViaSmtp($destinatario, $assunto, $corpoHtml);
+            return self::enviarViaSmtp($destinatario, $assunto, $corpoHtml, $responderPara);
         }
 
-        return self::enviarViaMail($destinatario, $assunto, $corpoHtml);
+        return self::enviarViaMail($destinatario, $assunto, $corpoHtml, $responderPara);
     }
 
     private static function registrarLog(string $destinatario, string $assunto, string $corpoHtml): void
@@ -86,7 +96,7 @@ class Mailer
         file_put_contents($diretorioLogs . '/emails.log', $linha, FILE_APPEND);
     }
 
-    private static function enviarViaSmtp(string $destinatario, string $assunto, string $corpoHtml): bool
+    private static function enviarViaSmtp(string $destinatario, string $assunto, string $corpoHtml, ?string $responderPara = null): bool
     {
         $mailer = new PHPMailer\PHPMailer\PHPMailer(true);
         try {
@@ -102,6 +112,9 @@ class Mailer
             $mailer->CharSet = 'UTF-8';
             $mailer->setFrom(Env::get('EMAIL_REMETENTE') ?: 'no-reply@petfinder.local', 'EcoSistemPet');
             $mailer->addAddress($destinatario);
+            if ($responderPara !== null) {
+                $mailer->addReplyTo($responderPara);
+            }
             $mailer->isHTML(true);
             $mailer->Subject = $assunto;
             $mailer->Body = $corpoHtml;
@@ -112,7 +125,7 @@ class Mailer
         }
     }
 
-    private static function enviarViaMail(string $destinatario, string $assunto, string $corpoHtml): bool
+    private static function enviarViaMail(string $destinatario, string $assunto, string $corpoHtml, ?string $responderPara = null): bool
     {
         $remetente = Env::get('EMAIL_REMETENTE') ?: 'no-reply@petfinder.local';
         $cabecalhos = [
@@ -120,6 +133,10 @@ class Mailer
             'MIME-Version: 1.0',
             'Content-Type: text/html; charset=UTF-8',
         ];
+
+        if ($responderPara !== null) {
+            $cabecalhos[] = 'Reply-To: ' . $responderPara;
+        }
 
         return mail($destinatario, $assunto, $corpoHtml, implode("\r\n", $cabecalhos));
     }

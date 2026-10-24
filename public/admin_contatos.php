@@ -125,6 +125,29 @@ require_once __DIR__ . '/../app/Includes/menu.php';
 
                         <p class="mb-0"><?= nl2br(htmlspecialchars($mensagem['mensagem'])) ?></p>
 
+                        <?php
+                        // Atalhos de resposta: e-mail já com assunto/protocolo e, se a pessoa deixou
+                        // telefone no formulário, WhatsApp com a saudação pronta.
+                        $protocoloMsg = (int) $mensagem['id'];
+                        $assuntoResposta = 'Re: ' . ($mensagem['assunto'] !== '' ? $mensagem['assunto'] : 'Sua mensagem') . ' (protocolo #' . $protocoloMsg . ')';
+                        $corpoResposta = 'Olá, ' . $mensagem['nome'] . "!\n\n\n---\nSua mensagem:\n" . mb_substr((string) $mensagem['mensagem'], 0, 600);
+                        $telefoneMsg = preg_match('/Telefone\/WhatsApp:\s*([^\r\n]+)/u', (string) $mensagem['mensagem'], $achado)
+                            ? Contato::normalizarTelefone($achado[1]) : null;
+                        ?>
+                        <div class="d-flex flex-wrap gap-2 mt-3">
+                            <a class="btn btn-outline-primary btn-sm"
+                                href="mailto:<?= htmlspecialchars($mensagem['email']) ?>?subject=<?= rawurlencode($assuntoResposta) ?>&amp;body=<?= rawurlencode($corpoResposta) ?>">
+                                <i class="bi bi-reply"></i> Responder por e-mail
+                            </a>
+                            <?php if ($telefoneMsg !== null): ?>
+                                <a class="btn btn-outline-success btn-sm" target="_blank" rel="noopener"
+                                    href="https://wa.me/<?= $telefoneMsg ?>?text=<?= rawurlencode('Olá, ' . $mensagem['nome'] . '! Aqui é da equipe do EcoSistemPet, sobre a sua solicitação #' . $protocoloMsg . '.') ?>">
+                                    <i class="bi bi-whatsapp"></i> Chamar no WhatsApp
+                                </a>
+                            <?php endif; ?>
+                            <span class="small text-muted align-self-center">Protocolo #<?= $protocoloMsg ?></span>
+                        </div>
+
                     </div>
 
                 </div>

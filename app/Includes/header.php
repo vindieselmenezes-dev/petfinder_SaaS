@@ -17,7 +17,8 @@
     <link rel="stylesheet" href="<?= Url::asset('css/dashboard.css') ?>?v=20261019-largura">
 
     <!-- PWA -->
-    <link rel="manifest" href="<?= Url::raiz('manifest.json') ?>" crossorigin="use-credentials">
+    <!-- Manifest do app: tenta o manifest.json e, se a hospedagem o bloquear, gera em memória -->
+    <script src="<?= Url::asset('js/pwa-manifest.js') ?>"></script>
     <meta name="theme-color" content="#015C1E">
     <link rel="apple-touch-icon" href="<?= Url::asset('img/icons/apple-touch-icon.png') ?>">
     <meta name="mobile-web-app-capable" content="yes">

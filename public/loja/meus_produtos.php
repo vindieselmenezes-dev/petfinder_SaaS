@@ -140,8 +140,7 @@ require_once "../../app/Includes/menu.php";
                             <?php endif; ?>
 
                             <a class="btn-excluir"
-                                href="excluir_produto.php?id=<?= (int) $produto['id']; ?>&empresa_id=<?= $empresaId; ?>"
-                                onclick="return confirm('Deseja excluir este produto?');">
+                                <?= AcaoPost::atributos(Url::pagina('excluir_produto.php'), ['id' => (int) $produto['id'], 'empresa_id' => (int) $empresaId], 'Deseja excluir este produto?') ?>>
                                 🗑 Excluir
                             </a>
 
