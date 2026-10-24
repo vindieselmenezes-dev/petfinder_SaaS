@@ -2,8 +2,9 @@
   "name": "EcoSistemPet",
   "short_name": "EcoSistemPet",
   "description": "Adoção, pets perdidos, clínicas, produtos e serviços para o seu pet em um só lugar.",
-  "start_url": "/petfinder-SaaS/index.html?pwa=1",
-  "scope": "/petfinder-SaaS/",
+  "id": "./",
+  "start_url": "./index.html?pwa=1",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#FFFFFF",
@@ -25,17 +26,17 @@
   "shortcuts": [
     {
       "name": "Pets para adoção",
-      "url": "/petfinder-SaaS/index.html?pwa=1#adocao",
+      "url": "./index.html?pwa=1#adocao",
       "icons": [{ "src": "assets/img/icons/icon-96v2.png", "sizes": "96x96" }]
     },
     {
       "name": "Pet perdido",
-      "url": "/petfinder-SaaS/public/pets/pets_perdidos.php",
+      "url": "./public/pets/pets_perdidos.php",
       "icons": [{ "src": "assets/img/icons/icon-96v2.png", "sizes": "96x96" }]
     },
     {
       "name": "Meu perfil",
-      "url": "/petfinder-SaaS/public/conta/meu_perfil.php",
+      "url": "./public/conta/meu_perfil.php",
       "icons": [{ "src": "assets/img/icons/icon-96v2.png", "sizes": "96x96" }]
     }
   ]

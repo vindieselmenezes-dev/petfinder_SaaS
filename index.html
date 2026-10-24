@@ -49,7 +49,8 @@
     <!-- PWA -->
     <!-- ========================= -->
 
-    <link rel="manifest" href="manifest.json">
+    <!-- Manifest do app: tenta o manifest.json e, se a hospedagem o bloquear, gera em memória -->
+    <script src="assets/js/pwa-manifest.js"></script>
 
     <meta name="theme-color" content="#015C1E">
 
@@ -480,33 +481,37 @@
                         <div class="d-flex flex-wrap gap-3">
 
                             <button type="button" id="btnInstalarApp" class="btn-app-download"
-                                style="display:none; border:none; cursor:pointer;">
+                                style="border:none; cursor:pointer;">
                                 <i class="bi bi-download fs-3"></i>
                                 <span class="text-start">
-                                    <small class="d-block text-muted" style="font-size:.7rem;">Instalar agora</small>
-                                    <strong>Adicionar à tela</strong>
+                                    <small id="btnInstalarDica" class="d-block text-muted" style="font-size:.7rem;">Passo a passo</small>
+                                    <strong>Instalar o app</strong>
                                 </span>
                             </button>
 
-                            <a href="public/em_breve.php?recurso=App EcoSistemPet (App Store)" id="btnAppStore"
-                                class="btn-app-download">
+                            <span id="btnAppStore" class="btn-app-download btn-app-em-breve" aria-disabled="true">
                                 <i class="bi bi-apple fs-3"></i>
                                 <span class="text-start">
-                                    <small class="d-block text-muted" style="font-size:.7rem;">Disponível na</small>
+                                    <small class="d-block text-muted" style="font-size:.7rem;">Em breve na</small>
                                     <strong>App Store</strong>
                                 </span>
-                            </a>
+                            </span>
 
-                            <a href="public/em_breve.php?recurso=App EcoSistemPet (Google Play)" id="btnGooglePlay"
-                                class="btn-app-download">
+                            <span id="btnGooglePlay" class="btn-app-download btn-app-em-breve" aria-disabled="true">
                                 <i class="bi bi-google-play fs-4"></i>
                                 <span class="text-start">
-                                    <small class="d-block text-muted" style="font-size:.7rem;">Disponível no</small>
+                                    <small class="d-block text-muted" style="font-size:.7rem;">Em breve no</small>
                                     <strong>Google Play</strong>
                                 </span>
-                            </a>
+                            </span>
 
                         </div>
+
+                        <p class="mt-3 mb-0 opacity-75 small">
+                            <i class="bi bi-info-circle"></i>
+                            Por enquanto o app ainda não está nas lojas: você instala direto pelo navegador,
+                            de graça e em poucos segundos.
+                        </p>
 
                         <p id="msgJaInstalado" class="mt-3 mb-0 opacity-75" style="display:none;">
                             <i class="bi bi-check-circle-fill"></i>
@@ -1945,27 +1950,106 @@
 
 
         <!-- ========================= -->
-        <!-- MODAL: instruções de instalação (iOS) -->
+        <!-- MODAL: passo a passo para instalar o app (mostra só o do aparelho da pessoa) -->
         <!-- ========================= -->
 
-        <div class="modal fade" id="modalInstalarIos" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
+        <div class="modal fade" id="modalInstalarApp" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="bi bi-apple"></i>
-                            Instalar no iPhone/iPad
+                            <i class="bi bi-download"></i>
+                            Como instalar o EcoSistemPet
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                     </div>
                     <div class="modal-body">
-                        <p>No iOS a instalação é feita direto pelo Safari, sem passar pela App Store:</p>
-                        <ol class="mb-0">
-                            <li class="mb-2">Abra este site no <strong>Safari</strong>.</li>
-                            <li class="mb-2">Toque no ícone de compartilhar <i class="bi bi-box-arrow-up"></i>.</li>
-                            <li class="mb-2">Escolha <strong>"Adicionar à Tela de Início"</strong>.</li>
-                            <li>Pronto! O ícone do EcoSistemPet aparece na sua tela como um app.</li>
-                        </ol>
+
+                        <div class="alert alert-warning" data-aviso-app style="display:none;">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            Você está num navegador <strong>dentro de outro app</strong> (Instagram, Facebook, WhatsApp...).
+                            Ele não consegue instalar. Toque nos três pontinhos (ou no ícone de compartilhar) e escolha
+                            <strong>"Abrir no navegador"</strong> (Chrome, Samsung Internet ou Safari) e depois siga os passos abaixo.
+                        </div>
+
+                        <p class="text-muted small">
+                            O app ainda não está nas lojas. A instalação é feita direto pelo navegador, é grátis e
+                            o ícone aparece na sua tela como qualquer outro app.
+                        </p>
+
+                        <div data-plataforma="android-chrome" style="display:none;">
+                            <h6><i class="bi bi-android2"></i> Android — Chrome</h6>
+                            <ol>
+                                <li class="mb-2">Toque no menu <strong>&#8942;</strong> (três pontinhos, no canto superior direito).</li>
+                                <li class="mb-2">Escolha <strong>"Instalar app"</strong> (ou <strong>"Adicionar à tela inicial"</strong>).</li>
+                                <li>Confirme em <strong>"Instalar"</strong>. Pronto!</li>
+                            </ol>
+                            <p class="small text-muted mb-0">Não apareceu a opção? Recarregue a página e tente de novo.</p>
+                        </div>
+
+                        <div data-plataforma="android-samsung" style="display:none;">
+                            <h6><i class="bi bi-android2"></i> Android — Samsung Internet</h6>
+                            <ol>
+                                <li class="mb-2">Toque no menu <strong>&#9776;</strong> (três linhas, na barra de baixo).</li>
+                                <li class="mb-2">Escolha <strong>"Adicionar página a"</strong> e depois <strong>"Tela inicial"</strong>.</li>
+                                <li>Confirme em <strong>"Adicionar"</strong>.</li>
+                            </ol>
+                            <p class="small text-muted mb-0">Se aparecer um ícone de instalar ao lado do endereço, pode tocar nele também.</p>
+                        </div>
+
+                        <div data-plataforma="android-firefox" style="display:none;">
+                            <h6><i class="bi bi-android2"></i> Android — Firefox</h6>
+                            <ol>
+                                <li class="mb-2">Toque no menu <strong>&#8942;</strong>.</li>
+                                <li class="mb-2">Escolha <strong>"Instalar"</strong> (ou <strong>"Adicionar à tela inicial"</strong>).</li>
+                                <li>Confirme para criar o ícone.</li>
+                            </ol>
+                        </div>
+
+                        <div data-plataforma="ios-safari" style="display:none;">
+                            <h6><i class="bi bi-apple"></i> iPhone / iPad — Safari</h6>
+                            <ol>
+                                <li class="mb-2">Toque no ícone de compartilhar <i class="bi bi-box-arrow-up"></i>.</li>
+                                <li class="mb-2">Role a lista e escolha <strong>"Adicionar à Tela de Início"</strong>.</li>
+                                <li>Toque em <strong>"Adicionar"</strong>. O ícone do EcoSistemPet aparece na tela.</li>
+                            </ol>
+                        </div>
+
+                        <div data-plataforma="ios-outro" style="display:none;">
+                            <h6><i class="bi bi-apple"></i> iPhone / iPad</h6>
+                            <p>No iPhone e no iPad a instalação funciona pelo <strong>Safari</strong>. Abra este site no Safari e siga:</p>
+                            <ol>
+                                <li class="mb-2">Toque no ícone de compartilhar <i class="bi bi-box-arrow-up"></i>.</li>
+                                <li class="mb-2">Escolha <strong>"Adicionar à Tela de Início"</strong>.</li>
+                                <li>Toque em <strong>"Adicionar"</strong>.</li>
+                            </ol>
+                        </div>
+
+                        <div data-plataforma="desktop" style="display:none;">
+                            <h6><i class="bi bi-laptop"></i> Computador — Chrome ou Edge</h6>
+                            <ol>
+                                <li class="mb-2">Procure o ícone de instalar <i class="bi bi-download"></i> no lado direito da barra de endereço e clique nele; ou</li>
+                                <li class="mb-2">Abra o menu <strong>&#8942;</strong> e escolha <strong>"Instalar EcoSistemPet"</strong> (às vezes em <em>"Transmitir, salvar e compartilhar"</em>).</li>
+                                <li>Confirme em <strong>"Instalar"</strong>.</li>
+                            </ol>
+                            <p class="small text-muted mb-0">Firefox e Safari no computador não instalam apps; use o Chrome ou o Edge.</p>
+                        </div>
+
+                        <div data-plataforma="nao-suportado" style="display:none;">
+                            <h6><i class="bi bi-exclamation-octagon"></i> Navegador sem suporte</h6>
+                            <p class="mb-0">
+                                Este navegador não consegue instalar o app (é o caso do Internet Explorer e de navegadores muito antigos).
+                                Abra este site no <strong>Chrome</strong>, <strong>Edge</strong> ou <strong>Samsung Internet</strong> (Android)
+                                ou no <strong>Safari</strong> (iPhone) e tente de novo.
+                            </p>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-link btn-sm p-0" data-ver-todos style="display:none;">
+                            Não é o seu aparelho? Ver todos os passos
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                     </div>
                 </div>
             </div>

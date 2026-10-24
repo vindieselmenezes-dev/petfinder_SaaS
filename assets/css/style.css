@@ -1733,6 +1733,15 @@ img.produto-card-img {
     color: #212529;
 }
 
+/* Selos de loja que ainda não existem: parecem botões, mas não são clicáveis. */
+.btn-app-em-breve,
+.btn-app-em-breve:hover {
+    opacity: .55;
+    cursor: default;
+    pointer-events: none;
+    background: #fff;
+}
+
 /* ===== Pilha de pets (grupos de 5 no card de adoção) ===== */
 .pilha-pets-card {
     all: unset;
