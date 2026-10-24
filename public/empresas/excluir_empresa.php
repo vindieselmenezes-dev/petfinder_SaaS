@@ -11,12 +11,20 @@ if (!isset($_SESSION["usuario_id"])) {
     exit;
 }
 
+// Ação que altera dados: só aceita POST com token CSRF (nunca por link GET).
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    Url::redirecionar(Url::pagina('minhas_empresas.php'));
+    exit;
+}
+
+Middleware::exigirCsrfValido();
+
 require_once "../../app/Controllers/EmpresaController.php";
 
 $controller = new EmpresaController();
 $usuarioId  = (int) $_SESSION["usuario_id"];
 
-$empresaId = (int) ($_GET["id"] ?? 0);
+$empresaId = (int) ($_POST["id"] ?? 0);
 
 if ($empresaId <= 0) {
     Url::redirecionar(Url::pagina('minhas_empresas.php'));

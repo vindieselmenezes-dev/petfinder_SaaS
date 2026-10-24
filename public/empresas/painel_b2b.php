@@ -118,17 +118,19 @@ include_once __DIR__ . '/../../app/Includes/menu.php';
     <?php endif; ?>
 
     <?php if ($podeGerenciarFaturamento): ?>
+        <?php if (PagamentoSimulado::usuarioPodeSimular((int) $empresaId)): ?>
         <div class="org-item" style="margin-bottom: 25px;">
             <strong style="display:block; margin-bottom:10px;">💳 Simulador de Faturamento (teste)</strong>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <a href="simular_faturamento.php?empresa_id=<?php echo $empresaId; ?>&status=Ativo" class="btn-acao"
+                <a <?= AcaoPost::atributos(Url::pagina('simular_faturamento.php'), ['empresa_id' => (int) $empresaId, 'status' => 'Ativo']) ?> class="btn-acao"
                     style="background:#2ecc71; color:white;">Marcar Ativo</a>
-                <a href="simular_faturamento.php?empresa_id=<?php echo $empresaId; ?>&status=Atrasado" class="btn-acao"
+                <a <?= AcaoPost::atributos(Url::pagina('simular_faturamento.php'), ['empresa_id' => (int) $empresaId, 'status' => 'Atrasado']) ?> class="btn-acao"
                     style="background:#f39c12; color:white;">Marcar Atrasado</a>
-                <a href="simular_faturamento.php?empresa_id=<?php echo $empresaId; ?>&status=Suspenso" class="btn-acao"
+                <a <?= AcaoPost::atributos(Url::pagina('simular_faturamento.php'), ['empresa_id' => (int) $empresaId, 'status' => 'Suspenso']) ?> class="btn-acao"
                     style="background:#e74c3c; color:white;">Marcar Suspenso</a>
             </div>
         </div>
+        <?php endif; ?>
 
         <div class="org-item" style="margin-bottom: 25px;">
             <strong style="display:block; margin-bottom:10px;">📦 Plano da Empresa</strong>

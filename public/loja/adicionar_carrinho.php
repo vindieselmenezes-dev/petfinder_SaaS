@@ -10,12 +10,9 @@ require_once __DIR__ . '/../../app/Helpers/Csrf.php';
 
 function voltarSeguro(?string $url): string
 {
-    // só aceita caminho relativo dentro do próprio site — nunca uma URL
-    // completa, pra não virar um open-redirect.
-    if (!$url || preg_match('#^(https?:)?//#i', $url) || str_starts_with($url, '\\')) {
-        return 'produtos.php';
-    }
-    return $url;
+    // só aceita caminho relativo dentro do próprio site (validação central em
+    // Url::caminhoLocalOuNull) — nunca uma URL completa, pra não virar open-redirect.
+    return Url::caminhoLocalOuNull($url) ?? 'produtos.php';
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !Csrf::validar($_POST['csrf_token'] ?? null)) {

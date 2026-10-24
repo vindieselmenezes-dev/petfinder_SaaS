@@ -107,5 +107,6 @@ try {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    die("Erro ao processar alerta e mensageria: " . $e->getMessage());
+    error_log('[processa_alerta] ' . $e->getMessage());
+    die("Não foi possível registrar o alerta agora. Tente novamente em instantes.");
 }

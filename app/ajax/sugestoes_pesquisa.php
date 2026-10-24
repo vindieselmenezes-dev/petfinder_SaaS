@@ -85,6 +85,7 @@ try {
     echo json_encode($rows);
 } catch (PDOException $e) {
     http_response_code(500);
-    // Em ambiente de desenvolvimento, retorne a mensagem de erro para facilitar debug
-    echo json_encode(['error' => $e->getMessage()]);
+    // O detalhe técnico fica só no log do servidor (nunca na resposta pública).
+    error_log('[sugestoes_pesquisa] ' . $e->getMessage());
+    echo json_encode(['error' => 'Não foi possível buscar sugestões agora.']);
 }

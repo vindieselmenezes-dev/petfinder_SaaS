@@ -187,7 +187,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                     Flash::sucesso("Conta e empresa criadas com sucesso! Complete seu perfil com fotos e horário de funcionamento.");
 
-                    if ($planoValido && (float) $planoValido["preco_mensal"] > 0) {
+                    // (O plano escolhido e o período de teste já foram gravados em
+                    // cadastrar(); a simulação só roda onde está liberada.)
+                    if ($planoValido && (float) $planoValido["preco_mensal"] > 0 && PagamentoSimulado::usuarioPodeSimular((int) $novaEmpresaId)) {
                         header("Location: simular_assinatura.php?empresa_id=" . $novaEmpresaId . "&plano_id=" . (int) $planoValido["id"]);
                         exit;
                     }

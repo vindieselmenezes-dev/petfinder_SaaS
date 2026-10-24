@@ -154,7 +154,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Plano pago escolhido no cadastro: aplica o trial via o mesmo
             // fluxo simulado de assinatura já usado no painel (calcula
             // plano_expira_em e grava na auditoria).
-            if ($planoValido && (float) $planoValido["preco_mensal"] > 0) {
+            // (O plano escolhido e o período de teste já foram gravados em
+            // cadastrar(); a simulação só roda onde está liberada.)
+            if ($planoValido && (float) $planoValido["preco_mensal"] > 0 && PagamentoSimulado::usuarioPodeSimular((int) $novoId)) {
                 header("Location: simular_assinatura.php?empresa_id=" . $novoId . "&plano_id=" . (int) $planoValido["id"]);
                 exit;
             }

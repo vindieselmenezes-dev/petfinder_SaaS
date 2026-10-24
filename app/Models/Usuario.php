@@ -89,11 +89,11 @@ class Usuario
 
     } catch (Throwable $e) {
 
-        die(
-            "<h2>ERRO DO BANCO</h2><pre>" .
-            $e->getMessage() .
-            "</pre>"
-        );
+        // O detalhe técnico vai só para o log do servidor; quem chamou
+        // mostra uma mensagem amigável ao ver o retorno "false".
+        error_log('[Usuario::cadastrar] ' . $e->getMessage());
+
+        return false;
 
     }
 }

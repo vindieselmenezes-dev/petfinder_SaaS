@@ -393,8 +393,7 @@ $tituloPagina = "Editar Empresa";
                                 <img src="<?= htmlspecialchars(Foto::url($imagem['imagem'], 'empresas')) ?>" width="90"
                                     height="90" style="object-fit:cover; border-radius:8px;" alt="Foto da galeria">
 
-                                <a href="excluir_imagem_empresa.php?empresa_id=<?= $empresaId ?>&imagem_id=<?= (int) $imagem['id'] ?>"
-                                    onclick="return confirm('Remover essa foto da galeria?');"
+                                <a <?= AcaoPost::atributos(Url::pagina('excluir_imagem_empresa.php'), ['empresa_id' => (int) $empresaId, 'imagem_id' => (int) $imagem['id']], 'Remover essa foto da galeria?') ?>
                                     style="position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:14px;">
                                     ×
                                 </a>

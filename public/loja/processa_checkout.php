@@ -40,8 +40,8 @@ if ($formaPagamentoId <= 0) {
 $enderecoModel = new Endereco();
 $endereco = $enderecoModel->buscarPorUsuario((int) $_SESSION['usuario_id']);
 
-if (!$endereco) {
-    $_SESSION['checkout_erro'] = 'Cadastre um endereço de entrega antes de continuar.';
+if (!Endereco::estaCompleto($endereco)) {
+    $_SESSION['checkout_erro'] = 'Cadastre (ou complete com rua e número) um endereço de entrega antes de continuar.';
     Url::redirecionar(Url::pagina('checkout.php'));
     exit;
 }

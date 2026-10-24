@@ -123,5 +123,6 @@ try {
 
 } catch (Exception $e) {
     $pdo->rollBack();
-    die("Erro crítico ao processar prontuário: " . $e->getMessage());
+    error_log('[processa_prontuario] ' . $e->getMessage());
+    die("Não foi possível salvar o prontuário agora. Tente novamente em instantes.");
 }

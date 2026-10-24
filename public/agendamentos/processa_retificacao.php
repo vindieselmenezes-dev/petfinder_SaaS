@@ -85,5 +85,6 @@ try {
 
 } catch (Exception $e) {
     $pdo->rollBack();
-    die("Erro crítico ao retificar prontuário: " . $e->getMessage());
+    error_log('[processa_retificacao] ' . $e->getMessage());
+    die("Não foi possível registrar a retificação do prontuário agora. Tente novamente em instantes.");
 }
