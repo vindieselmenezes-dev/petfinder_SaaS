@@ -58,8 +58,8 @@ if (isset($_SESSION['usuario_id'])) {
                                 <?= htmlspecialchars($pet["nome"] ?? 'Sem Nome'); ?> 
                             </td>
                             <td data-col="especie" data-th="Espécie / Raça" style="padding: 15px; color: #555;">
-                                <?= htmlspecialchars($pet["especie_nome"] ?? 'Não informada'); ?> 
-                                <br><small style="color: #999;"><?= htmlspecialchars($pet["raca_nome"] ?? 'Mestiço / Vira-lata'); ?></small>
+                                <?= htmlspecialchars($pet["especie"] ?? 'Não informada'); ?> 
+                                <br><small style="color: #999;"><?= htmlspecialchars($pet["raca"] ?? 'Mestiço / Vira-lata'); ?></small>
                             </td>
                             <td data-col="cidade" data-th="Cidade" style="padding: 15px; color: #777;">
                                 📍 <?= htmlspecialchars($pet["cidade"] ?? 'Não informada'); ?> 
