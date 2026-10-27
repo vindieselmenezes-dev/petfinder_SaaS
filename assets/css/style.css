@@ -779,6 +779,63 @@ html.pwa-mais-aberto body {
     }
 }
 
+/* ==========================================================
+   MENU MOBILE/TABLET (< 1200px): ALTURA, ROLAGEM E MENU DE PERFIL
+   - O menu aberto passa a ter altura máxima = tela visível e rola por
+     dentro; antes estourava a tela (principalmente na horizontal) e
+     escondia os botões e o menu de perfil.
+   - O menu de perfil deixa de ser um popup flutuante alinhado à direita
+     do botão (que vazava pela esquerda) e passa a abrir "em linha",
+     ocupando a largura do menu.
+   ========================================================== */
+
+@media(max-width:1199.98px) {
+    #header .navbar-collapse {
+        max-height: calc(100vh - 120px);
+        max-height: calc(100dvh - 120px - env(safe-area-inset-bottom, 0px));
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #header #btnHeaderPerfil:has(> .dropdown-menu.show) {
+        flex: 1 0 100%;
+    }
+
+    #header #btnHeaderPerfil .dropdown-menu {
+        position: static !important;
+        inset: auto !important;
+        transform: none !important;
+        width: 100%;
+        min-width: 0;
+        margin: 8px 0 0 !important;
+        border: 1px solid rgba(0, 0, 0, .08);
+        box-shadow: none;
+    }
+}
+
+/* Entre 1200px e 1279px o menu já é o de desktop, mas com todos os ícones
+   (favoritos, carrinho, notificações, perfil) ele estourava a largura. */
+@media(min-width:1200px) and (max-width:1279.98px) {
+    #header .navbar-brand small {
+        display: none;
+    }
+
+    #header .navbar-nav .nav-link {
+        padding-left: .35rem;
+        padding-right: .35rem;
+    }
+
+    #header .navbar .d-flex.align-items-center.gap-2 {
+        gap: .35rem !important;
+    }
+
+    #header .navbar .d-flex.align-items-center.gap-2 .btn {
+        padding-left: .6rem;
+        padding-right: .6rem;
+    }
+}
+
 @media(max-width:768px) {
     .logo {
         width: 50px;
@@ -919,6 +976,14 @@ html.pwa-mais-aberto body {
     color: #fff;
     opacity: .95;
     margin-bottom: 0;
+}
+
+/* Tablet em pé (768-991px): 4 colunas estreitas; o número grande
+   ("1 milhão+") ultrapassava a coluna e gerava rolagem horizontal. */
+@media(min-width:768px) and (max-width:991.98px) {
+    #estatisticas h2 {
+        font-size: 2rem;
+    }
 }
 
 .hero-search {
@@ -1103,8 +1168,10 @@ img.produto-card-img {
 
 #veterinarios img {
     width: 100%;
-    height: 260px;
+    height: auto;
+    aspect-ratio: 4 / 3;
     object-fit: cover;
+    object-position: center 30%;
 }
 
 #veterinarios .card-body {
@@ -1150,9 +1217,6 @@ img.produto-card-img {
         height: 220px;
     }
 
-    #veterinarios img {
-        height: 220px;
-    }
 }
 
 @media(max-width:768px) {
@@ -1160,9 +1224,6 @@ img.produto-card-img {
         height: 200px;
     }
 
-    #veterinarios img {
-        height: 200px;
-    }
 
     #empresas-destaque h2,
     #veterinarios h2 {
@@ -1471,8 +1532,10 @@ img.produto-card-img {
 
 #blog img {
     width: 100%;
-    height: 220px;
+    height: auto;
+    aspect-ratio: 4 / 3;
     object-fit: cover;
+    object-position: center 30%;
 }
 
 #blog .card-body {
@@ -1530,6 +1593,16 @@ img.produto-card-img {
 #parceirosLogos img:hover {
     opacity: 1;
     transform: scale(1.08);
+}
+
+/* Imagem dos cards de campanha / evento / doação: proporção fixa em vez de
+   altura fixa, para não cortar topo e base em telas estreitas. */
+#parceirosCampanhas img.card-img-top {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: center 30%;
 }
 
 /* Cards de campanha / evento / doação */
@@ -1654,10 +1727,6 @@ img.produto-card-img {
         font-size: 2rem;
     }
 
-    #blog img {
-        height: 200px;
-    }
-
     #footer {
         text-align: center;
     }
@@ -1668,10 +1737,6 @@ img.produto-card-img {
 }
 
 @media(max-width:576px) {
-    #blog img {
-        height: 180px;
-    }
-
     #newsletter h2 {
         font-size: 1.8rem;
     }

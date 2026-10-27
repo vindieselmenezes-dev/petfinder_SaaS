@@ -13,7 +13,7 @@
  *   vem do escopo do service worker, então o arquivo é o mesmo nos dois.
  */
 
-const VERSION = "petfinder-v11";
+const VERSION = "petfinder-v16";
 const STATIC_CACHE = `${VERSION}-static`;
 const OFFLINE_URL = "offline.html";
 const BASE = new URL(self.registration.scope).pathname; // termina com "/"
@@ -33,7 +33,7 @@ self.addEventListener("install", (event) => {
         caches.open(STATIC_CACHE).then((cache) =>
             Promise.all(
                 STATIC_ASSETS.map((url) =>
-                    cache.add(url).catch(() => {
+                    cache.add(new Request(url, { cache: "reload" })).catch(() => {
                         /* arquivo ausente não derruba a instalação */
                     })
                 )
@@ -99,7 +99,7 @@ self.addEventListener("fetch", (event) => {
     if (isStaticAsset(url)) {
         event.respondWith(
             caches.match(request).then((cached) => {
-                const fetchPromise = fetch(request)
+                const fetchPromise = fetch(request, { cache: "no-cache" })
                     .then((response) => {
                         if (response.ok) {
                             const clone = response.clone();

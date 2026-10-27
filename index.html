@@ -90,7 +90,7 @@
     <!-- CSS -->
     <!-- ========================= -->
 
-    <link rel="stylesheet" href="assets/css/style.css?v=20261014-desinstalar">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261027-b">
 
 </head>
 
@@ -1643,7 +1643,7 @@
 
                     return '<div class="col-lg-4 col-md-6"><div class="card h-100 shadow-sm">' +
                         '<a href="' + link + '"><img src="' + imagem + '" class="card-img-top" ' +
-                        'style="height:190px;object-fit:cover;" alt="' + escapar(campanha.titulo) + '"></a>' +
+                        'alt="' + escapar(campanha.titulo) + '"></a>' +
                         '<div class="card-body d-flex flex-column">' +
                         '<span class="badge bg-dark align-self-start mb-2">' +
                         (rotulos[campanha.tipo] || '🐾 Ação') + '</span>' +
@@ -1896,26 +1896,16 @@
 
                         <div class="d-flex gap-3 fs-3">
 
-                            <!--
-                                TODO: trocar os href="#" abaixo pelos perfis reais
-                                do EcoSistemPet assim que existirem, e adicionar
-                                target="_blank" rel="noopener" (URL externa).
-                            -->
-
-                            <a href="#" class="text-light" aria-label="Facebook do EcoSistemPet" title="Facebook">
+                            <a href="https://www.facebook.com/profile.php?id=61595770881732" class="text-light" target="_blank" rel="noopener noreferrer" aria-label="Facebook do EcoSistemPet" title="Facebook">
                                 <i class="bi bi-facebook"></i>
                             </a>
 
-                            <a href="#" class="text-light" aria-label="Instagram do EcoSistemPet" title="Instagram">
+                            <a href="https://www.instagram.com/ecosistempet" class="text-light" target="_blank" rel="noopener noreferrer" aria-label="Instagram do EcoSistemPet" title="Instagram">
                                 <i class="bi bi-instagram"></i>
                             </a>
 
-                            <a href="#" class="text-light" aria-label="YouTube do EcoSistemPet" title="YouTube">
-                                <i class="bi bi-youtube"></i>
-                            </a>
-
-                            <a href="#" class="text-light" aria-label="LinkedIn do EcoSistemPet" title="LinkedIn">
-                                <i class="bi bi-linkedin"></i>
+                            <a href="https://www.tiktok.com/@sergiomenezes822" class="text-light" target="_blank" rel="noopener noreferrer" aria-label="TikTok do EcoSistemPet" title="TikTok">
+                                <i class="bi bi-tiktok"></i>
                             </a>
 
                         </div>
@@ -2071,7 +2061,7 @@
     <!-- PWA: registro do Service Worker + botões de instalar -->
     <!-- ========================= -->
 
-    <script src="assets/js/pwa.js"></script>
+    <script src="assets/js/pwa.js?v=20261027-aviso2"></script>
 
     <!-- ========================= -->
     <!-- JAVASCRIPT -->
@@ -2644,6 +2634,21 @@
         })();
     </script>
     <button class="pwa-more-backdrop" id="pwaMoreBackdrop" type="button" aria-label="Fechar menu de acessos"></button>
+    <script>
+        // Menu de perfil no celular/tablet: ao abrir, rola o menu para que ele apareça inteiro.
+        (function () {
+            var perfil = document.getElementById("btnHeaderPerfil");
+            if (!perfil) { return; }
+            perfil.addEventListener("shown.bs.dropdown", function () {
+                if (!window.matchMedia("(max-width: 1199.98px)").matches) { return; }
+                var menu = perfil.querySelector(".dropdown-menu");
+                if (menu && menu.scrollIntoView) {
+                    menu.scrollIntoView({ block: "nearest", behavior: "smooth" });
+                }
+            });
+        })();
+    </script>
+
     <section class="pwa-more-panel" id="pwaMorePanel" role="dialog" aria-modal="true" aria-labelledby="pwaMoreTitle"
         aria-hidden="true">
         <div class="pwa-more-header">
