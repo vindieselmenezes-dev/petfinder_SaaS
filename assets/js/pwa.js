@@ -62,6 +62,71 @@
         if (msgJaInstalado) msgJaInstalado.style.display = "block";
     }
 
+    // Aviso de sucesso que aparece na tela assim que a instalação termina.
+    var avisoJaMostrado = false;
+
+    function avisarInstalado() {
+        if (avisoJaMostrado) return;
+
+        // Se a pessoa saiu da página durante a instalação (comum no Android),
+        // espera ela voltar para mostrar o aviso — senão o tempo dele acabaria
+        // sem ninguém ver.
+        if (document.visibilityState !== "visible") {
+            var aoVoltar = function () {
+                if (document.visibilityState === "visible") {
+                    document.removeEventListener("visibilitychange", aoVoltar);
+                    avisarInstalado();
+                }
+            };
+            document.addEventListener("visibilitychange", aoVoltar);
+            return;
+        }
+
+        avisoJaMostrado = true;
+
+        var aviso = document.createElement("div");
+        aviso.id = "avisoAppInstalado";
+        aviso.setAttribute("role", "status");
+        aviso.setAttribute("aria-live", "polite");
+        aviso.style.cssText =
+            "position:fixed;left:50%;transform:translateX(-50%);" +
+            "bottom:calc(20px + env(safe-area-inset-bottom, 0px));" +
+            "z-index:100000;width:calc(100% - 32px);max-width:420px;" +
+            "background:#198754;color:#fff;border-radius:14px;padding:14px 16px;" +
+            "box-shadow:0 8px 24px rgba(0,0,0,.25);display:flex;gap:12px;" +
+            "align-items:flex-start;font-size:.95rem;line-height:1.35;";
+
+        var icone = document.createElement("i");
+        icone.className = "bi bi-check-circle-fill";
+        icone.style.cssText = "font-size:1.4rem;flex:0 0 auto;";
+
+        var texto = document.createElement("div");
+        texto.style.flex = "1 1 auto";
+        texto.innerHTML =
+            "<strong>App instalado com sucesso!</strong><br>" +
+            "Procure o ícone do EcoSistemPet na tela inicial do seu aparelho.";
+
+        var fechar = document.createElement("button");
+        fechar.type = "button";
+        fechar.setAttribute("aria-label", "Fechar aviso");
+        fechar.innerHTML = "&times;";
+        fechar.style.cssText =
+            "background:none;border:0;color:#fff;font-size:1.6rem;line-height:1;" +
+            "padding:0 4px;cursor:pointer;flex:0 0 auto;";
+        fechar.addEventListener("click", function () {
+            if (aviso.parentNode) aviso.parentNode.removeChild(aviso);
+        });
+
+        aviso.appendChild(icone);
+        aviso.appendChild(texto);
+        aviso.appendChild(fechar);
+        document.body.appendChild(aviso);
+
+        setTimeout(function () {
+            if (aviso.parentNode) aviso.parentNode.removeChild(aviso);
+        }, 9000);
+    }
+
     if (estaInstalado()) {
         // já é um app instalado — não faz sentido mostrar botão de baixar
         marcarComoInstalado();
@@ -153,9 +218,15 @@
             var oferta = promptDeInstalacao;
             promptDeInstalacao = null;
             oferta.prompt();
-            oferta.userChoice.finally(function () {
-                if (dicaInstalar) dicaInstalar.textContent = "Passo a passo";
-            });
+            oferta.userChoice
+                .then(function (escolha) {
+                    // O navegador confirma a instalação com "accepted"; o evento
+                    // "appinstalled" pode demorar alguns segundos ou nem chegar.
+                    if (escolha && escolha.outcome === "accepted") avisarInstalado();
+                })
+                .finally(function () {
+                    if (dicaInstalar) dicaInstalar.textContent = "Passo a passo";
+                });
             return;
         }
 
@@ -164,5 +235,6 @@
 
     window.addEventListener("appinstalled", function () {
         marcarComoInstalado();
+        avisarInstalado();
     });
 })();
