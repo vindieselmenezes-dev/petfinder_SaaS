@@ -1044,6 +1044,16 @@ padding: 14px 18px;
     object-fit: cover;
 }
 
+/* Cards de "Empresas em Destaque" na home: proporção fixa em vez de altura
+   fixa. Com 200-240px de altura a foto era cortada em cima/embaixo no
+   celular e dos lados em telas médias. Cards de pet e produto (que usam
+   object-fit: contain) ficam de fora. */
+#empresas-destaque .empresa-card img.card-img-top:not(.pet-card-img):not(.produto-card-img) {
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-position: center 30%;
+}
+
 /* Fotos de pet "corpo inteiro" cortavam a cabeça/patas com o corte
    cover padrão. Igual ao ajuste da página de detalhe do produto: em
    vez de cortar, mostra a foto inteira (object-fit: contain), com um
