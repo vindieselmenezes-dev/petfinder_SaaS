@@ -43,7 +43,9 @@
         var htmlOriginal = botao.innerHTML;
         var eraDropdownItem = botao.classList.contains('dropdown-item');
 
-        botao.innerHTML = eraDropdownItem
+        var mostrarTexto = eraDropdownItem || botao.hasAttribute('data-copiar-com-texto');
+
+        botao.innerHTML = mostrarTexto
             ? '<i class="bi bi-check2"></i> Link copiado!'
             : '<i class="bi bi-check2"></i>';
 
