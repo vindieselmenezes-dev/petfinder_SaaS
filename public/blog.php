@@ -8,6 +8,7 @@ require_once __DIR__ . '/../app/bootstrap.php';
 require_once __DIR__ . '/../app/Models/BlogComment.php';
 require_once __DIR__ . '/../app/Models/BlogShare.php';
 require_once __DIR__ . '/../app/Helpers/Csrf.php';
+require_once __DIR__ . '/../app/Helpers/Compartilhamento.php';
 
 $blogComment = new BlogComment();
 $blogShare = new BlogShare();
@@ -17,10 +18,22 @@ $mensagem = '';
 $tipoMensagem = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // O registro de "compartilhou" é enviado em segundo plano pelo JavaScript
+    // (ajax=1) e não precisa de página de volta: só um código de status.
+    $ehAjax = (($_POST['ajax'] ?? '') === '1');
+
     if (!Csrf::validar($_POST['csrf_token'] ?? null)) {
+        if ($ehAjax) {
+            http_response_code(403);
+            exit;
+        }
         $mensagem = 'Sessão expirada. Atualize a página e tente novamente.';
         $tipoMensagem = 'erro';
     } elseif (!isset($_SESSION['usuario_id'])) {
+        if ($ehAjax) {
+            http_response_code(401);
+            exit;
+        }
         $mensagem = 'Você precisa estar logado para comentar ou compartilhar.';
         $tipoMensagem = 'erro';
     } else {
@@ -40,7 +53,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($_POST['rede_social'])) {
             $redeSocial = trim($_POST['rede_social']);
-            $blogShare->salvar($postId, $usuarioId, $redeSocial);
+            $redesPermitidas = ['whatsapp', 'facebook', 'twitter', 'telegram', 'link', 'nativo'];
+
+            // Só grava redes conhecidas e posts que existem (1 a 3).
+            if (in_array($redeSocial, $redesPermitidas, true) && in_array($postId, [1, 2, 3], true)) {
+                $blogShare->salvar($postId, $usuarioId, $redeSocial);
+            }
+
+            if ($ehAjax) {
+                http_response_code(204);
+                exit;
+            }
         }
     }
 }
@@ -48,6 +71,98 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $comentariosPost1 = $blogComment->listarPorPostId(1);
 $comentariosPost2 = $blogComment->listarPorPostId(2);
 $comentariosPost3 = $blogComment->listarPorPostId(3);
+
+// Dados de cada post: usados nos botões de compartilhar e na prévia (Open Graph)
+// que WhatsApp, Facebook e X mostram quando o link é colado.
+$posts = [
+    1 => [
+        'titulo' => 'Como escolher a melhor ração?',
+        'resumo' => 'Escolher a ração certa é o primeiro passo para garantir saúde e longevidade ao seu pet.',
+        'imagem' => 'img/blog/blog01.jpg',
+    ],
+    2 => [
+        'titulo' => 'Vacinas obrigatórias',
+        'resumo' => 'A proteção contra doenças começa com o calendário de vacinação correto.',
+        'imagem' => 'img/blog/blog02.jpg',
+    ],
+    3 => [
+        'titulo' => 'Como viajar com seu pet',
+        'resumo' => 'Planejar a viagem faz toda a diferença para o conforto do seu animal de estimação.',
+        'imagem' => 'img/blog/blog03.jpg',
+    ],
+];
+
+function esc(string $texto): string
+{
+    return htmlspecialchars($texto, ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * Link completo (com domínio) de um post, com a âncora para abrir já nele.
+ */
+function urlDoPost(int $id): string
+{
+    return Url::absoluta(Url::pagina('blog.php') . '?post=' . $id) . '#post' . $id;
+}
+
+/**
+ * Botões "Compartilhar" de um post: WhatsApp, Facebook, X, Telegram e copiar
+ * link, abertos para qualquer visitante. Quem está logado também tem o
+ * compartilhamento registrado (tabela blog_shares) em segundo plano.
+ */
+function botoesCompartilhar(int $id, array $posts): string
+{
+    $post = $posts[$id];
+    $url = urlDoPost($id);
+    $texto = 'Confira: ' . $post['titulo'];
+
+    $whatsapp = esc(Compartilhamento::linkWhatsapp($texto, $url));
+    $facebook = esc(Compartilhamento::linkFacebook($url));
+    $x = esc(Compartilhamento::linkTwitter($texto, $url));
+    $telegram = esc(Compartilhamento::linkTelegram($texto, $url));
+
+    $csrf = isset($_SESSION['usuario_id'])
+        ? ' data-csrf="' . esc(Csrf::gerarToken()) . '"'
+        : '';
+
+    return '
+            <div class="mt-4" data-compartilhar-post data-post="' . $id . '"
+                data-titulo="' . esc($post['titulo']) . '" data-url="' . esc($url) . '"' . $csrf . '>
+                <strong>Compartilhar:</strong>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <a href="' . $whatsapp . '" target="_blank" rel="noopener" data-rede="whatsapp"
+                        class="btn btn-outline-success btn-sm" title="Compartilhar no WhatsApp">
+                        <i class="bi bi-whatsapp"></i> WhatsApp
+                    </a>
+                    <a href="' . $facebook . '" target="_blank" rel="noopener" data-rede="facebook"
+                        class="btn btn-outline-primary btn-sm" title="Compartilhar no Facebook">
+                        <i class="bi bi-facebook"></i> Facebook
+                    </a>
+                    <a href="' . $x . '" target="_blank" rel="noopener" data-rede="twitter"
+                        class="btn btn-outline-dark btn-sm" title="Compartilhar no X">
+                        <i class="bi bi-twitter-x"></i> X
+                    </a>
+                    <a href="' . $telegram . '" target="_blank" rel="noopener" data-rede="telegram"
+                        class="btn btn-outline-info btn-sm" title="Compartilhar no Telegram">
+                        <i class="bi bi-telegram"></i> Telegram
+                    </a>
+                    <button type="button" data-rede="link" data-copiar-texto="' . esc($url) . '"
+                        data-copiar-com-texto class="btn btn-outline-secondary btn-sm" title="Copiar link">
+                        <i class="bi bi-link-45deg"></i> Copiar link
+                    </button>
+                    <button type="button" data-compartilhar-nativo
+                        class="btn btn-outline-secondary btn-sm d-none" title="Mais opções">
+                        <i class="bi bi-share"></i> Mais
+                    </button>
+                </div>
+            </div>';
+}
+
+// Post usado na prévia quando o link é colado numa rede social.
+$postPrevia = isset($posts[$postId]) ? $postId : 1;
+$previaTitulo = isset($_GET['post']) ? $posts[$postPrevia]['titulo'] . ' - Blog EcoSistemPet' : 'Blog - EcoSistemPet';
+$previaUrl = Url::absoluta(Url::pagina('blog.php') . '?post=' . $postPrevia);
+$previaImagem = Url::absoluta(Url::asset($posts[$postPrevia]['imagem']));
 
 function exibirComentarios(array $comentarios): string
 {
@@ -80,7 +195,21 @@ function exibirComentarios(array $comentarios): string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Blog - EcoSistemPet</title>
+    <title><?= esc($previaTitulo) ?></title>
+    <meta name="description" content="<?= esc($posts[$postPrevia]['resumo']) ?>">
+
+    <!-- PRÉVIA AO COMPARTILHAR (WhatsApp, Facebook, X, Telegram) -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="EcoSistemPet">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="<?= esc($posts[$postPrevia]['titulo']) ?>">
+    <meta property="og:description" content="<?= esc($posts[$postPrevia]['resumo']) ?>">
+    <meta property="og:image" content="<?= esc($previaImagem) ?>">
+    <meta property="og:url" content="<?= esc($previaUrl) ?>">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="<?= esc($posts[$postPrevia]['titulo']) ?>">
+    <meta name="twitter:description" content="<?= esc($posts[$postPrevia]['resumo']) ?>">
+    <meta name="twitter:image" content="<?= esc($previaImagem) ?>">
 
     <!-- BOOTSTRAP -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
@@ -196,31 +325,7 @@ function exibirComentarios(array $comentarios): string
                 </div>
             </div>
 
-            <div class="mt-4">
-                <strong>Compartilhar:</strong>
-                <?php if (isset($_SESSION['usuario_id'])): ?>
-                    <form method="POST" class="d-inline">
-                        <?= Csrf::campoHtml() ?>
-                        <input type="hidden" name="post" value="1">
-                        <input type="hidden" name="rede_social" value="facebook">
-                        <button type="submit" class="btn btn-primary btn-sm me-2">Facebook</button>
-                    </form>
-                    <form method="POST" class="d-inline">
-                        <?= Csrf::campoHtml() ?>
-                        <input type="hidden" name="post" value="1">
-                        <input type="hidden" name="rede_social" value="whatsapp">
-                        <button type="submit" class="btn btn-success btn-sm me-2">WhatsApp</button>
-                    </form>
-                    <form method="POST" class="d-inline">
-                        <?= Csrf::campoHtml() ?>
-                        <input type="hidden" name="post" value="1">
-                        <input type="hidden" name="rede_social" value="twitter">
-                        <button type="submit" class="btn btn-info btn-sm text-white">Twitter</button>
-                    </form>
-                <?php else: ?>
-                    <p class="text-muted">Faça login para compartilhar este post.</p>
-                <?php endif; ?>
-            </div>
+            <?= botoesCompartilhar(1, $posts) ?>
 
             <div class="mt-4">
                 <h5>Comentários</h5>
@@ -266,31 +371,7 @@ function exibirComentarios(array $comentarios): string
                 </div>
             </div>
 
-            <div class="mt-4">
-                <strong>Compartilhar:</strong>
-                <?php if (isset($_SESSION['usuario_id'])): ?>
-                    <form method="POST" class="d-inline">
-                        <?= Csrf::campoHtml() ?>
-                        <input type="hidden" name="post" value="2">
-                        <input type="hidden" name="rede_social" value="facebook">
-                        <button type="submit" class="btn btn-primary btn-sm me-2">Facebook</button>
-                    </form>
-                    <form method="POST" class="d-inline">
-                        <?= Csrf::campoHtml() ?>
-                        <input type="hidden" name="post" value="2">
-                        <input type="hidden" name="rede_social" value="whatsapp">
-                        <button type="submit" class="btn btn-success btn-sm me-2">WhatsApp</button>
-                    </form>
-                    <form method="POST" class="d-inline">
-                        <?= Csrf::campoHtml() ?>
-                        <input type="hidden" name="post" value="2">
-                        <input type="hidden" name="rede_social" value="twitter">
-                        <button type="submit" class="btn btn-info btn-sm text-white">Twitter</button>
-                    </form>
-                <?php else: ?>
-                    <p class="text-muted">Faça login para compartilhar este post.</p>
-                <?php endif; ?>
-            </div>
+            <?= botoesCompartilhar(2, $posts) ?>
 
             <div class="mt-4">
                 <h5>Comentários</h5>
@@ -334,31 +415,7 @@ function exibirComentarios(array $comentarios): string
                 </div>
             </div>
 
-            <div class="mt-4">
-                <strong>Compartilhar:</strong>
-                <?php if (isset($_SESSION['usuario_id'])): ?>
-                    <form method="POST" class="d-inline">
-                        <?= Csrf::campoHtml() ?>
-                        <input type="hidden" name="post" value="3">
-                        <input type="hidden" name="rede_social" value="facebook">
-                        <button type="submit" class="btn btn-primary btn-sm me-2">Facebook</button>
-                    </form>
-                    <form method="POST" class="d-inline">
-                        <?= Csrf::campoHtml() ?>
-                        <input type="hidden" name="post" value="3">
-                        <input type="hidden" name="rede_social" value="whatsapp">
-                        <button type="submit" class="btn btn-success btn-sm me-2">WhatsApp</button>
-                    </form>
-                    <form method="POST" class="d-inline">
-                        <?= Csrf::campoHtml() ?>
-                        <input type="hidden" name="post" value="3">
-                        <input type="hidden" name="rede_social" value="twitter">
-                        <button type="submit" class="btn btn-info btn-sm text-white">Twitter</button>
-                    </form>
-                <?php else: ?>
-                    <p class="text-muted">Faça login para compartilhar este post.</p>
-                <?php endif; ?>
-            </div>
+            <?= botoesCompartilhar(3, $posts) ?>
 
             <div class="mt-4">
                 <h5>Comentários</h5>
@@ -384,6 +441,52 @@ function exibirComentarios(array $comentarios): string
         </section>
 
     </main>
+
+    <script src="<?= Url::asset('js/compartilhamento.js') ?>"></script>
+    <script>
+        // Compartilhar: registra o clique (só de quem está logado) e mostra o
+        // botão "Mais" quando o aparelho tem o menu de compartilhar nativo.
+        (function () {
+            function registrar(bloco, rede) {
+                var token = bloco.getAttribute('data-csrf');
+                if (!token) { return; }
+
+                var dados = new FormData();
+                dados.append('csrf_token', token);
+                dados.append('post', bloco.getAttribute('data-post'));
+                dados.append('rede_social', rede);
+                dados.append('ajax', '1');
+
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon(window.location.pathname, dados);
+                } else {
+                    fetch(window.location.pathname, { method: 'POST', body: dados, keepalive: true, credentials: 'same-origin' });
+                }
+            }
+
+            document.addEventListener('click', function (evento) {
+                var botao = evento.target.closest('[data-rede]');
+                var bloco = botao && botao.closest('[data-compartilhar-post]');
+                if (bloco) { registrar(bloco, botao.getAttribute('data-rede')); }
+            });
+
+            if (navigator.share) {
+                document.querySelectorAll('[data-compartilhar-nativo]').forEach(function (botao) {
+                    botao.classList.remove('d-none');
+                    botao.addEventListener('click', function () {
+                        var bloco = botao.closest('[data-compartilhar-post]');
+                        navigator.share({
+                            title: bloco.getAttribute('data-titulo'),
+                            text: 'Confira: ' + bloco.getAttribute('data-titulo'),
+                            url: bloco.getAttribute('data-url')
+                        }).then(function () {
+                            registrar(bloco, 'nativo');
+                        }).catch(function () { /* pessoa cancelou */ });
+                    });
+                });
+            }
+        })();
+    </script>
 
 </body>
 
