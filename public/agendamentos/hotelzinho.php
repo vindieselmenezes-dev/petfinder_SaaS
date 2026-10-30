@@ -37,7 +37,7 @@ function renderizarCardEmpresa(array $empresa, int $categoriaId): string
         <div class="col-lg-4 col-md-6">
             <div class="card empresa-card h-100 shadow-sm {$classeDestaque}">
                 <a href="{$perfilUrl}" class="position-relative">
-                    <img src="{$capa}" class="card-img-top" style="height:180px;object-fit:cover;" alt="{$nome}">
+                    <img src="{$capa}" class="card-img-top" alt="{$nome}">
                     {$seloDestaque}
                 </a>
                 <div class="card-body">
@@ -119,21 +119,18 @@ function renderizarCardEmpresa(array $empresa, int $categoriaId): string
 
             <div class="row g-4 mb-5 text-center">
                 <div class="col-md-4">
-                    <img src="../../assets/img/servicos/hotelzinho-suite.jpg" alt="Suíte do hotelzinho" class="rounded-3 mb-2"
-                        style="height:160px;width:100%;object-fit:cover;">
+                    <img src="../../assets/img/servicos/hotelzinho-suite.jpg" alt="Suíte do hotelzinho" class="rounded-3 mb-2 servico-galeria-img">
                     <h5>Suítes confortáveis</h5>
                     <p class="text-muted small">Espaços individuais e higienizados, pensados pro conforto do seu pet.
                     </p>
                 </div>
                 <div class="col-md-4">
-                    <img src="../../assets/img/servicos/hotelzinho-recreacao.jpg" alt="Área de recreação do hotelzinho" class="rounded-3 mb-2"
-                        style="height:160px;width:100%;object-fit:cover;">
+                    <img src="../../assets/img/servicos/hotelzinho-recreacao.jpg" alt="Área de recreação do hotelzinho" class="rounded-3 mb-2 servico-galeria-img">
                     <h5>Área de recreação</h5>
                     <p class="text-muted small">Espaço livre pra brincar e gastar energia com outros pets.</p>
                 </div>
                 <div class="col-md-4">
-                    <img src="../../assets/img/servicos/hotelzinho-suites.webp" alt="Hotelzinho com acompanhamento 24 horas" class="rounded-3 mb-2"
-                        style="height:160px;width:100%;object-fit:cover;">
+                    <img src="../../assets/img/servicos/hotelzinho-suites.webp" alt="Hotelzinho com acompanhamento 24 horas" class="rounded-3 mb-2 servico-galeria-img">
                     <h5>Acompanhamento 24h</h5>
                     <p class="text-muted small">Equipe disponível o dia inteiro pra cuidar de alimentação e bem-estar.
                     </p>

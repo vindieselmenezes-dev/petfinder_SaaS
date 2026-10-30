@@ -1044,13 +1044,24 @@ padding: 14px 18px;
     object-fit: cover;
 }
 
-/* Cards de "Empresas em Destaque" na home: proporção fixa em vez de altura
-   fixa. Com 200-240px de altura a foto era cortada em cima/embaixo no
-   celular e dos lados em telas médias. Cards de pet e produto (que usam
+/* Capas dos cards de empresa/prestador (home, lista de empresas, clínicas,
+   hotelzinho, banho e tosa, pesquisa): proporção fixa em vez de altura fixa.
+   Com 180-240px de altura a foto era cortada em cima/embaixo no celular e
+   dos lados em telas médias. Cards de pet e produto (que usam
    object-fit: contain) ficam de fora. */
-#empresas-destaque .empresa-card img.card-img-top:not(.pet-card-img):not(.produto-card-img) {
+.empresa-card img.card-img-top:not(.pet-card-img):not(.produto-card-img) {
     height: auto;
     aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: center 30%;
+}
+
+/* Fotos da galeria de serviços (ex.: hotelzinho): quadradas, sem altura fixa. */
+.servico-galeria-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
     object-position: center 30%;
 }
 

@@ -174,7 +174,6 @@ $tituloPagina = match ($tipo) {
 
                             <a href="prestador.php?id=<?= (int) $prestador['id'] ?>">
                                 <img src="<?= htmlspecialchars($foto) ?>" class="card-img-top"
-                                    style="height:220px; object-fit:cover;"
                                     alt="<?= htmlspecialchars($prestador['usuario_nome']) ?>">
                             </a>
 
