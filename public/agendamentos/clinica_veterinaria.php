@@ -38,7 +38,7 @@ function renderizarCardEmpresaClinica(array $empresa): string
         <div class="col-lg-4 col-md-6">
             <div class="card empresa-card h-100 shadow-sm {$classeDestaque}">
                 <a href="{$perfilUrl}" class="position-relative">
-                    <img src="{$capa}" class="card-img-top" style="height:180px;object-fit:cover;" alt="{$nome}">
+                    <img src="{$capa}" class="card-img-top" alt="{$nome}">
                     {$seloDestaque}
                 </a>
                 <div class="card-body">

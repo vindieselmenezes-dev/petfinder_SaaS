@@ -37,7 +37,7 @@ function renderizarCardEmpresaBanhoTosa(array $empresa): string
         <div class="col-lg-4 col-md-6">
             <div class="card empresa-card h-100 shadow-sm {$classeDestaque}">
                 <a href="{$perfilUrl}" class="position-relative">
-                    <img src="{$capa}" class="card-img-top" style="height:180px;object-fit:cover;" alt="{$nome}">
+                    <img src="{$capa}" class="card-img-top" alt="{$nome}">
                     {$seloDestaque}
                 </a>
                 <div class="card-body">
@@ -123,8 +123,8 @@ function renderizarCardEmpresaBanhoTosa(array $empresa): string
                 </div>
 
                 <div class="col-lg-6">
-                    <img src="../../assets/img/servicos/higiene-cuidados.jpg" class="rounded-3 w-100"
-                        style="max-height:320px;object-fit:cover;" alt="Cuidados de higiene">
+                    <img src="../../assets/img/servicos/higiene-cuidados.jpg" class="rounded-3 img-fluid"
+                        alt="Cuidados de higiene">
                 </div>
 
             </div>
