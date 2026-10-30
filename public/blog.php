@@ -79,16 +79,19 @@ $posts = [
         'titulo' => 'Como escolher a melhor ração?',
         'resumo' => 'Escolher a ração certa é o primeiro passo para garantir saúde e longevidade ao seu pet.',
         'imagem' => 'img/blog/blog01.jpg',
+        'imagem_og' => 'img/blog/og/blog01-og.jpg', // 1200x630, usada na prévia das redes
     ],
     2 => [
         'titulo' => 'Vacinas obrigatórias',
         'resumo' => 'A proteção contra doenças começa com o calendário de vacinação correto.',
         'imagem' => 'img/blog/blog02.jpg',
+        'imagem_og' => 'img/blog/og/blog02-og.jpg', // 1200x630, usada na prévia das redes
     ],
     3 => [
         'titulo' => 'Como viajar com seu pet',
         'resumo' => 'Planejar a viagem faz toda a diferença para o conforto do seu animal de estimação.',
         'imagem' => 'img/blog/blog03.jpg',
+        'imagem_og' => 'img/blog/og/blog03-og.jpg', // 1200x630, usada na prévia das redes
     ],
 ];
 
@@ -162,7 +165,7 @@ function botoesCompartilhar(int $id, array $posts): string
 $postPrevia = isset($posts[$postId]) ? $postId : 1;
 $previaTitulo = isset($_GET['post']) ? $posts[$postPrevia]['titulo'] . ' - Blog EcoSistemPet' : 'Blog - EcoSistemPet';
 $previaUrl = Url::absoluta(Url::pagina('blog.php') . '?post=' . $postPrevia);
-$previaImagem = Url::absoluta(Url::asset($posts[$postPrevia]['imagem']));
+$previaImagem = Url::absoluta(Url::asset($posts[$postPrevia]['imagem_og']));
 
 function exibirComentarios(array $comentarios): string
 {
@@ -205,8 +208,11 @@ function exibirComentarios(array $comentarios): string
     <meta property="og:title" content="<?= esc($posts[$postPrevia]['titulo']) ?>">
     <meta property="og:description" content="<?= esc($posts[$postPrevia]['resumo']) ?>">
     <meta property="og:image" content="<?= esc($previaImagem) ?>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="<?= esc($posts[$postPrevia]['titulo']) ?>">
     <meta property="og:url" content="<?= esc($previaUrl) ?>">
-    <meta name="twitter:card" content="summary">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?= esc($posts[$postPrevia]['titulo']) ?>">
     <meta name="twitter:description" content="<?= esc($posts[$postPrevia]['resumo']) ?>">
     <meta name="twitter:image" content="<?= esc($previaImagem) ?>">
