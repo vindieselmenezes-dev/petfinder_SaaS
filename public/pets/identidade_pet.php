@@ -140,8 +140,13 @@ $seoTitulo = $pet ? "Identidade de " . $pet["nome"] . " - EcoSistemPet" : "Ident
                     </div>
                 <?php endif; ?>
 
+                <?php
+                // Endereço completo desta identidade (com o domínio do próprio site, definido
+                // em APP_URL no .env), que é o que o QR code vai levar quem escanear.
+                $urlIdentidade = Url::absoluta(Url::pagina('identidade_pet.php') . '?token=' . urlencode($pet['token_identidade']));
+                ?>
                 <div class="px-4 mt-3">
-                    <a href="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=<?= urlencode('https://petfinderbrasil.com.br/public/identidade_pet.php?token=' . $pet['token_identidade']) ?>"
+                    <a href="https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=<?= urlencode($urlIdentidade) ?>"
                         target="_blank" rel="noopener" class="text-decoration-none small text-muted">
                         <i class="bi bi-qr-code"></i> Ver / imprimir QR desta identidade
                     </a>
