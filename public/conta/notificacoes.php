@@ -52,6 +52,31 @@ require_once "../../app/Includes/menu.php";
     </div>
 <?php endif; ?>
 
+<div class="alert alert-light border d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <span id="resTestarLatido" role="status">Teste o alerta sonoro e a vibração dos avisos de pet neste aparelho.</span>
+    <button type="button" class="btn btn-outline-danger btn-sm" id="btnTestarLatido">🐶 Testar latido</button>
+</div>
+<script>
+    document.getElementById('btnTestarLatido').addEventListener('click', function () {
+        var saida = document.getElementById('resTestarLatido');
+        if (!window.PetfinderLatido) {
+            saida.textContent = 'O teste não está disponível nesta página (script do latido não carregou).';
+            return;
+        }
+        window.PetfinderLatido.testar().then(function (r) {
+            var vib = {
+                'sem-suporte': ' Vibração: este navegador não tem esse recurso (iPhone/Safari, Firefox e computadores não vibram). Use o Chrome no Android.',
+                'recusou': ' Vibração: o navegador recusou o pedido. Toque no botão de novo e confira se o site tem permissão.',
+                'pediu': ' Vibração: o navegador mandou vibrar. Se o celular não mexeu, confira o modo silencioso/Não perturbe e, nas configurações do Android, Som e vibração.'
+            }[r.vibracao] || '';
+            if (r.ok) { saida.textContent = 'O latido tocou.' + vib + ' Se você não ouviu, aumente o volume de mídia.'; }
+            else if (r.motivo === 'arquivo') { saida.textContent = 'O arquivo do latido não foi encontrado no servidor. Envie o arquivo assets/audio/latido.mp3.'; }
+            else if (r.motivo === 'bloqueado') { saida.textContent = 'O navegador bloqueou o som. Toque novamente no botão.' + vib; }
+            else { saida.textContent = 'Não foi possível tocar o som neste aparelho.' + vib; }
+        });
+    });
+</script>
+
 <div id="listaNotificacoes">
 
     <?php if (count($notificacoes) === 0): ?>

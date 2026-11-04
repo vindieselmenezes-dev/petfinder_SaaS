@@ -100,7 +100,7 @@
     <!-- CSS -->
     <!-- ========================= -->
 
-    <link rel="stylesheet" href="assets/css/style.css?v=20261029-imagens">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261031-alerta">
 
 </head>
 
@@ -466,15 +466,95 @@
         <!-- BAIXE O APP -->
         <!-- ========================================================= -->
 
-        <section id="baixe-o-app" class="py-5" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
-
+        <section id="baixe-o-app" class="py-4 py-md-5" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
             <div class="container">
+                <div class="row justify-content-center mb-4 mb-lg-5">
+                    <div class="col-md-10 col-lg-8 col-xl-6">
+                        <div class="alerta-pet-card" id="alertaPet">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <span class="alerta-pet-icone" aria-hidden="true"><i class="bi bi-bell-fill"></i></span>
+                                <div>
+                                    <h2 class="h5 fw-bold mb-0">Alerta Pet</h2>
+                                    <p class="small mb-0 text-secondary">Viu um pet perdido ou perdeu o seu? Avise em segundos.</p>
+                                </div>
+                            </div>
+                            <div class="alerta-pet-acoes">
+                                <button type="button" class="alerta-pet-btn alerta-pet-btn--achei" data-alerta-modo="achei" aria-expanded="false">
+                                    <i class="bi bi-camera-fill"></i> Achei um pet
+                                </button>
+                                <button type="button" class="alerta-pet-btn alerta-pet-btn--perdi" data-alerta-modo="perdi" aria-expanded="false">
+                                    <i class="bi bi-search-heart"></i> Perdi meu pet
+                                </button>
+                            </div>
+                            <p class="small text-secondary mb-0 mt-2">
+                                <i class="bi bi-geo-alt"></i> Usamos sua localização para avisar quem está por perto (5 km).
+                            </p>
+
+                            <div id="alertaPushBloco" class="alerta-pet-push" hidden>
+                                <p id="alertaPushTxt" class="mb-2">Quer ser avisado quando um pet for achado ou se perder perto de você? Ative as notificações neste aparelho.</p>
+                                <button type="button" id="alertaPushBtn" class="btn btn-sm btn-danger">Ativar notificações</button>
+                            </div>
+
+                            <form id="formAchei" class="alerta-pet-form" hidden novalidate>
+                                <input type="file" id="alertaFotoCamera" accept="image/*" capture="environment" class="visually-hidden">
+                                <input type="file" id="alertaFotoGaleria" accept="image/*" class="visually-hidden">
+                                <button type="button" class="alerta-pet-foto" id="alertaFotoBtn">
+                                    <img id="alertaFotoPrev" alt="Prévia da foto do pet" hidden>
+                                    <span id="alertaFotoTxt"><i class="bi bi-camera-fill"></i><strong>Tirar foto agora</strong></span>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm p-0 mb-2" id="alertaFotoGaleriaBtn">ou escolher da galeria</button>
+                                <fieldset class="mb-2">
+                                    <legend class="alerta-pet-rotulo">O que é?</legend>
+                                    <div class="alerta-pet-chips">
+                                        <label><input type="radio" name="especie" value="cachorro" checked><span>Cachorro</span></label>
+                                        <label><input type="radio" name="especie" value="gato"><span>Gato</span></label>
+                                        <label><input type="radio" name="especie" value="outro"><span>Outro</span></label>
+                                    </div>
+                                    <select id="alertaEspecieId" class="form-select form-select-sm mt-2" aria-label="Qual animal?" hidden>
+                                        <option value="3">Ave</option><option value="5">Coelho</option><option value="6">Hamster</option>
+                                        <option value="7">Porquinho-da-Índia</option><option value="8">Réptil</option>
+                                        <option value="9">Cavalo</option><option value="4">Peixe</option><option value="10" selected>Outro animal</option>
+                                    </select>
+                                </fieldset>
+                                <label for="alertaDescricaoAchei" class="alerta-pet-rotulo">Descrição</label>
+                                <textarea id="alertaDescricaoAchei" class="form-control mb-2" rows="3" maxlength="500"
+                                    placeholder="Cor, porte, coleira, onde viu, se parece machucado..."></textarea>
+                                <p class="alerta-pet-status" id="alertaStatusGps" role="status">Buscando sua localização...</p>
+                                <button type="submit" class="alerta-pet-enviar" id="alertaEnviarAchei">Enviar alerta</button>
+                            </form>
+
+                            <form id="formPerdi" class="alerta-pet-form" method="POST" action="public/pets/processa_alerta.php" hidden>
+                                <input type="hidden" name="csrf_token" id="perdiCsrf">
+                                <input type="hidden" name="lost_latitude" id="perdiLat">
+                                <input type="hidden" name="lost_longitude" id="perdiLng">
+                                <div id="perdiSemLogin" hidden>
+                                    <p class="mb-2">Para avisar que seu pet sumiu, entre na sua conta.</p>
+                                    <a class="btn btn-danger" href="public/login.php">Entrar</a>
+                                </div>
+                                <div id="perdiCampos" hidden>
+                                    <label for="perdiPet" class="alerta-pet-rotulo">Qual pet sumiu?</label>
+                                    <select id="perdiPet" name="pet_id" class="form-select mb-2" required></select>
+                                    <label for="perdiLocal" class="alerta-pet-rotulo">Onde foi visto por último?</label>
+                                    <input id="perdiLocal" name="last_seen_location" class="form-control mb-2" required maxlength="255"
+                                        placeholder="Rua, bairro ou ponto de referência">
+                                    <label for="perdiDesc" class="alerta-pet-rotulo">Descrição</label>
+                                    <textarea id="perdiDesc" name="description" class="form-control mb-2" rows="3" maxlength="500"
+                                        placeholder="Coleira, comportamento, algo que ajude a reconhecer..."></textarea>
+                                    <p class="alerta-pet-status" id="perdiStatusGps" role="status">Buscando sua localização...</p>
+                                    <button type="submit" class="alerta-pet-enviar">Enviar alerta</button>
+                                </div>
+                            </form>
+
+                            <div id="alertaPetMsg" class="alerta-pet-msg" role="status" aria-live="polite" hidden></div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="row align-items-center text-white">
 
                     <div class="col-lg-7">
 
-                        <span class="badge bg-warning text-dark mb-3 px-3 py-2">
+                        <span class="badge bg-warning text-dark mb-2 mb-md-3 px-3 py-2">
                             <i class="bi bi-stars"></i>
                             Novidade
                         </span>
@@ -483,13 +563,15 @@
                             Leve o EcoSistemPet no bolso
                         </h2>
 
-                        <p class="fs-5 opacity-75 mb-4">
+                        <p class="d-md-none small opacity-75 mb-3">
+                            Adoção, achados e perdidos, agenda do pet e lojinha sempre à mão.
+                        </p>
+                        <p class="d-none d-md-block fs-5 opacity-75 mb-4">
                             Baixe o nosso app e tenha adoção, achados e perdidos, agenda do
                             pet e a lojinha sempre à mão, com notificações em tempo real.
                         </p>
 
-                        <div class="d-flex flex-wrap gap-3">
-
+                        <div class="d-flex flex-wrap gap-2 gap-md-3 baixe-app-botoes">
                             <button type="button" id="btnInstalarApp" class="btn-app-download"
                                 style="border:none; cursor:pointer;">
                                 <i class="bi bi-download fs-3"></i>
@@ -530,7 +612,7 @@
 
                     </div>
 
-                    <div class="col-lg-5 text-center mt-5 mt-lg-0">
+                    <div class="col-lg-5 text-center mt-5 mt-lg-0 d-none d-lg-block">
 
                         <div
                             class="d-inline-flex align-items-center justify-content-center rounded-4 bg-white bg-opacity-10 p-5">
@@ -2072,6 +2154,8 @@
     <!-- ========================= -->
 
     <script src="assets/js/pwa.js?v=20261027-aviso2"></script>
+    <script src="assets/js/alerta-pet.js?v=20261102-push"></script>
+    <script src="assets/js/latido-alerta.js?v=20261105" data-audio="assets/audio/latido.mp3" data-contagem="app/ajax/contar_notificacoes.php"></script>
 
     <!-- ========================= -->
     <!-- JAVASCRIPT -->
