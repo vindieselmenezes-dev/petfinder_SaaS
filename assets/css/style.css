@@ -2022,3 +2022,192 @@ img.produto-card-img {
         padding-top: 10px !important;
     }
 }
+
+/* ==========================================================
+   ALERTA PET (home) + BLOCO "BAIXE O APP" COMPACTO NO CELULAR
+   ========================================================== */
+
+.alerta-pet-card {
+    background: #fff;
+    color: #1d3557;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+}
+
+.alerta-pet-icone {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #d32f2f;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.alerta-pet-acoes {
+    display: flex;
+    gap: 10px;
+}
+
+.alerta-pet-btn {
+    flex: 1;
+    min-height: 56px;
+    border: 2px solid #d32f2f;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: .95rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+}
+
+.alerta-pet-btn--achei { background: #d32f2f; color: #fff; }
+.alerta-pet-btn--perdi { background: #fff; color: #b71c1c; }
+.alerta-pet-btn[aria-expanded="true"] { box-shadow: 0 0 0 3px rgba(211, 47, 47, .3); }
+
+.alerta-pet-form { margin-top: 14px; }
+
+.alerta-pet-rotulo {
+    display: block;
+    float: none;
+    width: auto;
+    padding: 0;
+    margin: 0 0 4px;
+    font-size: .8rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.alerta-pet-foto {
+    width: 100%;
+    height: 150px;
+    margin-bottom: 6px;
+    padding: 0;
+    border: 2px dashed #94a3b8;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #d32f2f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.alerta-pet-foto span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.alerta-pet-foto i { font-size: 2.2rem; }
+.alerta-pet-foto strong { color: #1d3557; font-size: .95rem; }
+.alerta-pet-foto img { width: 100%; height: 100%; object-fit: cover; }
+
+.alerta-pet-chips { display: flex; gap: 8px; }
+.alerta-pet-chips label { flex: 1; margin: 0; position: relative; }
+
+.alerta-pet-chips input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.alerta-pet-chips span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #fff;
+    color: #334155;
+    font-size: .9rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.alerta-pet-chips input:checked + span {
+    border: 2px solid #d32f2f;
+    background: #fdecea;
+    color: #b71c1c;
+    font-weight: 600;
+}
+
+.alerta-pet-chips input:focus-visible + span {
+    outline: 3px solid #2575fc;
+    outline-offset: 2px;
+}
+
+.alerta-pet-status {
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: #fff8e1;
+    color: #7a5c00;
+    font-size: .8rem;
+}
+
+.alerta-pet-status.ok { background: #e8f9f0; color: #166534; }
+.alerta-pet-status.erro { background: #fdecea; color: #9b1c1c; }
+
+.alerta-pet-enviar {
+    width: 100%;
+    min-height: 52px;
+    border: 0;
+    border-radius: 12px;
+    background: #d32f2f;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.alerta-pet-enviar:disabled { opacity: .6; }
+
+.alerta-pet-msg {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #e8f9f0;
+    color: #166534;
+    font-size: .9rem;
+}
+
+.alerta-pet-msg.erro { background: #fdecea; color: #9b1c1c; }
+
+/* O título do bloco de instalar herdava azul-escuro (pouco contraste no roxo). */
+#baixe-o-app .col-lg-7 h2 { color: #fff; }
+
+/* Celular: o bloco "Leve o EcoSistemPet no bolso" ocupa metade do espaço. */
+@media (max-width: 767.98px) {
+    #baixe-o-app .display-6 { font-size: 1.25rem; }
+    #baixe-o-app .baixe-app-botoes { flex-wrap: nowrap; }
+
+    #baixe-o-app .btn-app-download {
+        flex: 1 1 0;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        font-size: .8rem;
+    }
+
+    #baixe-o-app #btnInstalarApp { flex: 1.4 1 0; }
+    #baixe-o-app #btnInstalarDica,
+    #baixe-o-app .btn-app-em-breve i { display: none !important; }
+    #baixe-o-app #btnInstalarApp i { font-size: 1.1rem !important; }
+}
+
+.alerta-pet-push {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #fff8e1;
+    color: #5c4400;
+    font-size: .85rem;
+}

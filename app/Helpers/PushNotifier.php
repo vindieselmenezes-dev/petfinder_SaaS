@@ -99,6 +99,9 @@ final class PushNotifier
         }
 
         foreach ($webPush->flush() as $report) {
+            if (!$report->isSuccess()) {
+                error_log('[PushNotifier] push não entregue (usuário ' . $usuarioId . '): ' . $report->getReason());
+            }
             if (!$report->isSuccess() && $report->isSubscriptionExpired()) {
                 $pdo->prepare('UPDATE push_subscriptions SET ativo = 0 WHERE id = :id')->execute([':id' => $subscriptions[array_search($report->getRequest()->getUri()->__toString(), array_column($subscriptions, 'endpoint'))]['id'] ?? 0]);
             }
