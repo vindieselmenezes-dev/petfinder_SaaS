@@ -92,5 +92,6 @@ $temMaisRegistros = $stmtCheckMore->fetch() ? true : false;
             <p style="text-align:center; color:#95a5a6;">Nenhum produto ou serviço disponível no momento.</p>
         <?php endif; ?>
     </div>
+<?php require_once __DIR__ . '/../../app/Includes/latido.php'; ?>
 </body>
 </html>

@@ -365,6 +365,7 @@ $logo = $parceiro ? Foto::url($parceiro['logo'] ?? null, 'parceiros', 'img/logo.
         })();
     </script>
 
+<?php require_once __DIR__ . '/../../app/Includes/latido.php'; ?>
 </body>
 
 </html>

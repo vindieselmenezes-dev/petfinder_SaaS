@@ -61,6 +61,7 @@ $recurso = trim($_GET["recurso"] ?? "Esta funcionalidade");
         © <?= date("Y") ?> EcoSistemPet
     </footer>
 
+<?php require_once __DIR__ . '/../app/Includes/latido.php'; ?>
 </body>
 
 </html>

@@ -117,6 +117,7 @@ $etapas = $isEmpresa
             <a class="btn btn-link" href="<?= Url::pagina('dashboard.php') ?>">Pular por enquanto</a>
         </form>
     </main>
+<?php require_once __DIR__ . '/../../app/Includes/latido.php'; ?>
 </body>
 
 </html>

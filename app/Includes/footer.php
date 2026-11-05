@@ -54,9 +54,7 @@ if ($pushVapidKey && Auth::check()):
     </script>
     <script src="<?= Url::asset('js/push-notifications.js') ?>?v=20261018"></script>
 <?php endif; ?>
-<?php if (Auth::check()): ?>
-    <script src="<?= Url::asset('js/latido-alerta.js') ?>?v=20261105" data-audio="<?= Url::asset('audio/latido.mp3') ?>" data-contagem="<?= Url::ajax('contar_notificacoes.php') ?>"></script>
-<?php endif; ?>
+<?php require_once __DIR__ . '/latido.php'; ?>
 <script>
     if (window.PetfinderLocalizacao) {
         window.PetfinderLocalizacao.solicitarSeNecessario('<?= Url::ajax('salvar_localizacao.php') ?>');
