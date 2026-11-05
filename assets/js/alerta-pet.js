@@ -145,6 +145,12 @@
 
         if (modo) { pedirLocalizacao(); }
         if (modo === 'perdi') { prepararPerdi(); }
+        if (modo === 'achei') {
+            // A opção de mostrar o telefone só aparece para quem tem telefone cadastrado.
+            contexto().then(function (ctx) {
+                $('alertaTelefoneBloco').hidden = !(ctx.logado && ctx.tem_telefone);
+            });
+        }
     }
 
     botoes.forEach(function (b) {
@@ -220,6 +226,7 @@
             dados.append('especie_id', $('alertaEspecieId').value);
             dados.append('descricao', $('alertaDescricaoAchei').value);
             if (coords) { dados.append('latitude', coords.lat); dados.append('longitude', coords.lng); }
+            if (!$('alertaTelefoneBloco').hidden && $('alertaMostrarTelefone').checked) { dados.append('mostrar_telefone', '1'); }
 
             return fetch(API, { method: 'POST', body: dados, credentials: 'same-origin' })
                 .then(function (resp) { return resp.json().then(function (j) { return { status: resp.status, json: j }; }); })

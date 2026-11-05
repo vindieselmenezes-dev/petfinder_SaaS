@@ -225,13 +225,34 @@ $seoImagem = Foto::url(
                         </p>
                     <?php endif; ?>
 
-                    <h5>Tutor responsável</h5>
+                    <h5><?= ($pet["status"] ?? "") === "Encontrado" ? "Quem achou" : "Tutor responsável" ?></h5>
 
                     <p class="mb-3">
                         <?= htmlspecialchars($pet["tutor_nome"] ?? $naoInformado) ?>
                     </p>
 
-                    <?php if (!empty($pet["tutor_telefone"])): ?>
+                    <?php if (($pet["status"] ?? "") === "Encontrado"): ?>
+
+                        <?php /* Pet achado na rua: o contato é só pelo chat do app, sem mostrar telefone. */ ?>
+                        <?php if (!isset($_SESSION["usuario_id"])): ?>
+                            <a href="<?= Url::pagina('login.php') ?>" class="btn btn-outline-primary btn-lg">
+                                Entre para falar com quem achou
+                            </a>
+                        <?php elseif ((int) $pet["usuario_id"] === (int) $_SESSION["usuario_id"]): ?>
+                            <div class="alert alert-secondary mb-0">Alerta publicado por você.</div>
+                        <?php else: ?>
+                            <a href="contatar_achado.php?pet_id=<?= (int) $pet["id"] ?>" class="btn btn-success btn-lg">
+                                💬 É o meu pet! Falar com quem achou
+                            </a>
+                            <?php if (isset(ContatoAchado::ligados([(int) $pet["id"]])[(int) $pet["id"]]) && !empty($pet["tutor_telefone"])): ?>
+                                <p class="mt-3 mb-0">
+                                    📞 <?= htmlspecialchars($pet["tutor_telefone"]) ?> ·
+                                    <a href="https://wa.me/55<?= preg_replace('/\D/', '', $pet["tutor_telefone"]) ?>" target="_blank" rel="noopener">WhatsApp</a>
+                                </p>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                    <?php elseif (!empty($pet["tutor_telefone"])): ?>
 
                         <a href="https://wa.me/55<?= preg_replace('/\D/', '', $pet["tutor_telefone"]) ?>" target="_blank"
                             rel="noopener" class="btn btn-success btn-lg">
