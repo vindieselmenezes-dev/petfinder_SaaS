@@ -123,6 +123,8 @@ final class Url
         'pets_adocao.php' => 'pets',
         'pets_adotados.php' => 'pets',
         'pets_encontrados.php' => 'pets',
+        'contatar_achado.php' => 'pets',
+        'alternar_telefone_achado.php' => 'pets',
         'pets_perdidos.php' => 'pets',
         'pets_tutor.php' => 'pets',
         'planos.php' => 'empresas',

@@ -519,6 +519,13 @@
                                 <label for="alertaDescricaoAchei" class="alerta-pet-rotulo">Descrição</label>
                                 <textarea id="alertaDescricaoAchei" class="form-control mb-2" rows="3" maxlength="500"
                                     placeholder="Cor, porte, coleira, onde viu, se parece machucado..."></textarea>
+                                <div class="form-check mb-2" id="alertaTelefoneBloco" hidden>
+                                    <input class="form-check-input" type="checkbox" id="alertaMostrarTelefone">
+                                    <label class="form-check-label small" for="alertaMostrarTelefone">
+                                        Mostrar meu telefone neste alerta, só para usuários logados (opcional).
+                                        Você pode ocultar depois em Meus Pets.
+                                    </label>
+                                </div>
                                 <p class="alerta-pet-status" id="alertaStatusGps" role="status">Buscando sua localização...</p>
                                 <button type="submit" class="alerta-pet-enviar" id="alertaEnviarAchei">Enviar alerta</button>
                             </form>
@@ -2154,7 +2161,7 @@
     <!-- ========================= -->
 
     <script src="assets/js/pwa.js?v=20261027-aviso2"></script>
-    <script src="assets/js/alerta-pet.js?v=20261102-push"></script>
+    <script src="assets/js/alerta-pet.js?v=20261106-telefone"></script>
     <script src="assets/js/latido-alerta.js?v=20261105" data-audio="assets/audio/latido.mp3" data-contagem="app/ajax/contar_notificacoes.php"></script>
 
     <!-- ========================= -->

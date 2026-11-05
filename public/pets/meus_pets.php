@@ -11,6 +11,7 @@ $favoritoModel = new Favorito();
 
 // Lista apenas os pets do usuário logado
 $pets = $controller->listarPorUsuario(Auth::id());
+$telefoneVisivel = ContatoAchado::ligados(array_column($pets, 'id'));
 
 require_once __DIR__ . '/../../app/Includes/header.php';
 require_once __DIR__ . '/../../app/Includes/menu.php';
@@ -116,6 +117,15 @@ function especieIcone(?string $especie): string {
                                 <a href="identidade_pet.php?token=<?= urlencode($controller->garantirTokenIdentidade((int) $pet['id'])); ?>" target="_blank" class="btn-acao" style="display: inline-block; background: #015C1E; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">🪪 Identidade</a>
                                 <?php if (($pet['nome'] ?? '') === 'Sem nome (encontrado)'): ?>
                                     <?php /* Pet achado na rua pelo "Achei um pet": o tutor é desconhecido, então não há "Perdido" nem "Recuperado". */ ?>
+                                    <?php $telefoneLigado = isset($telefoneVisivel[(int) $pet['id']]); ?>
+                                    <form method="POST" action="alternar_telefone_achado.php" style="display: inline;">
+                                        <?= Csrf::campoHtml() ?>
+                                        <input type="hidden" name="pet_id" value="<?= (int) $pet['id']; ?>">
+                                        <input type="hidden" name="mostrar" value="<?= $telefoneLigado ? '0' : '1'; ?>">
+                                        <button type="submit" class="btn-acao" style="background: #16a085; color: white; border: 0; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">
+                                            <?= $telefoneLigado ? '🙈 Ocultar telefone' : '📞 Mostrar telefone'; ?>
+                                        </button>
+                                    </form>
                                 <?php elseif (($pet['status'] ?? '') !== 'Perdido'): ?>
                                     <a href="alerta_perdido.php?pet_id=<?= (int) $pet['id']; ?>" class="btn-acao" style="display: inline-block; background: #e67e22; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; font-family: sans-serif; margin-left: 5px;">🚨 Perdido</a>
                                 <?php else: ?>

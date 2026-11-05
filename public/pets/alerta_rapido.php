@@ -112,6 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         'logado' => $usuarioId > 0,
         'csrf' => $usuarioId > 0 ? Csrf::gerarToken() : null,
         'vapid' => $usuarioId > 0 ? (Env::get('PUSH_VAPID_PUBLIC_KEY') ?: null) : null,
+        'tem_telefone' => $usuarioId > 0 && ContatoAchado::usuarioTemTelefone($usuarioId),
         'pets' => $pets,
     ]);
 }
@@ -151,6 +152,9 @@ $especieId = match ($_POST['especie'] ?? '') {
 };
 
 $descricao = mb_substr(trim((string) ($_POST['descricao'] ?? '')), 0, 500);
+
+// Opcional e desligado por padrão: só vale se a pessoa tiver telefone cadastrado.
+$mostrarTelefone = ($_POST['mostrar_telefone'] ?? '') === '1' && ContatoAchado::usuarioTemTelefone($usuarioId);
 
 $lat = is_numeric($_POST['latitude'] ?? null) ? (float) $_POST['latitude'] : null;
 $lng = is_numeric($_POST['longitude'] ?? null) ? (float) $_POST['longitude'] : null;
@@ -203,6 +207,14 @@ try {
         responder(500, ['mensagem' => 'Não foi possível publicar o alerta agora. Tente de novo.']);
     }
 
+    $telefoneVisivel = false;
+    if ($mostrarTelefone) {
+        $stmt = $pdo->prepare('SELECT id FROM pets WHERE usuario_id = ? AND foto = ? ORDER BY id DESC LIMIT 1');
+        $stmt->execute([$usuarioId, $arquivo]);
+        $novoPetId = (int) $stmt->fetchColumn();
+        $telefoneVisivel = $novoPetId > 0 && ContatoAchado::alternar($novoPetId, $usuarioId, true);
+    }
+
     // Avisa quem tem localização salva num raio de 5 km (máx. 200 pessoas).
     $notificados = 0;
     if ($lat !== null) {
@@ -233,9 +245,10 @@ try {
         'ok' => true,
         'notificados' => $notificados,
         'url' => Url::pagina('pets_encontrados.php'),
-        'mensagem' => $notificados > 0
+        'mensagem' => ($notificados > 0
             ? "Alerta publicado! $notificados pessoas perto de você foram avisadas."
-            : 'Alerta publicado! Ele já aparece em "Pets Encontrados".',
+            : 'Alerta publicado! Ele já aparece em "Pets Encontrados".')
+            . ($telefoneVisivel ? ' Seu telefone aparece só para usuários logados; você pode ocultá-lo em Meus Pets.' : ''),
     ]);
 } catch (Throwable $erro) {
     error_log('[alerta_rapido] ' . $erro->getMessage());

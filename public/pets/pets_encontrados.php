@@ -14,6 +14,7 @@ $favoritoModel = new Favorito();
 $porPagina = 24;
 $pagina = max(1, (int) ($_GET['pagina'] ?? 1));
 $pets = $controller->listarPorStatus("Encontrado", $pagina, $porPagina);
+$telefoneVisivel = ContatoAchado::ligados(array_column($pets, 'id'));
 $totalPets = $controller->contarPorStatus("Encontrado");
 $totalPaginas = (int) ceil($totalPets / $porPagina);
 
@@ -37,7 +38,7 @@ if (isset($_SESSION['usuario_id'])) {
                     <th style="padding: 15px;">Nome</th>
                     <th style="padding: 15px;">Espécie / Raça</th>
                     <th style="padding: 15px;">Cidade</th>
-                    <th style="padding: 15px;">Tutor</th>
+                    <th style="padding: 15px;">Quem achou</th>
                     <th style="padding: 15px;">Contato</th>
                     <th style="padding: 15px;">Data</th>
                     <th style="padding: 15px; text-align: center;">Ações</th>
@@ -67,11 +68,23 @@ if (isset($_SESSION['usuario_id'])) {
                             <td data-col="cidade" data-th="Cidade" style="padding: 15px; color: #777;">
                                 📍 <?= htmlspecialchars($pet["cidade"] ?? 'Não informada'); ?>
                             </td>
-                            <td data-col="tutor" data-th="Tutor" style="padding: 15px; color: #333;">
+                            <td data-col="tutor" data-th="Quem achou" style="padding: 15px; color: #333;">
                                 <?= htmlspecialchars($pet["tutor_nome"] ?? $naoInformado); ?>
                             </td>
                             <td data-col="contato" data-th="Contato" style="padding: 15px; color: #555;">
-                                📞 <?= htmlspecialchars($pet["tutor_telefone"] ?? $naoInformado); ?>
+                                <?php if (!isset($_SESSION['usuario_id'])): ?>
+                                    <a href="<?= Url::pagina('login.php') ?>" style="color: #2980b9; font-size: 13px;">Entre para falar com quem achou</a>
+                                <?php elseif ((int) $pet['usuario_id'] === (int) $_SESSION['usuario_id']): ?>
+                                    <span style="color: #7f8c8d; font-size: 13px;">Alerta publicado por você</span>
+                                <?php else: ?>
+                                    <a href="contatar_achado.php?pet_id=<?= (int) $pet['id']; ?>" style="display: inline-block; background: #27ae60; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: bold;">💬 É o meu pet</a>
+                                    <?php if (isset($telefoneVisivel[(int) $pet['id']]) && !empty($pet['tutor_telefone'])): ?>
+                                        <div style="margin-top: 6px; font-size: 13px;">
+                                            📞 <?= htmlspecialchars($pet['tutor_telefone']); ?> ·
+                                            <a href="https://wa.me/55<?= preg_replace('/\D/', '', $pet['tutor_telefone']); ?>" target="_blank" rel="noopener">WhatsApp</a>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </td>
                             <td data-col="data" data-th="Data" style="padding: 15px; color: #777;">
                                 <?= !empty($pet["criado_em"]) ? date("d/m/Y", strtotime($pet["criado_em"])) : $naoInformado; ?>
