@@ -276,5 +276,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             confirmar.addEventListener('input', conferir);
         })();
     </script>
+<?php require_once __DIR__ . '/../app/Includes/latido.php'; ?>
 </body>
 </html>

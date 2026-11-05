@@ -94,6 +94,7 @@ try {
                 type="submit"><?= $doisFatoresAtivo ? 'Desativar 2FA' : 'Ativar 2FA' ?></button></form>
         <?php endif; ?>
     </main>
+<?php require_once __DIR__ . '/../../app/Includes/latido.php'; ?>
 </body>
 
 </html>

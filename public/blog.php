@@ -494,6 +494,7 @@ function exibirComentarios(array $comentarios): string
         })();
     </script>
 
+<?php require_once __DIR__ . '/../app/Includes/latido.php'; ?>
 </body>
 
 </html>

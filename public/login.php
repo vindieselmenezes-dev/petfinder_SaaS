@@ -309,6 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </p>
         </form>
     </div>
+<?php require_once __DIR__ . '/../app/Includes/latido.php'; ?>
 </body>
 
 </html>

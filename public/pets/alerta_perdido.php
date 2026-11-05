@@ -105,5 +105,6 @@ if (!$pet || (int)$pet['usuario_id'] !== $usuarioId) {
             );
         }
     </script>
+<?php require_once __DIR__ . '/../../app/Includes/latido.php'; ?>
 </body>
 </html>

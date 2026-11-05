@@ -163,6 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button class="btn btn-link p-0" type="submit">Reenviar código</button>
         </form>
     </main>
+<?php require_once __DIR__ . '/../../app/Includes/latido.php'; ?>
 </body>
 
 </html>

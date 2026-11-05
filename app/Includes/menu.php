@@ -139,6 +139,7 @@ function menuGrupo(string $titulo, string $icone, array $itens, string $paginaAt
                 <li><a href="<?= Url::pagina('admin_pedidos.php') ?>">💳 Pedidos e Pagamentos</a></li>
                 <li><a href="<?= Url::pagina('admin_parceiros.php') ?>">🤝 Moderação de Parceiros</a></li>
                 <li><a href="<?= Url::pagina('admin_campanhas.php') ?>">🛡️ Moderação de Campanhas</a></li>
+                <li><a href="<?= Url::pagina('admin_alertas_pet.php') ?>">🚨 Moderação de Alertas Pet</a></li>
                 <li><a href="<?= Url::pagina('admin_configuracoes.php') ?>">⚙️ Configurações Gerais</a></li>
                 <li><a href="<?= Url::pagina('admin_contatos.php') ?>">📬 Mensagens de Contato</a></li>
             </ul>

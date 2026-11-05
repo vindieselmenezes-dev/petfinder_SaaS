@@ -43,6 +43,7 @@ final class Url
         'admin_pedidos.php' => 'admin',
         'admin_usuario_detalhe.php' => 'admin',
         'admin_usuarios.php' => 'admin',
+        'admin_alertas_pet.php' => 'admin',
         'admin_configuracoes.php' => 'admin',
         'agendar_consulta.php' => 'agendamentos',
         'alerta_perdido.php' => 'pets',
