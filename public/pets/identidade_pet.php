@@ -134,6 +134,23 @@ $seoTitulo = $pet ? "Identidade de " . $pet["nome"] . " - EcoSistemPet" : "Ident
 
                 </div>
 
+                <?php
+                // Só vacina, data e situação: veterinário, lote e observações ficam privados.
+                $resumoVacinas = (new PetVacina())->resumoPublico((int) $pet['id']);
+                $corVacina = ['Em dia' => 'success', 'Vence em breve' => 'warning', 'Atrasada' => 'danger'];
+                ?>
+                <?php if ($resumoVacinas): ?>
+                    <div class="text-start px-4 mt-3">
+                        <h3 class="h6 mb-2">💉 Vacinas</h3>
+                        <?php foreach ($resumoVacinas as $v): ?>
+                            <div class="d-flex justify-content-between align-items-center small mb-1">
+                                <span><?= htmlspecialchars($v['vacina']) ?> · <?= date('d/m/Y', strtotime($v['data_aplicacao'])) ?></span>
+                                <span class="badge bg-<?= $corVacina[$v['situacao']] ?? 'secondary' ?>"><?= htmlspecialchars($v['situacao']) ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+
                 <?php if ($pet["status"] === 'Perdido'): ?>
                     <div class="alert alert-danger mx-4 mt-3">
                         🚨 Este pet está desaparecido! Se você o encontrou, entre em contato com o tutor.

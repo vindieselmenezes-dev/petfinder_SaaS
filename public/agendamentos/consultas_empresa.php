@@ -133,6 +133,10 @@ $statusCores = [
                                     <button type="submit" class="btn btn-sm btn-success">Concluir</button>
                                 </form>
                             <?php endif; ?>
+                            <?php if (!empty($c['pet_id']) && $c['status'] !== 'Cancelada' && EmpresaAcesso::temAcesso($pdo, $empresaId, $usuarioId, ['proprietario', 'administrador', 'veterinario'])): ?>
+                                <a href="registrar_vacina.php?empresa_id=<?= $empresaId ?>&pet_id=<?= (int) $c['pet_id'] ?>"
+                                    class="btn btn-sm btn-outline-warning">💉 Vacina</a>
+                            <?php endif; ?>
                             <?php if (in_array($c['status'], ['Em Atendimento', 'Concluída'], true)): ?>
                                 <a href="novo_prontuario.php?empresa_id=<?= $empresaId ?>&consulta_id=<?= (int) $c['id'] ?>"
                                     class="btn btn-sm btn-outline-primary">📋 Prontuário</a>

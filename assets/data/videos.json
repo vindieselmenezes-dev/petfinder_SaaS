@@ -1,0 +1,19 @@
+{
+  "_como_usar": "Para publicar um video, copie um dos exemplos abaixo para dentro da lista 'videos' (separe por virgula). Campos: titulo, duracao (ex: 5:26), tipo ('youtube' ou 'arquivo'), youtube (link ou ID do video, quando tipo=youtube), arquivo (caminho do .mp4, quando tipo=arquivo), capa (imagem de capa, opcional para youtube, recomendada para arquivo), ativo (false oculta o video sem apagar). Ordem na lista = ordem no baralho.",
+  "_exemplo_youtube": {
+    "titulo": "10 cuidados essenciais com a saude dos pets",
+    "duracao": "5:26",
+    "tipo": "youtube",
+    "youtube": "https://www.youtube.com/watch?v=XXXXXXXXXXX",
+    "ativo": true
+  },
+  "_exemplo_arquivo": {
+    "titulo": "Passeios seguros e responsaveis",
+    "duracao": "6:15",
+    "tipo": "arquivo",
+    "arquivo": "uploads/videos/passeios-seguros.mp4",
+    "capa": "uploads/videos/passeios-seguros.jpg",
+    "ativo": true
+  },
+  "videos": []
+}

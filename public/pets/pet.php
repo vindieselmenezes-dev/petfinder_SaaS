@@ -12,6 +12,9 @@ $favoritoModel = new Favorito();
 $id = isset($_GET["id"]) ? (int) $_GET["id"] : 0;
 
 $pet = $controller->buscarPorId($id);
+if (!PetAcesso::podeVerPerfil($pet)) {
+    $pet = null; // sem acesso = mesma tela de "não encontrado"
+}
 $imagensAdicionais = $pet ? $imagemController->buscarImagens($id) : [];
 
 $statusCores = [
@@ -223,6 +226,13 @@ $seoImagem = Foto::url(
                                 <i class="bi bi-clock-history"></i> Ver histórico completo deste pet
                             </a>
                         </p>
+                        <?php if (Auth::check() && ((int) $pet["usuario_id"] === Auth::id() || Auth::ehAdministrador())): ?>
+                            <p class="mb-4">
+                                <a href="vacinas_pet.php?id=<?= (int) $pet["id"]; ?>" class="text-decoration-none text-secondary">
+                                    <i class="bi bi-capsule"></i> Ver quadro de vacinas
+                                </a>
+                            </p>
+                        <?php endif; ?>
                     <?php endif; ?>
 
                     <h5><?= ($pet["status"] ?? "") === "Encontrado" ? "Quem achou" : "Tutor responsável" ?></h5>

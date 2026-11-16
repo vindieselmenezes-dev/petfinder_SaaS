@@ -37,7 +37,8 @@
     <meta property="og:site_name" content="EcoSistemPet">
     <meta property="og:locale" content="pt_BR">
     <meta property="og:title" content="EcoSistemPet - Tudo para seu pet em um só lugar">
-    <meta property="og:description" content="Adoção, veterinários, pet shops, serviços e marketplace para o seu pet. Informação, cuidado e carinho.">
+    <meta property="og:description"
+        content="Adoção, veterinários, pet shops, serviços e marketplace para o seu pet. Informação, cuidado e carinho.">
     <meta property="og:image" content="https://ecosistempet.infinityfreeapp.com/assets/img/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -101,6 +102,7 @@
     <!-- ========================= -->
 
     <link rel="stylesheet" href="assets/css/style.css?v=20261031-alerta">
+    <link rel="stylesheet" href="assets/css/educacao-pet.css?v=2">
 
 </head>
 
@@ -466,7 +468,8 @@
         <!-- BAIXE O APP -->
         <!-- ========================================================= -->
 
-        <section id="baixe-o-app" class="py-4 py-md-5" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
+        <section id="baixe-o-app" class="py-4 py-md-5"
+            style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
             <div class="container">
                 <div class="row justify-content-center mb-4 mb-lg-5">
                     <div class="col-md-10 col-lg-8 col-xl-6">
@@ -475,45 +478,62 @@
                                 <span class="alerta-pet-icone" aria-hidden="true"><i class="bi bi-bell-fill"></i></span>
                                 <div>
                                     <h2 class="h5 fw-bold mb-0">Alerta Pet</h2>
-                                    <p class="small mb-0 text-secondary">Viu um pet perdido ou perdeu o seu? Avise em segundos.</p>
+                                    <p class="small mb-0 text-secondary">Viu um pet perdido ou perdeu o seu? Avise em
+                                        segundos.</p>
                                 </div>
                             </div>
                             <div class="alerta-pet-acoes">
-                                <button type="button" class="alerta-pet-btn alerta-pet-btn--achei" data-alerta-modo="achei" aria-expanded="false">
+                                <button type="button" class="alerta-pet-btn alerta-pet-btn--achei"
+                                    data-alerta-modo="achei" aria-expanded="false">
                                     <i class="bi bi-camera-fill"></i> Achei um pet
                                 </button>
-                                <button type="button" class="alerta-pet-btn alerta-pet-btn--perdi" data-alerta-modo="perdi" aria-expanded="false">
+                                <button type="button" class="alerta-pet-btn alerta-pet-btn--perdi"
+                                    data-alerta-modo="perdi" aria-expanded="false">
                                     <i class="bi bi-search-heart"></i> Perdi meu pet
                                 </button>
                             </div>
                             <p class="small text-secondary mb-0 mt-2">
-                                <i class="bi bi-geo-alt"></i> Usamos sua localização para avisar quem está por perto (5 km).
+                                <i class="bi bi-geo-alt"></i> Usamos sua localização para avisar quem está por perto (5
+                                km).
                             </p>
 
                             <div id="alertaPushBloco" class="alerta-pet-push" hidden>
-                                <p id="alertaPushTxt" class="mb-2">Quer ser avisado quando um pet for achado ou se perder perto de você? Ative as notificações neste aparelho.</p>
-                                <button type="button" id="alertaPushBtn" class="btn btn-sm btn-danger">Ativar notificações</button>
+                                <p id="alertaPushTxt" class="mb-2">Quer ser avisado quando um pet for achado ou se
+                                    perder perto de você? Ative as notificações neste aparelho.</p>
+                                <button type="button" id="alertaPushBtn" class="btn btn-sm btn-danger">Ativar
+                                    notificações</button>
                             </div>
 
                             <form id="formAchei" class="alerta-pet-form" hidden novalidate>
-                                <input type="file" id="alertaFotoCamera" accept="image/*" capture="environment" class="visually-hidden">
+                                <input type="file" id="alertaFotoCamera" accept="image/*" capture="environment"
+                                    class="visually-hidden">
                                 <input type="file" id="alertaFotoGaleria" accept="image/*" class="visually-hidden">
                                 <button type="button" class="alerta-pet-foto" id="alertaFotoBtn">
                                     <img id="alertaFotoPrev" alt="Prévia da foto do pet" hidden>
-                                    <span id="alertaFotoTxt"><i class="bi bi-camera-fill"></i><strong>Tirar foto agora</strong></span>
+                                    <span id="alertaFotoTxt"><i class="bi bi-camera-fill"></i><strong>Tirar foto
+                                            agora</strong></span>
                                 </button>
-                                <button type="button" class="btn btn-link btn-sm p-0 mb-2" id="alertaFotoGaleriaBtn">ou escolher da galeria</button>
+                                <button type="button" class="btn btn-link btn-sm p-0 mb-2" id="alertaFotoGaleriaBtn">ou
+                                    escolher da galeria</button>
                                 <fieldset class="mb-2">
                                     <legend class="alerta-pet-rotulo">O que é?</legend>
                                     <div class="alerta-pet-chips">
-                                        <label><input type="radio" name="especie" value="cachorro" checked><span>Cachorro</span></label>
+                                        <label><input type="radio" name="especie" value="cachorro"
+                                                checked><span>Cachorro</span></label>
                                         <label><input type="radio" name="especie" value="gato"><span>Gato</span></label>
-                                        <label><input type="radio" name="especie" value="outro"><span>Outro</span></label>
+                                        <label><input type="radio" name="especie"
+                                                value="outro"><span>Outro</span></label>
                                     </div>
-                                    <select id="alertaEspecieId" class="form-select form-select-sm mt-2" aria-label="Qual animal?" hidden>
-                                        <option value="3">Ave</option><option value="5">Coelho</option><option value="6">Hamster</option>
-                                        <option value="7">Porquinho-da-Índia</option><option value="8">Réptil</option>
-                                        <option value="9">Cavalo</option><option value="4">Peixe</option><option value="10" selected>Outro animal</option>
+                                    <select id="alertaEspecieId" class="form-select form-select-sm mt-2"
+                                        aria-label="Qual animal?" hidden>
+                                        <option value="3">Ave</option>
+                                        <option value="5">Coelho</option>
+                                        <option value="6">Hamster</option>
+                                        <option value="7">Porquinho-da-Índia</option>
+                                        <option value="8">Réptil</option>
+                                        <option value="9">Cavalo</option>
+                                        <option value="4">Peixe</option>
+                                        <option value="10" selected>Outro animal</option>
                                     </select>
                                 </fieldset>
                                 <label for="alertaDescricaoAchei" class="alerta-pet-rotulo">Descrição</label>
@@ -526,11 +546,14 @@
                                         Você pode ocultar depois em Meus Pets.
                                     </label>
                                 </div>
-                                <p class="alerta-pet-status" id="alertaStatusGps" role="status">Buscando sua localização...</p>
-                                <button type="submit" class="alerta-pet-enviar" id="alertaEnviarAchei">Enviar alerta</button>
+                                <p class="alerta-pet-status" id="alertaStatusGps" role="status">Buscando sua
+                                    localização...</p>
+                                <button type="submit" class="alerta-pet-enviar" id="alertaEnviarAchei">Enviar
+                                    alerta</button>
                             </form>
 
-                            <form id="formPerdi" class="alerta-pet-form" method="POST" action="public/pets/processa_alerta.php" hidden>
+                            <form id="formPerdi" class="alerta-pet-form" method="POST"
+                                action="public/pets/processa_alerta.php" hidden>
                                 <input type="hidden" name="csrf_token" id="perdiCsrf">
                                 <input type="hidden" name="lost_latitude" id="perdiLat">
                                 <input type="hidden" name="lost_longitude" id="perdiLng">
@@ -542,12 +565,14 @@
                                     <label for="perdiPet" class="alerta-pet-rotulo">Qual pet sumiu?</label>
                                     <select id="perdiPet" name="pet_id" class="form-select mb-2" required></select>
                                     <label for="perdiLocal" class="alerta-pet-rotulo">Onde foi visto por último?</label>
-                                    <input id="perdiLocal" name="last_seen_location" class="form-control mb-2" required maxlength="255"
-                                        placeholder="Rua, bairro ou ponto de referência">
+                                    <input id="perdiLocal" name="last_seen_location" class="form-control mb-2" required
+                                        maxlength="255" placeholder="Rua, bairro ou ponto de referência">
                                     <label for="perdiDesc" class="alerta-pet-rotulo">Descrição</label>
-                                    <textarea id="perdiDesc" name="description" class="form-control mb-2" rows="3" maxlength="500"
+                                    <textarea id="perdiDesc" name="description" class="form-control mb-2" rows="3"
+                                        maxlength="500"
                                         placeholder="Coleira, comportamento, algo que ajude a reconhecer..."></textarea>
-                                    <p class="alerta-pet-status" id="perdiStatusGps" role="status">Buscando sua localização...</p>
+                                    <p class="alerta-pet-status" id="perdiStatusGps" role="status">Buscando sua
+                                        localização...</p>
                                     <button type="submit" class="alerta-pet-enviar">Enviar alerta</button>
                                 </div>
                             </form>
@@ -583,7 +608,8 @@
                                 style="border:none; cursor:pointer;">
                                 <i class="bi bi-download fs-3"></i>
                                 <span class="text-start">
-                                    <small id="btnInstalarDica" class="d-block text-muted" style="font-size:.7rem;">Passo a passo</small>
+                                    <small id="btnInstalarDica" class="d-block text-muted"
+                                        style="font-size:.7rem;">Passo a passo</small>
                                     <strong>Instalar o app</strong>
                                 </span>
                             </button>
@@ -710,6 +736,7 @@
         <!-- ESTATÍSTICAS -->
         <!-- ========================================================= -->
 
+        <!-- [OCULTO TEMPORARIAMENTE] Faixa de estatisticas. REATIVAR quando houver usuarios reais: remova este comentario (esta linha e a linha de fechamento).
         <section id="estatisticas" class="py-5 bg-light">
 
             <div class="container">
@@ -753,6 +780,7 @@
             </div>
 
         </section>
+        [FIM DA SECAO OCULTA] -->
 
         <!-- ========================================================= -->
         <!-- EMPRESAS EM DESTAQUE -->
@@ -1260,74 +1288,70 @@
 
             <div class="container">
 
-                <div class="row align-items-center">
+                <div class="row align-items-center g-4">
 
-                    <div class="col-lg-6">
+                    <div class="col-lg-3 col-md-4">
 
-                        <img src="assets/img/pets/meu-pet.jpg" class="img-fluid rounded shadow" alt="Meu Pet">
+                        <img src="assets/img/pets/meu-pet.jpg" class="ep-foto rounded shadow" alt="Meu Pet">
 
                     </div>
 
-                    <div class="col-lg-6">
+                    <div class="col-lg-9 col-md-8">
 
-                        <h2 class="fw-bold">
+                        <h2 class="fw-bold h3">Cuide melhor do seu pet</h2>
 
-                            Gerencie a vida do seu pet
-
-                        </h2>
-
-                        <p class="text-muted">
-
-                            Cadastre seus animais e acompanhe vacinas,
-                            consultas, medicamentos, peso, documentos
-                            e histórico veterinário em um único lugar.
-
+                        <p class="text-muted small mb-3">
+                            Cadastre seus animais e acompanhe vacinas, consultas, medicamentos,
+                            lembretes e histórico veterinário em um só lugar.
                         </p>
 
-                        <ul class="list-group list-group-flush mb-4">
+                        <div class="row g-3 align-items-start">
 
-                            <li class="list-group-item">
+                            <div class="col-md-6">
 
-                                ✔ Carteira Digital
+                                <ul class="ep-lista">
+                                    <li>Manter vacinas e vermífugo em dia</li>
+                                    <li>Check-up veterinário anual</li>
+                                    <li>Ração adequada e água fresca sempre</li>
+                                    <li>Passeios e brincadeiras diárias</li>
+                                    <li>Evitar alimentos tóxicos (chocolate, uva, cebola)</li>
+                                </ul>
 
-                            </li>
+                                <a href="public/cadastrar_pet.php" class="btn btn-primary">Cadastrar Meu Pet</a>
 
-                            <li class="list-group-item">
+                            </div>
 
-                                ✔ Vacinas
+                            <div class="col-md-6">
 
-                            </li>
+                                <div class="ep-faixa">
+                                    <div class="ep-faixa-top"><span class="ep-faixa-t"><span
+                                                class="ep-faixa-ic">&#9654;</span>Nossa Videoteca Educativa</span><span
+                                            id="epCount" class="ep-faixa-c"></span></div>
+                                    <div class="ep-faixa-l">Assista, compartilhe e faça a diferença! &#128062;</div>
+                                </div>
+                                <div class="ep-deck" id="epDeck"></div>
 
-                            <li class="list-group-item">
+                            </div>
 
-                                ✔ Histórico Médico
-
-                            </li>
-
-                            <li class="list-group-item">
-
-                                ✔ Lembretes
-
-                            </li>
-
-                            <li class="list-group-item">
-
-                                ✔ Medicamentos
-
-                            </li>
-
-                        </ul>
-
-                        <a href="public/cadastrar_pet.php" class="btn btn-primary btn-lg">
-
-                            Cadastrar Meu Pet
-
-                        </a>
+                        </div>
 
                     </div>
 
                 </div>
 
+            </div>
+
+            <div class="modal fade" id="epModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header py-2">
+                            <h5 class="modal-title fs-6" id="epModalTitle"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body" id="epPlayer"></div>
+                    </div>
+                </div>
             </div>
 
         </section>
@@ -1772,8 +1796,8 @@
                         '</a></div>';
                 }
 
-                fetch('app/ajax/listar_parceiros_destaque.php', { cache: 'no-store' })
-                    .then(function (resposta) { return resposta.ok ? resposta.json() : null; })
+                fetch('app/ajax/listar_parceiros_destaque.php', {cache: 'no-store'})
+                    .then(function (resposta) {return resposta.ok ? resposta.json() : null;})
                     .then(function (dados) {
 
                         if (!dados) return;
@@ -1892,10 +1916,10 @@
 
                     fetch('app/ajax/newsletter_inscrever.php', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: email, site: campoHoneypot.value })
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({email: email, site: campoHoneypot.value})
                     })
-                        .then(function (resposta) { return resposta.json(); })
+                        .then(function (resposta) {return resposta.json();})
                         .then(function (dados) {
 
                             mostrarMensagem(
@@ -1995,15 +2019,19 @@
 
                         <div class="d-flex gap-3 fs-3">
 
-                            <a href="https://www.facebook.com/profile.php?id=61595770881732" class="text-light" target="_blank" rel="noopener noreferrer" aria-label="Facebook do EcoSistemPet" title="Facebook">
+                            <a href="https://www.facebook.com/profile.php?id=61595770881732" class="text-light"
+                                target="_blank" rel="noopener noreferrer" aria-label="Facebook do EcoSistemPet"
+                                title="Facebook">
                                 <i class="bi bi-facebook"></i>
                             </a>
 
-                            <a href="https://www.instagram.com/ecosistempet" class="text-light" target="_blank" rel="noopener noreferrer" aria-label="Instagram do EcoSistemPet" title="Instagram">
+                            <a href="https://www.instagram.com/ecosistempet" class="text-light" target="_blank"
+                                rel="noopener noreferrer" aria-label="Instagram do EcoSistemPet" title="Instagram">
                                 <i class="bi bi-instagram"></i>
                             </a>
 
-                            <a href="https://www.tiktok.com/@sergiomenezes822" class="text-light" target="_blank" rel="noopener noreferrer" aria-label="TikTok do EcoSistemPet" title="TikTok">
+                            <a href="https://www.tiktok.com/@sergiomenezes822" class="text-light" target="_blank"
+                                rel="noopener noreferrer" aria-label="TikTok do EcoSistemPet" title="TikTok">
                                 <i class="bi bi-tiktok"></i>
                             </a>
 
@@ -2056,9 +2084,11 @@
 
                         <div class="alert alert-warning" data-aviso-app style="display:none;">
                             <i class="bi bi-exclamation-triangle-fill"></i>
-                            Você está num navegador <strong>dentro de outro app</strong> (Instagram, Facebook, WhatsApp...).
+                            Você está num navegador <strong>dentro de outro app</strong> (Instagram, Facebook,
+                            WhatsApp...).
                             Ele não consegue instalar. Toque nos três pontinhos (ou no ícone de compartilhar) e escolha
-                            <strong>"Abrir no navegador"</strong> (Chrome, Samsung Internet ou Safari) e depois siga os passos abaixo.
+                            <strong>"Abrir no navegador"</strong> (Chrome, Samsung Internet ou Safari) e depois siga os
+                            passos abaixo.
                         </div>
 
                         <p class="text-muted small">
@@ -2069,28 +2099,35 @@
                         <div data-plataforma="android-chrome" style="display:none;">
                             <h6><i class="bi bi-android2"></i> Android — Chrome</h6>
                             <ol>
-                                <li class="mb-2">Toque no menu <strong>&#8942;</strong> (três pontinhos, no canto superior direito).</li>
-                                <li class="mb-2">Escolha <strong>"Instalar app"</strong> (ou <strong>"Adicionar à tela inicial"</strong>).</li>
+                                <li class="mb-2">Toque no menu <strong>&#8942;</strong> (três pontinhos, no canto
+                                    superior direito).</li>
+                                <li class="mb-2">Escolha <strong>"Instalar app"</strong> (ou <strong>"Adicionar à tela
+                                        inicial"</strong>).</li>
                                 <li>Confirme em <strong>"Instalar"</strong>. Pronto!</li>
                             </ol>
-                            <p class="small text-muted mb-0">Não apareceu a opção? Recarregue a página e tente de novo.</p>
+                            <p class="small text-muted mb-0">Não apareceu a opção? Recarregue a página e tente de novo.
+                            </p>
                         </div>
 
                         <div data-plataforma="android-samsung" style="display:none;">
                             <h6><i class="bi bi-android2"></i> Android — Samsung Internet</h6>
                             <ol>
-                                <li class="mb-2">Toque no menu <strong>&#9776;</strong> (três linhas, na barra de baixo).</li>
-                                <li class="mb-2">Escolha <strong>"Adicionar página a"</strong> e depois <strong>"Tela inicial"</strong>.</li>
+                                <li class="mb-2">Toque no menu <strong>&#9776;</strong> (três linhas, na barra de
+                                    baixo).</li>
+                                <li class="mb-2">Escolha <strong>"Adicionar página a"</strong> e depois <strong>"Tela
+                                        inicial"</strong>.</li>
                                 <li>Confirme em <strong>"Adicionar"</strong>.</li>
                             </ol>
-                            <p class="small text-muted mb-0">Se aparecer um ícone de instalar ao lado do endereço, pode tocar nele também.</p>
+                            <p class="small text-muted mb-0">Se aparecer um ícone de instalar ao lado do endereço, pode
+                                tocar nele também.</p>
                         </div>
 
                         <div data-plataforma="android-firefox" style="display:none;">
                             <h6><i class="bi bi-android2"></i> Android — Firefox</h6>
                             <ol>
                                 <li class="mb-2">Toque no menu <strong>&#8942;</strong>.</li>
-                                <li class="mb-2">Escolha <strong>"Instalar"</strong> (ou <strong>"Adicionar à tela inicial"</strong>).</li>
+                                <li class="mb-2">Escolha <strong>"Instalar"</strong> (ou <strong>"Adicionar à tela
+                                        inicial"</strong>).</li>
                                 <li>Confirme para criar o ícone.</li>
                             </ol>
                         </div>
@@ -2099,14 +2136,16 @@
                             <h6><i class="bi bi-apple"></i> iPhone / iPad — Safari</h6>
                             <ol>
                                 <li class="mb-2">Toque no ícone de compartilhar <i class="bi bi-box-arrow-up"></i>.</li>
-                                <li class="mb-2">Role a lista e escolha <strong>"Adicionar à Tela de Início"</strong>.</li>
+                                <li class="mb-2">Role a lista e escolha <strong>"Adicionar à Tela de Início"</strong>.
+                                </li>
                                 <li>Toque em <strong>"Adicionar"</strong>. O ícone do EcoSistemPet aparece na tela.</li>
                             </ol>
                         </div>
 
                         <div data-plataforma="ios-outro" style="display:none;">
                             <h6><i class="bi bi-apple"></i> iPhone / iPad</h6>
-                            <p>No iPhone e no iPad a instalação funciona pelo <strong>Safari</strong>. Abra este site no Safari e siga:</p>
+                            <p>No iPhone e no iPad a instalação funciona pelo <strong>Safari</strong>. Abra este site no
+                                Safari e siga:</p>
                             <ol>
                                 <li class="mb-2">Toque no ícone de compartilhar <i class="bi bi-box-arrow-up"></i>.</li>
                                 <li class="mb-2">Escolha <strong>"Adicionar à Tela de Início"</strong>.</li>
@@ -2117,18 +2156,24 @@
                         <div data-plataforma="desktop" style="display:none;">
                             <h6><i class="bi bi-laptop"></i> Computador — Chrome ou Edge</h6>
                             <ol>
-                                <li class="mb-2">Procure o ícone de instalar <i class="bi bi-download"></i> no lado direito da barra de endereço e clique nele; ou</li>
-                                <li class="mb-2">Abra o menu <strong>&#8942;</strong> e escolha <strong>"Instalar EcoSistemPet"</strong> (às vezes em <em>"Transmitir, salvar e compartilhar"</em>).</li>
+                                <li class="mb-2">Procure o ícone de instalar <i class="bi bi-download"></i> no lado
+                                    direito da barra de endereço e clique nele; ou</li>
+                                <li class="mb-2">Abra o menu <strong>&#8942;</strong> e escolha <strong>"Instalar
+                                        EcoSistemPet"</strong> (às vezes em <em>"Transmitir, salvar e
+                                        compartilhar"</em>).</li>
                                 <li>Confirme em <strong>"Instalar"</strong>.</li>
                             </ol>
-                            <p class="small text-muted mb-0">Firefox e Safari no computador não instalam apps; use o Chrome ou o Edge.</p>
+                            <p class="small text-muted mb-0">Firefox e Safari no computador não instalam apps; use o
+                                Chrome ou o Edge.</p>
                         </div>
 
                         <div data-plataforma="nao-suportado" style="display:none;">
                             <h6><i class="bi bi-exclamation-octagon"></i> Navegador sem suporte</h6>
                             <p class="mb-0">
-                                Este navegador não consegue instalar o app (é o caso do Internet Explorer e de navegadores muito antigos).
-                                Abra este site no <strong>Chrome</strong>, <strong>Edge</strong> ou <strong>Samsung Internet</strong> (Android)
+                                Este navegador não consegue instalar o app (é o caso do Internet Explorer e de
+                                navegadores muito antigos).
+                                Abra este site no <strong>Chrome</strong>, <strong>Edge</strong> ou <strong>Samsung
+                                    Internet</strong> (Android)
                                 ou no <strong>Safari</strong> (iPhone) e tente de novo.
                             </p>
                         </div>
@@ -2162,13 +2207,15 @@
 
     <script src="assets/js/pwa.js?v=20261027-aviso2"></script>
     <script src="assets/js/alerta-pet.js?v=20261106-telefone"></script>
-    <script src="assets/js/latido-alerta.js?v=20261105" data-audio="assets/audio/latido.mp3" data-contagem="app/ajax/contar_notificacoes.php"></script>
+    <script src="assets/js/latido-alerta.js?v=20261105" data-audio="assets/audio/latido.mp3"
+        data-contagem="app/ajax/contar_notificacoes.php"></script>
 
     <!-- ========================= -->
     <!-- JAVASCRIPT -->
     <!-- ========================= -->
 
     <script src="assets/js/script.js?v=2"></script>
+    <script src="assets/js/educacao-pet.js?v=2"></script>
     <script src="assets/js/geolocalizacao.js">
     </script>
     <script src="assets/js/click-sounds.js"></script>
@@ -2190,10 +2237,10 @@
             }
 
             function carregarVeterinarios() {
-                fetch('app/ajax/listar_veterinarios_proximos.php', { cache: 'no-store' })
+                fetch('app/ajax/listar_veterinarios_proximos.php', {cache: 'no-store'})
                     .then(function (resposta) {
-                        if (resposta.status === 401) return { localizacao: false, veterinarios: [] };
-                        return resposta.ok ? resposta.json() : { localizacao: true, veterinarios: [] };
+                        if (resposta.status === 401) return {localizacao: false, veterinarios: []};
+                        return resposta.ok ? resposta.json() : {localizacao: true, veterinarios: []};
                     })
                     .then(function (dados) {
                         if (!dados.localizacao) {
@@ -2254,8 +2301,8 @@
                 return '★'.repeat(preenchidas) + '☆'.repeat(5 - preenchidas);
             }
 
-            fetch('app/ajax/listar_empresas_destaque.php', { cache: 'no-store' })
-                .then(function (resposta) { return resposta.ok ? resposta.json() : []; })
+            fetch('app/ajax/listar_empresas_destaque.php', {cache: 'no-store'})
+                .then(function (resposta) {return resposta.ok ? resposta.json() : [];})
                 .then(function (empresas) {
                     if (!Array.isArray(empresas) || !empresas.length) return;
                     lista.innerHTML = empresas.slice(0, 6).map(function (empresa) {
@@ -2455,7 +2502,7 @@
                     const listaEl = document.getElementById('listaAdocao');
                     if (listaEl) {
                         listaEl.classList.add('busca-realizada');
-                        setTimeout(function () { listaEl.classList.remove('busca-realizada'); }, 1000);
+                        setTimeout(function () {listaEl.classList.remove('busca-realizada');}, 1000);
                     }
                 } catch (e) {
                     console.warn('Erro ao aplicar destaque visual:', e);
@@ -2476,7 +2523,7 @@
                 }
 
                 if (!estaAberto) {
-                    painel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                    painel.scrollIntoView({behavior: "smooth", block: "nearest"});
                 }
             }
             window.alternarPilhaPets = alternarPilhaPets;
@@ -2497,7 +2544,7 @@
                     selectRaca.appendChild(option);
                 });
 
-                if (valorAtual && racas.some(function (raca) { return String(raca.id) === String(valorAtual); })) {
+                if (valorAtual && racas.some(function (raca) {return String(raca.id) === String(valorAtual);})) {
                     selectRaca.value = valorAtual;
                 } else {
                     selectRaca.value = "";
@@ -2508,7 +2555,7 @@
             function carregarOpcoesFiltros() {
 
                 fetch("app/ajax/listar_filtros.php")
-                    .then(function (resposta) { return resposta.json(); })
+                    .then(function (resposta) {return resposta.json();})
                     .then(function (dados) {
 
                         if (!dados || !Array.isArray(dados.especies)) return;
@@ -2662,7 +2709,7 @@
         (function () {
 
             fetch("app/ajax/verificar_sessao.php")
-                .then(function (resposta) { return resposta.json(); })
+                .then(function (resposta) {return resposta.json();})
                 .then(function (dados) {
 
                     if (dados && dados.logado) {
@@ -2701,8 +2748,8 @@
             // mostra o número real no balãozinho, escondendo quando for zero
             // pra não poluir a tela com um "0" sem necessidade.
             function atualizarBadge(url, idBadge) {
-                fetch(url, { cache: "no-store" })
-                    .then(function (resposta) { return resposta.json(); })
+                fetch(url, {cache: "no-store"})
+                    .then(function (resposta) {return resposta.json();})
                     .then(function (dados) {
                         const badge = document.getElementById(idBadge);
                         if (!badge) {
@@ -2739,12 +2786,12 @@
         // Menu de perfil no celular/tablet: ao abrir, rola o menu para que ele apareça inteiro.
         (function () {
             var perfil = document.getElementById("btnHeaderPerfil");
-            if (!perfil) { return; }
+            if (!perfil) {return;}
             perfil.addEventListener("shown.bs.dropdown", function () {
-                if (!window.matchMedia("(max-width: 1199.98px)").matches) { return; }
+                if (!window.matchMedia("(max-width: 1199.98px)").matches) {return;}
                 var menu = perfil.querySelector(".dropdown-menu");
                 if (menu && menu.scrollIntoView) {
-                    menu.scrollIntoView({ block: "nearest", behavior: "smooth" });
+                    menu.scrollIntoView({block: "nearest", behavior: "smooth"});
                 }
             });
         })();
@@ -2806,7 +2853,8 @@
                         <ol>
                             <li>Na tela inicial, <strong>segure</strong> o ícone do EcoSistemPet.</li>
                             <li>Toque em <strong>Desinstalar</strong> (em alguns aparelhos aparece como
-                                <strong>Remover</strong>).</li>
+                                <strong>Remover</strong>).
+                            </li>
                             <li>Confirme em <strong>OK</strong>.</li>
                         </ol>
                     </div>
@@ -2821,7 +2869,8 @@
                     </div>
 
                     <div data-desinstalar="desktop">
-                        <h6 class="fw-bold"><i class="bi bi-laptop" aria-hidden="true"></i> Computador (Chrome ou Edge)</h6>
+                        <h6 class="fw-bold"><i class="bi bi-laptop" aria-hidden="true"></i> Computador (Chrome ou Edge)
+                        </h6>
                         <ol>
                             <li>Com o app aberto, clique nos três pontinhos <strong>(&#8942;)</strong> no canto da
                                 janela.</li>
@@ -2903,7 +2952,7 @@
                         aviso.innerHTML = 'Está em outro aparelho? <a href="#" id="desinstalarVerTodos">Ver os passos de todos os sistemas</a>.';
                         document.getElementById('desinstalarVerTodos').addEventListener('click', function (e) {
                             e.preventDefault();
-                            modalDesinstalar.querySelectorAll('[data-desinstalar]').forEach(function (b) { b.hidden = false; });
+                            modalDesinstalar.querySelectorAll('[data-desinstalar]').forEach(function (b) {b.hidden = false;});
                             aviso.hidden = true;
                         });
                         aviso.hidden = false;
