@@ -1,4 +1,7 @@
-<?php
+
+
+
+?php
 
 declare(strict_types=1);
 
@@ -95,6 +98,8 @@ require __DIR__ . '/FavoritoTest.php';
 require __DIR__ . '/EnderecoTest.php';
 require __DIR__ . '/LimiteLoginTest.php';
 require __DIR__ . '/HistoricoStatusTest.php';
+require __DIR__ . '/PetVacinaTest.php';
+require __DIR__ . '/PetAcessoTest.php';
 require __DIR__ . '/SolicitacaoAdocaoTest.php';
 require __DIR__ . '/ConversaTest.php';
 require __DIR__ . '/SuporteTest.php';

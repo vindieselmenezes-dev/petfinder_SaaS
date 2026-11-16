@@ -15,6 +15,11 @@ $historicoController = new PetHistoricoController();
 $petId = (int) ($_GET['id'] ?? 0);
 $pet = $controller->buscarPorId($petId);
 
+// Histórico (consultas, vacinas, cuidados) é privado: só o tutor e o administrador.
+if ($pet && !PetAcesso::podeVerPrivado($pet)) {
+    $pet = null;
+}
+
 if (!$pet) {
     die("<h1 style='text-align:center; margin-top:50px; color:red;'>Pet não encontrado.</h1>");
 }
@@ -43,6 +48,7 @@ $corTipo = [
     'Cuidados especiais' => '#f39c12',
     'Adestramento' => '#2ecc71',
     'Agenda de passeios' => '#16a085',
+    'Vacina' => '#e67e22',
 ];
 ?>
 
