@@ -239,6 +239,15 @@
 
                             </li>
 
+                            <li class="nav-item">
+
+                                <a class="nav-link fw-semibold" href="public/videoteca.php">
+                                    <i class="bi bi-play-circle-fill text-success"></i> Videoteca
+                                    <span class="badge rounded-pill bg-warning text-dark ms-1">novo</span>
+                                </a>
+
+                            </li>
+
                         </ul>
 
                         <!-- ===================================== -->
@@ -439,7 +448,7 @@
                     <div class="carousel-item">
                         <a href="public/pets/buscar_pets.php" class="d-block h-100"
                             aria-label="Ver pets disponíveis para adoção">
-                            <img src="assets/img/banner/banner-adote.png" class="hero-image"
+                            <img src="assets/img/banner/banner-adote-wide.jpg" class="hero-image"
                                 alt="Dê uma chance a um novo começo: adote um pet">
                         </a>
                     </div>
@@ -1281,6 +1290,62 @@
         </section>
 
         <!-- ========================================================= -->
+        <!-- VIDEOTECA EDUCATIVA (destaque) -->
+        <!-- ========================================================= -->
+
+        <section id="videoteca" class="vt-destaque py-5">
+            <style>
+                .vt-destaque .vt-caixa {
+                    background: linear-gradient(135deg, #015C1E 0%, #003411 100%);
+                    color: #fff;
+                    border-radius: 28px;
+                    padding: 40px;
+                    box-shadow: 0 12px 32px rgba(1, 92, 30, .25);
+                }
+                .vt-destaque .vt-selo { background: rgba(255, 193, 7, .18); color: #ffc107; font-weight: 700; }
+                .vt-destaque .vt-chip {
+                    display: inline-block; background: rgba(255, 255, 255, .12); color: #fff;
+                    border-radius: 50rem; padding: 4px 14px; font-size: 14px; margin: 0 6px 8px 0;
+                }
+                .vt-destaque .vt-play {
+                    width: 120px; height: 120px; border-radius: 50%; background: #fff; color: #015C1E;
+                    display: inline-flex; align-items: center; justify-content: center; font-size: 64px;
+                    text-decoration: none; box-shadow: 0 0 0 0 rgba(255, 193, 7, .7); animation: vtPulso 2s infinite;
+                }
+                @keyframes vtPulso { 70% { box-shadow: 0 0 0 28px rgba(255, 193, 7, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); } }
+                @media (prefers-reduced-motion: reduce) { .vt-destaque .vt-play { animation: none; } }
+            </style>
+
+            <div class="container">
+                <div class="vt-caixa">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-8">
+                            <span class="badge vt-selo rounded-pill px-3 py-2 mb-3">
+                                <i class="bi bi-play-circle-fill"></i> Videoteca Educativa
+                            </span>
+                            <h2 class="display-6 fw-bold mb-2">Aprenda a cuidar melhor do seu pet</h2>
+                            <p class="lead mb-3">Assista, compartilhe e faça a diferença! 🐾</p>
+                            <div class="mb-3">
+                                <span class="vt-chip">Saúde e vacinas</span>
+                                <span class="vt-chip">Alimentação</span>
+                                <span class="vt-chip">Comportamento</span>
+                                <span class="vt-chip">Adoção e ONGs</span>
+                            </div>
+                            <a href="public/videoteca.php" class="btn btn-warning btn-lg fw-semibold">
+                                <i class="bi bi-play-fill"></i> Assistir agora
+                            </a>
+                        </div>
+                        <div class="col-lg-4 text-center">
+                            <a href="public/videoteca.php" class="vt-play" aria-label="Abrir a Videoteca Educativa">
+                                <i class="bi bi-play-fill"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
         <!-- ÁREA MEU PET -->
         <!-- ========================================================= -->
 
@@ -1985,6 +2050,7 @@
                             <li><a href="public/sobre.php" class="text-light">Sobre</a></li>
                             <li><a href="public/contato.php" class="text-light">Contato</a></li>
                             <li><a href="public/blog.php" class="text-light">Blog</a></li>
+                            <li><a href="public/videoteca.php" class="text-light">Videoteca</a></li>
                             <li><a href="public/parceiros/parceiros.php" class="text-light">Parceiros e ONGs</a></li>
 
                         </ul>
@@ -2815,6 +2881,7 @@
                 serviços</a>
             <a href="public/parceiros/parceiros.php"><i class="bi bi-people" aria-hidden="true"></i>Parceiros e ONGs</a>
             <a href="public/blog.php"><i class="bi bi-journal-text" aria-hidden="true"></i>Blog</a>
+            <a href="public/videoteca.php"><i class="bi bi-play-circle" aria-hidden="true"></i>Videoteca</a>
             <a href="public/cadastro_empresa.php"><i class="bi bi-megaphone" aria-hidden="true"></i>Anunciar</a>
             <a href="public/planos.php"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>Planos</a>
             <a href="public/meus_favoritos.php"><i class="bi bi-heart" aria-hidden="true"></i>Favoritos</a>
