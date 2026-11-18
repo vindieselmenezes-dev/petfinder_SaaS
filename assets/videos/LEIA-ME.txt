@@ -1,0 +1,4 @@
+Vídeos próprios da Videoteca (.mp4 ou .webm) podem ficar aqui (assets/videos)
+ou em uploads/videos. Depois cadastre cada um em assets/data/videos.json:
+  { "titulo": "...", "tipo": "arquivo", "arquivo": "assets/videos/nome.mp4", "categoria": "adocao" }
+Dica: prefira arquivos pequenos (até ~20 MB); para vídeos longos use o YouTube.

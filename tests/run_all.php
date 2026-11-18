@@ -100,6 +100,7 @@ require __DIR__ . '/LimiteLoginTest.php';
 require __DIR__ . '/HistoricoStatusTest.php';
 require __DIR__ . '/PetVacinaTest.php';
 require __DIR__ . '/PetAcessoTest.php';
+require __DIR__ . '/VideotecaTest.php';
 require __DIR__ . '/SolicitacaoAdocaoTest.php';
 require __DIR__ . '/ConversaTest.php';
 require __DIR__ . '/SuporteTest.php';

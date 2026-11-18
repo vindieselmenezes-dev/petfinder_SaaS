@@ -78,6 +78,11 @@ function menuGrupo(string $titulo, string $icone, array $itens, string $paginaAt
             ['minhas_solicitacoes_empresa.php', '📥 Minhas Solicitações de Serviço'],
         ], $paginaAtualMenu);
 
+        // 🎬 Videoteca Educativa - todos os perfis
+        menuGrupo('Videoteca', '🎬', [
+            ['videoteca.php', '▶️ Videoteca Educativa'],
+        ], $paginaAtualMenu);
+
         // 🤝 Área de Parceiros (ONGs e empresas apoiadoras) - todos os perfis
         menuGrupo('Parceiros', '🤝', [
             ['parceiros.php', '🌍 ONGs e Empresas Parceiras'],

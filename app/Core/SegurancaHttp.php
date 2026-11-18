@@ -110,6 +110,8 @@ final class SegurancaHttp
             "font-src 'self' fonts.gstatic.com cdn.jsdelivr.net",
             "img-src 'self' data: api.qrserver.com",
             "connect-src 'self' cdn.jsdelivr.net",
+            // Videoteca: só o player do YouTube em modo sem cookies pode ser embutido.
+            "frame-src 'self' https://www.youtube-nocookie.com",
             "frame-ancestors 'self'",
             "object-src 'none'",
             "base-uri 'self'",
