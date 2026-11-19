@@ -873,8 +873,18 @@ html.pwa-mais-aberto body {
 
 #hero .carousel-item {
     position: relative;
-    height: clamp(160px, 34vw, 520px);
+    /* Mesma proporção dos banners (3:1): sem faixa clara em cima/embaixo,
+       inclusive no celular. O teto de 520px continua valendo em telas grandes. */
+    aspect-ratio: 3 / 1;
+    max-height: 520px;
     background: #f2f8fb;
+}
+
+/* A imagem (ou o link que a envolve) preenche o slide por inteiro */
+#hero .carousel-item > .hero-image,
+#hero .carousel-item > a {
+    position: absolute;
+    inset: 0;
 }
 
 /* ==========================================================

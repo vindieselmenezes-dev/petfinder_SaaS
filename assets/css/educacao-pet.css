@@ -1,5 +1,5 @@
 /* Secao "Cuide melhor do seu pet" + baralho de videos educativos */
-#meu-pet .ep-foto{width:100%;max-height:200px;height:200px;object-fit:cover}
+#meu-pet .ep-foto{width:100%;max-height:200px;height:200px;object-fit:contain;object-position:center;background:#f8f9fa}
 #meu-pet .ep-lista{list-style:none;margin:0 0 .75rem;padding:0;display:grid;gap:.35rem}
 #meu-pet .ep-lista li{font-size:.85rem;display:flex;gap:.4rem;line-height:1.4}
 #meu-pet .ep-lista li::before{content:"\2714";color:#198754;flex:none}
