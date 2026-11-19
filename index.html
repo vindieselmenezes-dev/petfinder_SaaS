@@ -102,7 +102,7 @@
     <!-- ========================= -->
 
     <link rel="stylesheet" href="assets/css/style.css?v=20261031-alerta">
-    <link rel="stylesheet" href="assets/css/educacao-pet.css?v=2">
+    <link rel="stylesheet" href="assets/css/educacao-pet.css?v=3">
 
 </head>
 
@@ -423,8 +423,27 @@
 
         </header>
 
-        <!-- Espaçamento para compensar o header fixo -->
-        <div style="height:95px;"></div>
+        <!-- Espaçamento para compensar o header fixo (a altura acompanha o header de verdade,
+             sem sobrar faixa clara entre o menu e o banner) -->
+        <div id="headerSpacer" style="height:91px;"></div>
+        <script>
+            (function () {
+                var header = document.getElementById('header');
+                var spacer = document.getElementById('headerSpacer');
+                if (!header || !spacer) { return; }
+                function ajustar() {
+                    // Com o menu do celular aberto o header cresce por cima da página: não mexe.
+                    if (header.querySelector('.navbar-collapse.show, .navbar-collapse.collapsing')) { return; }
+                    spacer.style.height = Math.ceil(header.getBoundingClientRect().height) + 'px';
+                }
+                ajustar();
+                window.addEventListener('load', ajustar);
+                window.addEventListener('resize', ajustar);
+                header.addEventListener('hidden.bs.collapse', ajustar);
+                if (document.fonts && document.fonts.ready) { document.fonts.ready.then(ajustar); }
+                if (window.ResizeObserver) { new ResizeObserver(ajustar).observe(header); }
+            })();
+        </script>
 
         <!-- ========================================================= -->
         <!-- HERO / BANNER PRINCIPAL -->
